@@ -24,21 +24,3 @@ dofile(MP.."/download_worker.lua")
 
 -- clear http reference from global scope
 blockexchange.http = nil
-
-
--- test stuff
---[[
-minetest.register_on_mods_loaded(function()
-  local pos1 = { x=0, y=0, z=0 }
-  local pos2 = { x=20, y=20, z=20 }
-  minetest.after(0, function()
-    minetest.emerge_area(pos1, pos2, function(_, _, calls_remaining)
-      minetest.log("action", "Emerge-calls remaining: " .. calls_remaining)
-      if calls_remaining == 0 then
-        minetest.log("action", "done!")
-        blockexchange.upload(pos1, pos2)
-      end
-    end)
-  end)
-end)
---]]
