@@ -1,6 +1,6 @@
 
 function blockexchange.download(pos1, schema_id)
-	blockexchange.get_schema(schema_id, function(schema)
+	blockexchange.api.get_schema(schema_id, function(schema)
 		local pos2 = vector.add(pos1, {x=schema.size_x, y=schema.size_y, z=schema.size_z})
 		local ctx = {
 			pos1 = pos1,

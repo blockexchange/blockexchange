@@ -3,7 +3,23 @@
 local http = blockexchange.http
 local url = blockexchange.url
 
-function blockexchange.create_schema(pos1, pos2, description, tags, callback, err_callback)
+blockexchange.api = {}
+
+function blockexchange.api.get_info(callback, err_callback)
+  http.fetch({
+    url = url .. "/api/info",
+    timeout = 5
+  }, function(res)
+    if res.succeeded and res.code == 200 then
+      local schema = minetest.parse_json(res.data)
+      callback(schema)
+    elseif type(err_callback) == "function" then
+      err_callback(res.code or 0)
+    end
+  end)
+end
+
+function blockexchange.api.create_schema(pos1, pos2, description, tags, callback, err_callback)
   local json = minetest.write_json({
     size_x = pos2.x - pos1.x,
     size_y = pos2.y - pos1.y,
@@ -28,7 +44,7 @@ function blockexchange.create_schema(pos1, pos2, description, tags, callback, er
   end)
 end
 
-function blockexchange.finalize_schema(schema_id, node_count, callback, err_callback)
+function blockexchange.api.finalize_schema(schema_id, node_count, callback, err_callback)
 	local json = minetest.write_json({
 		node_count = node_count
 	})
@@ -47,7 +63,7 @@ function blockexchange.finalize_schema(schema_id, node_count, callback, err_call
   end)
 end
 
-function blockexchange.create_schemapart(schema_id, pos, data, callback, err_callback)
+function blockexchange.api.create_schemapart(schema_id, pos, data, callback, err_callback)
   local json = minetest.write_json({
     schema_id = schema_id,
     offset_x = pos.x,
@@ -70,7 +86,7 @@ function blockexchange.create_schemapart(schema_id, pos, data, callback, err_cal
   end)
 end
 
-function blockexchange.get_schema(schema_id, callback, err_callback)
+function blockexchange.api.get_schema(schema_id, callback, err_callback)
   http.fetch({
     url = url .. "/api/schema/" .. schema_id,
     timeout = 5
@@ -84,7 +100,7 @@ function blockexchange.get_schema(schema_id, callback, err_callback)
   end)
 end
 
-function blockexchange.get_schemapart(schema_id, pos, callback, err_callback)
+function blockexchange.api.get_schemapart(schema_id, pos, callback, err_callback)
   http.fetch({
     url = url .. "/api/schemapart/" .. schema_id .. "/" .. pos.x .. "/" .. pos.y .. "/" .. pos.z,
     timeout = 5

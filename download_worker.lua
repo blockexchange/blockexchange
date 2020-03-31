@@ -13,7 +13,7 @@ function blockexchange.download_worker(ctx)
 
 	local relative_pos = vector.subtract(pos, ctx.pos1)
 
-	blockexchange.get_schemapart(ctx.schema.id, relative_pos, function(schemapart)
+	blockexchange.api.get_schemapart(ctx.schema.id, relative_pos, function(schemapart)
 		local start = minetest.get_us_time()
 
 		blockexchange.deserialize_part(pos, schemapart.data);

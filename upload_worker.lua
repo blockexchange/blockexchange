@@ -2,7 +2,7 @@
 function blockexchange.upload_worker(ctx)
   local pos, current_part, total_parts = ctx.iterator()
   if not pos then
-    blockexchange.finalize_schema(ctx.schema.id, ctx.node_count, function()
+    blockexchange.api.finalize_schema(ctx.schema.id, ctx.node_count, function()
       print("Upload complete with " .. ctx.totalbytes .. " bytes in " .. total_parts .. " parts")
     end)
     return
@@ -21,7 +21,7 @@ function blockexchange.upload_worker(ctx)
 
 	local relative_pos = vector.subtract(pos, ctx.pos1)
 
-  blockexchange.create_schemapart(ctx.schema.id, relative_pos, data, function()
+  blockexchange.api.create_schemapart(ctx.schema.id, relative_pos, data, function()
     print("Upload of part " .. minetest.pos_to_string(pos) ..
     " completed with " .. #data ..
     " bytes (processing took " .. diff .. " micros)")

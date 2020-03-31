@@ -7,6 +7,7 @@ end
 
 
 blockexchange = {
+	api_version_major = 1,
   http = http,
   url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.land",
   part_length = 10
