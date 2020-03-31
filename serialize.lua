@@ -1,5 +1,5 @@
 
-function blockexchange.serialize_part(pos, end_pos, modname_count)
+function blockexchange.serialize_part(pos, end_pos, node_count)
   local pos2 = vector.add(pos, blockexchange.part_length)
   pos2.x = math.min(pos2.x, end_pos.x)
   pos2.y = math.min(pos2.y, end_pos.y)
@@ -22,23 +22,15 @@ function blockexchange.serialize_part(pos, end_pos, modname_count)
   end
   end
 
-	modname_count = modname_count or {}
+	node_count = node_count or {}
 
 	for node_id, count in pairs(node_id_count) do
 		local node_name = minetest.get_name_from_content_id(node_id)
-		local mod_name
-		for str in string.gmatch(node_name, "([^:]+)") do
-			if not mod_name then
-				mod_name = str
-			end
-		end
-
-		local counter = modname_count[mod_name] or 0
-
-		modname_count[mod_name] = counter + count
+		local counter = node_count[node_name] or 0
+		node_count[node_name] = counter + count
 	end
 
-  return worldedit.serialize(pos, pos2), modname_count
+  return worldedit.serialize(pos, pos2), node_count
 end
 
 function blockexchange.deserialize_part(pos, data)

@@ -6,7 +6,7 @@ function blockexchange.upload(pos1, pos2, description, tags)
       pos2 = pos2,
       totalbytes = 0,
       iterator = blockexchange.iterator(pos1, pos2, blockexchange.part_length),
-			modname_count = {}
+			node_count = {}
     }
 
     -- start upload worker with context

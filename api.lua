@@ -28,9 +28,9 @@ function blockexchange.create_schema(pos1, pos2, description, tags, callback, er
   end)
 end
 
-function blockexchange.finalize_schema(schema_id, modname_count, callback, err_callback)
+function blockexchange.finalize_schema(schema_id, node_count, callback, err_callback)
 	local json = minetest.write_json({
-		modname_count = modname_count
+		node_count = node_count
 	})
 
   http.fetch({
