@@ -1,7 +1,8 @@
-function blockexchange.upload(pos1, pos2, description, tags)
+function blockexchange.upload(playername, pos1, pos2, description, tags)
 	pos1, pos2 = worldedit.sort_pos(pos1, pos2)
   blockexchange.api.create_schema(pos1, pos2, description, tags, function(schema)
     local ctx = {
+			playername = playername,
       schema = schema,
       pos1 = pos1,
       pos2 = pos2,
@@ -14,6 +15,8 @@ function blockexchange.upload(pos1, pos2, description, tags)
     minetest.after(0, blockexchange.upload_worker, ctx)
   end,
 	function(http_code)
-		minetest.log("error", "Create schema failed with http code: " .. http_code)
+		local msg = "[blockexchange] create schema failed with http code: " .. (http_code or "unknown")
+		minetest.log("error", msg)
+		minetest.chat_send_player(playername, minetest.colorize("#ff0000", msg))
 	end)
 end

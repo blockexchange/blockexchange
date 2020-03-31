@@ -7,7 +7,7 @@ minetest.register_chatcommand("blockexchange_save", {
 		local description = ""
 		local tags = {}
 
-    blockexchange.upload(pos1, pos2, description, tags)
+    blockexchange.upload(name, pos1, pos2, description, tags)
 		return true
   end
 })

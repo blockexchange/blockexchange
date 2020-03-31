@@ -25,7 +25,13 @@ function blockexchange.upload_worker(ctx)
     print("Upload of part " .. minetest.pos_to_string(pos) ..
     " completed with " .. #data ..
     " bytes (processing took " .. diff .. " micros)")
-  end)
 
-  minetest.after(0.5, blockexchange.upload_worker, ctx)
+		minetest.after(0.5, blockexchange.upload_worker, ctx)
+	  end,
+		function(http_code)
+			local msg = "[blockexchange] create schemapart failed with http code: " .. (http_code or "unkown")
+			minetest.log("error", msg)
+			minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
+	end)
+
 end
