@@ -24,3 +24,7 @@ dofile(MP.."/download_worker.lua")
 
 -- clear http reference from global scope
 blockexchange.http = nil
+
+if minetest.settings:get("enable_blockexchange_integration_test") then
+	dofile(MP.."/integration_test.lua")
+end
