@@ -1,4 +1,5 @@
 function blockexchange.upload(pos1, pos2, description, tags)
+	pos1, pos2 = worldedit.sort_pos(pos1, pos2)
   blockexchange.create_schema(pos1, pos2, description, tags, function(schema)
     local ctx = {
       schema = schema,
