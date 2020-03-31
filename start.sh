@@ -1,9 +1,4 @@
-
 #!/bin/sh
-
-test -d worldedit ||\
- git clone https://github.com/Uberi/Minetest-WorldEdit worldedit
-
 
 sudo docker run --rm -it \
 	-u root:root \

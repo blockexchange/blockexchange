@@ -1,5 +1,6 @@
 globals = {
-	"blockexchange"
+	"blockexchange",
+	"worldedit"
 }
 
 read_globals = {
@@ -11,8 +12,6 @@ read_globals = {
 	"minetest",
 	"vector", "ItemStack",
 	"dump", "dump2",
-	"VoxelArea",
+	"VoxelArea"
 
-	-- Deps
-	"worldedit"
 }

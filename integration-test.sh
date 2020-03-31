@@ -7,6 +7,7 @@ WORLDDIR=${MTDIR}/worlds/world
 
 cat <<EOF > ${CFG}
  enable_blockexchange_integration_test = true
+ secure.http_mods = blockexchange
 EOF
 
 mkdir -p ${WORLDDIR}

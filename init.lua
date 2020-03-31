@@ -25,6 +25,12 @@ dofile(MP.."/download_worker.lua")
 -- clear http reference from global scope
 blockexchange.http = nil
 
+if not minetest.get_modpath("worldedit") then
+	minetest.log("warning", "Using embedded worldedit dependency!")
+	worldedit = {}
+	dofile(MP.."/embedded/worldedit.lua")
+end
+
 if minetest.settings:get("enable_blockexchange_integration_test") then
 	dofile(MP.."/integration_test.lua")
 end
