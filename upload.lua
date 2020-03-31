@@ -1,7 +1,7 @@
 function blockexchange.upload(pos1, pos2)
-  blockexchange.create_schema(pos1, pos2, function(schema_id)
+  blockexchange.create_schema(pos1, pos2, function(schema)
     local ctx = {
-      schema_id = schema_id,
+      schema = schema,
       pos1 = pos1,
       pos2 = pos2,
       totalbytes = 0,
@@ -10,5 +10,8 @@ function blockexchange.upload(pos1, pos2)
 
     -- start upload worker with context
     minetest.after(0, blockexchange.upload_worker, ctx)
-  end)
+  end,
+	function(http_code)
+		minetest.log("error", "Create schema failed with http code: " .. http_code)
+	end)
 end

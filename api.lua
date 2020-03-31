@@ -3,7 +3,7 @@
 local http = blockexchange.http
 local url = blockexchange.url
 
-function blockexchange.create_schema(pos1, pos2, callback)
+function blockexchange.create_schema(pos1, pos2, callback, err_callback)
   local json = minetest.write_json({
     size_x = pos2.x - pos1.x,
     size_y = pos2.y - pos1.y,
@@ -19,14 +19,14 @@ function blockexchange.create_schema(pos1, pos2, callback)
   }, function(res)
     if res.succeeded and res.code == 200 then
       local schema = minetest.parse_json(res.data)
-      callback(schema.id)
-    else
-      callback(nil, res.code)
+      callback(schema)
+    elseif type(err_callback) == "function" then
+      err_callback(res.code or 0)
     end
   end)
 end
 
-function blockexchange.finalize_schema(schema_id, callback)
+function blockexchange.finalize_schema(schema_id, callback, err_callback)
   http.fetch({
     url = url .. "/api/schema/" .. schema_id .. "/complete",
     extra_headers = { "Content-Type: application/json" },
@@ -35,13 +35,13 @@ function blockexchange.finalize_schema(schema_id, callback)
   }, function(res)
     if res.succeeded and res.code == 200 then
       callback(true)
-    else
-      callback(nil, res.code)
+		elseif type(err_callback) == "function" then
+      err_callback(res.code or 0)
     end
   end)
 end
 
-function blockexchange.create_schemapart(schema_id, pos, data, callback)
+function blockexchange.create_schemapart(schema_id, pos, data, callback, err_callback)
   local json = minetest.write_json({
     schema_id = schema_id,
     offset_x = pos.x,
@@ -58,13 +58,13 @@ function blockexchange.create_schemapart(schema_id, pos, data, callback)
   }, function(res)
     if res.succeeded and res.code == 200 then
       callback(true)
-    else
-      callback(nil, res.code)
+		elseif type(err_callback) == "function" then
+      err_callback(res.code or 0)
     end
   end)
 end
 
-function blockexchange.get_schema(schema_id, callback)
+function blockexchange.get_schema(schema_id, callback, err_callback)
   http.fetch({
     url = url .. "/api/schema/" .. schema_id,
     timeout = 5
@@ -72,13 +72,13 @@ function blockexchange.get_schema(schema_id, callback)
     if res.succeeded and res.code == 200 then
       local schema = minetest.parse_json(res.data)
       callback(schema)
-    else
-      callback(nil, res.code)
+		elseif type(err_callback) == "function" then
+      err_callback(res.code or 0)
     end
   end)
 end
 
-function blockexchange.get_schemapart(schema_id, pos, callback)
+function blockexchange.get_schemapart(schema_id, pos, callback, err_callback)
   http.fetch({
     url = url .. "/api/schemapart/" .. schema_id .. "/" .. pos.x .. "/" .. pos.y .. "/" .. pos.z,
     timeout = 5
@@ -86,8 +86,8 @@ function blockexchange.get_schemapart(schema_id, pos, callback)
     if res.succeeded and res.code == 200 then
       local schemapart = minetest.parse_json(res.data)
       callback(schemapart)
-    else
-      callback(nil, res.code)
+		elseif type(err_callback) == "function" then
+      err_callback(res.code or 0)
     end
   end)
 end
