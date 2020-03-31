@@ -4,7 +4,10 @@ minetest.register_chatcommand("blockexchange_save", {
 	func = function(name)
     local pos1 = worldedit.pos1[name]
     local pos2 = worldedit.pos2[name]
-    blockexchange.upload(pos1, pos2)
+		local description = ""
+		local tags = {}
+
+    blockexchange.upload(pos1, pos2, description, tags)
   end
 })
 

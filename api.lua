@@ -3,12 +3,14 @@
 local http = blockexchange.http
 local url = blockexchange.url
 
-function blockexchange.create_schema(pos1, pos2, callback, err_callback)
+function blockexchange.create_schema(pos1, pos2, description, tags, callback, err_callback)
   local json = minetest.write_json({
     size_x = pos2.x - pos1.x,
     size_y = pos2.y - pos1.y,
     size_z = pos2.z - pos1.z,
-    part_length = 10
+    part_length = 10,
+		description = description,
+		tags = tags
   });
 
   http.fetch({
@@ -26,12 +28,16 @@ function blockexchange.create_schema(pos1, pos2, callback, err_callback)
   end)
 end
 
-function blockexchange.finalize_schema(schema_id, callback, err_callback)
+function blockexchange.finalize_schema(schema_id, modname_count, callback, err_callback)
+	local json = minetest.write_json({
+		modname_count = modname_count
+	})
+
   http.fetch({
     url = url .. "/api/schema/" .. schema_id .. "/complete",
     extra_headers = { "Content-Type: application/json" },
     timeout = 5,
-    post_data = "{}"
+    post_data = json
   }, function(res)
     if res.succeeded and res.code == 200 then
       callback(true)
