@@ -27,8 +27,13 @@ blockexchange.http = nil
 
 if not minetest.get_modpath("worldedit") then
 	minetest.log("warning", "Using embedded worldedit dependency!")
-	worldedit = {}
+	worldedit = {
+		pos1 = {},
+		pos2 = {}
+	}
 	dofile(MP.."/embedded/worldedit.lua")
+	dofile(MP.."/embedded/common.lua")
+	dofile(MP.."/embedded/chat.lua")
 end
 
 if minetest.settings:get("enable_blockexchange_integration_test") then

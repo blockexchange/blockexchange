@@ -10,5 +10,5 @@ State: **WIP**
 # License
 
 * Code: MIT
-* `embedded/worldedit.lua` AGPL 3.0 (https://github.com/Uberi/Minetest-WorldEdit/)
+* `embedded/*` AGPL 3.0 (https://github.com/Uberi/Minetest-WorldEdit/)
 * Textures: CC-BY-SA 3.0
