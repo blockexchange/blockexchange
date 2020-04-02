@@ -59,6 +59,19 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
   return data, node_count
 end
 
-function blockexchange.deserialize_part(pos, data)
-	--TODO
+function blockexchange.deserialize_part(pos1, data)
+	local pos2 = vector.add(pos1, data.size)
+
+  local manip = minetest.get_voxel_manip()
+  local e1, e2 = manip:read_from_map(pos1, pos2)
+  local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
+
+  -- TODO re-map node-id's
+
+  manip:set_data(data.node_ids)
+  manip:set_light_data(data.param1)
+  manip:set_param2_data(data.param2)
+
+  -- TODO set metadata
+
 end
