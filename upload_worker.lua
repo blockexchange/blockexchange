@@ -21,10 +21,19 @@ function blockexchange.upload_worker(ctx)
   pos2.z = math.min(pos2.z, ctx.pos2.z)
 
   local data = blockexchange.serialize_part(pos, pos2, ctx.node_count)
-
   local diff = minetest.get_us_time() - start
 
 	local relative_pos = vector.subtract(pos, ctx.pos1)
+
+	--[[
+	local json = minetest.write_json(data, true);
+	local file = io.open(minetest.get_worldpath().."/schemapart_" .. ctx.schema.id .. "_" ..
+		minetest.pos_to_string(relative_pos) .. ".json", "w" );
+	if file then
+		file:write(json)
+		file:close()
+	end
+	--]]
 
   blockexchange.api.create_schemapart(ctx.schema.id, relative_pos, data, function()
     minetest.log("action", "[blockexchange] Upload of part " .. minetest.pos_to_string(pos) ..
