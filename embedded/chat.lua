@@ -36,7 +36,7 @@ minetest.register_chatcommand("/pos2", {
 			worldedit.pos2[name] = pos
 
 			if pos2_player_map[name] then
-				player:hud_remove(pos1_player_map[name])
+				player:hud_remove(pos2_player_map[name])
 			end
 
 			pos2_player_map[name] = player:hud_add({
