@@ -31,15 +31,29 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 	local pos_with_meta = minetest.find_nodes_with_meta(pos1, pos2)
 	for _, pos in ipairs(pos_with_meta) do
 		local relative_pos = vector.subtract(pos, pos1)
-		metadata[minetest.pos_to_string(relative_pos)] = minetest.get_meta(pos):to_table()
+    local meta = minetest.get_meta(pos):to_table()
+
+    -- Convert metadata item stacks to item strings
+    for _, invlist in pairs(meta.inventory) do
+      for index = 1, #invlist do
+        local itemstack = invlist[index]
+        if itemstack.to_string then
+          invlist[index] = itemstack:to_string()
+        end
+      end
+    end
+
+    metadata[minetest.pos_to_string(relative_pos)] = meta
 	end
+
 
 	local data = {
 		node_ids = manip:get_data(),
 		param1 = manip:get_light_data(),
 		param2 = manip:get_param2_data(),
 		node_mapping = node_mapping,
-		metadata = metadata
+		metadata = metadata,
+    size = vector.add( vector.subtract(pos2, pos1), 1 )
 	}
 
   return data, node_count

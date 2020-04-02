@@ -19,7 +19,29 @@ minetest.register_on_mods_loaded(function()
 			file:close()
 		end
 
-		minetest.log("warning", "[TEST] integration tests done!")
-		minetest.request_shutdown("success")
+		local pos1 = { x=0, y=0, z=0 }
+		local pos2 = { x=15, y=15, z=15 }
+		minetest.after(0, function()
+			minetest.emerge_area(pos1, pos2, function()
+				minetest.set_node(pos1, { name = "default:chest" })
+				local meta = minetest.get_meta(pos1)
+				local inv = meta:get_inventory()
+				inv:set_size("main", 8*4)
+				inv:set_stack("main", 1, ItemStack("default:cobble 99"))
+
+				local part = blockexchange.serialize_part(pos1, pos2)
+				print("metadata: " .. minetest.write_json(part.metadata))
+				print("node_mapping: " .. minetest.write_json(part.node_mapping))
+				print("size: " .. minetest.write_json(part.size))
+
+				blockexchange.upload("test", pos1, pos2, "description", {"test", "thing"})
+
+				minetest.after(10, function()
+					minetest.log("warning", "[TEST] integration tests done!")
+					minetest.request_shutdown("success")
+				end)
+			end)
+		end)
+
 	end)
 end)

@@ -10,7 +10,7 @@ blockexchange = {
 	api_version_major = 1,
   http = http,
   url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.land",
-  part_length = 10
+  part_length = 16
 }
 
 local MP = minetest.get_modpath("blockexchange")
