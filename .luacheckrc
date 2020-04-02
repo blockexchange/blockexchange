@@ -1,6 +1,5 @@
 globals = {
-	"blockexchange",
-	"worldedit"
+	"blockexchange"
 }
 
 read_globals = {

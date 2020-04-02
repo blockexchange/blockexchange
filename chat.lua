@@ -2,8 +2,8 @@ minetest.register_chatcommand("blockexchange_save", {
   params = "",
 	description = "",
 	func = function(name)
-    local pos1 = worldedit.pos1[name]
-    local pos2 = worldedit.pos2[name]
+    local pos1 = blockexchange.pos1[name]
+    local pos2 = blockexchange.pos2[name]
 		local description = ""
 		local tags = {}
 
@@ -16,7 +16,7 @@ minetest.register_chatcommand("blockexchange_load", {
   params = "<schemaid>",
 	description = "",
 	func = function(name, param)
-    local pos1 = worldedit.pos1[name]
+    local pos1 = blockexchange.pos1[name]
 		blockexchange.download(pos1, param)
 		return true
   end
