@@ -6,7 +6,6 @@ function blockexchange.upload(playername, pos1, pos2, description, tags)
       schema = schema,
       pos1 = pos1,
       pos2 = pos2,
-      totalbytes = 0,
       iterator = blockexchange.iterator(pos1, pos2, blockexchange.part_length),
 			node_count = {}
     }
