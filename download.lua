@@ -6,7 +6,6 @@ function blockexchange.download(pos1, schema_id)
 			pos1 = pos1,
 			pos2 = pos2,
 			schema = schema,
-			totalbytes = 0,
 			iterator = blockexchange.iterator(pos1, pos2, schema.part_length)
 		}
 		minetest.after(0, blockexchange.download_worker, ctx)

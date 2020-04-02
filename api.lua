@@ -24,7 +24,7 @@ function blockexchange.api.create_schema(pos1, pos2, description, tags, callback
     size_x = pos2.x - pos1.x,
     size_y = pos2.y - pos1.y,
     size_z = pos2.z - pos1.z,
-    part_length = 10,
+    part_length = blockexchange.part_length,
 		description = description,
 		tags = tags
   });

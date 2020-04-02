@@ -2,7 +2,7 @@
 function blockexchange.download_worker(ctx)
 	local pos, current_part, total_parts = ctx.iterator()
 	if not pos then
-    print("Download complete with " .. ctx.totalbytes .. " bytes in " .. total_parts .. " parts")
+    print("Download complete with " .. total_parts .. " parts")
     return
   end
 
@@ -20,12 +20,8 @@ function blockexchange.download_worker(ctx)
 
 		local diff = minetest.get_us_time() - start
 
-		local len = #schemapart.data
-		ctx.totalbytes = ctx.totalbytes + len
-
     print("Download of part " .. minetest.pos_to_string(pos) ..
-    " completed with " .. len ..
-    " bytes (processing took " .. diff .. " micros)")
+    " completed (processing took " .. diff .. " micros)")
 
 		minetest.after(0.5, blockexchange.download_worker, ctx)
 	end)
