@@ -4,6 +4,7 @@ function blockexchange.upload_worker(ctx)
   if not pos then
     blockexchange.api.finalize_schema(ctx.schema.id, ctx.node_count, function()
       minetest.log("action", "[blockexchange] Upload complete with " .. total_parts .. " parts")
+      ctx.success = true
     end)
     return
   end
@@ -35,6 +36,7 @@ function blockexchange.upload_worker(ctx)
 			local msg = "[blockexchange] create schemapart failed with http code: " .. (http_code or "unkown")
 			minetest.log("error", msg)
 			minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
+      ctx.failed = true
 	end)
 
 end
