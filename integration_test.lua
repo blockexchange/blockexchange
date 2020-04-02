@@ -21,10 +21,12 @@ minetest.register_on_mods_loaded(function()
 
 		minetest.log("warning", "[TEST] starting tests")
 		local pos1 = { x=0, y=0, z=0 }
-		local pos2 = { x=15, y=15, z=15 }
+		local pos2 = { x=256, y=50, z=256 }
 		minetest.after(0, function()
 			minetest.log("warning", "[TEST] emerging area")
-			minetest.emerge_area(pos1, pos2, function()
+			minetest.emerge_area(pos1, pos2, function(_, _, remaining)
+				if remaining > 0 then return end
+
 				minetest.log("warning", "[TEST] testing serializer")
 				minetest.set_node(pos1, { name = "default:chest" })
 				local meta = minetest.get_meta(pos1)
@@ -37,10 +39,15 @@ minetest.register_on_mods_loaded(function()
 				print("node_mapping: " .. minetest.write_json(part.node_mapping))
 				print("size: " .. minetest.write_json(part.size))
 
-				minetest.log("warning", "[TEST] uploading schema")
-				blockexchange.upload("test", pos1, pos2, "description", {"test", "thing"})
+				blockexchange.deserialize_part(vector.add(pos1, 16), part)
 
-				minetest.after(10, function()
+				local node = minetest.get_node(vector.add(pos1, 16))
+				assert(node.name == "default:chest")
+
+				--minetest.log("warning", "[TEST] uploading schema")
+				--blockexchange.upload("test", pos1, pos2, "description", {"test", "thing"})
+
+				minetest.after(0, function()
 					minetest.log("warning", "[TEST] integration tests done!")
 					minetest.request_shutdown("success")
 				end)

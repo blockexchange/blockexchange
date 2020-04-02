@@ -27,8 +27,7 @@ function blockexchange.upload_worker(ctx)
 
   blockexchange.api.create_schemapart(ctx.schema.id, relative_pos, data, function()
     minetest.log("action", "[blockexchange] Upload of part " .. minetest.pos_to_string(pos) ..
-    " completed with " .. #data ..
-    " bytes (processing took " .. diff .. " micros)")
+    " completed (processing took " .. diff .. " micros)")
 
 		minetest.after(0.5, blockexchange.upload_worker, ctx)
 	  end,

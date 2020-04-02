@@ -51,7 +51,7 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 		node_ids = manip:get_data(),
 		param1 = manip:get_light_data(),
 		param2 = manip:get_param2_data(),
-		node_mapping = node_mapping,
+		node_mapping = node_mapping, -- name -> id
 		metadata = metadata,
     size = vector.add( vector.subtract(pos2, pos1), 1 )
 	}
@@ -59,19 +59,41 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
   return data, node_count
 end
 
+-- local nodename->id cache
+local local_nodename_to_id_mapping = {} -- name -> id
+
 function blockexchange.deserialize_part(pos1, data)
+  local foreign_nodeid_to_name_mapping = {} -- id -> name
+  for k, v in pairs(data.node_mapping) do
+    foreign_nodeid_to_name_mapping[v] = k
+  end
+
 	local pos2 = vector.add(pos1, data.size)
 
   local manip = minetest.get_voxel_manip()
   local e1, e2 = manip:read_from_map(pos1, pos2)
   local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
 
-  -- TODO re-map node-id's
+  for i, node_id in ipairs(data.node_ids) do
+    local node_name = foreign_nodeid_to_name_mapping[node_id]
+    local local_node_id = local_nodename_to_id_mapping[node_name]
+    if not local_node_id then
+      local_node_id = minetest.get_content_id(node_name)
+      local_nodename_to_id_mapping[node_name] = local_node_id
+    end
+
+    data.node_ids[i] = local_node_id
+  end
 
   manip:set_data(data.node_ids)
   manip:set_light_data(data.param1)
   manip:set_param2_data(data.param2)
+  manip:write_to_map()
 
-  -- TODO set metadata
+  for pos_str, metadata in pairs(data.metadata) do
+    local relative_pos = minetest.string_to_pos(pos_str)
+    local absolute_pos = vector.add(pos1, relative_pos)
+    minetest.get_meta(absolute_pos):from_table(metadata)
+  end
 
 end
