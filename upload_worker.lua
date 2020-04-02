@@ -3,14 +3,14 @@ function blockexchange.upload_worker(ctx)
   local pos, current_part, total_parts = ctx.iterator()
   if not pos then
     blockexchange.api.finalize_schema(ctx.schema.id, ctx.node_count, function()
-      print("Upload complete with " .. total_parts .. " parts")
+      minetest.log("action", "[blockexchange] Upload complete with " .. total_parts .. " parts")
     end)
     return
   end
 
   local progress_percent = math.floor(current_part / total_parts * 100 * 10) / 10
 
-  minetest.log("Upload pos: " .. minetest.pos_to_string(pos) ..
+  minetest.log("action", "[blockexchange] Upload pos: " .. minetest.pos_to_string(pos) ..
     " Progress: " .. progress_percent .. "% (" .. current_part .. "/" .. total_parts .. ")")
   local start = minetest.get_us_time()
 
@@ -26,7 +26,7 @@ function blockexchange.upload_worker(ctx)
 	local relative_pos = vector.subtract(pos, ctx.pos1)
 
   blockexchange.api.create_schemapart(ctx.schema.id, relative_pos, data, function()
-    print("Upload of part " .. minetest.pos_to_string(pos) ..
+    minetest.log("action", "[blockexchange] Upload of part " .. minetest.pos_to_string(pos) ..
     " completed with " .. #data ..
     " bytes (processing took " .. diff .. " micros)")
 

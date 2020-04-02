@@ -19,10 +19,13 @@ minetest.register_on_mods_loaded(function()
 			file:close()
 		end
 
+		minetest.log("warning", "[TEST] starting tests")
 		local pos1 = { x=0, y=0, z=0 }
 		local pos2 = { x=15, y=15, z=15 }
 		minetest.after(0, function()
+			minetest.log("warning", "[TEST] emerging area")
 			minetest.emerge_area(pos1, pos2, function()
+				minetest.log("warning", "[TEST] testing serializer")
 				minetest.set_node(pos1, { name = "default:chest" })
 				local meta = minetest.get_meta(pos1)
 				local inv = meta:get_inventory()
@@ -34,6 +37,7 @@ minetest.register_on_mods_loaded(function()
 				print("node_mapping: " .. minetest.write_json(part.node_mapping))
 				print("size: " .. minetest.write_json(part.size))
 
+				minetest.log("warning", "[TEST] uploading schema")
 				blockexchange.upload("test", pos1, pos2, "description", {"test", "thing"})
 
 				minetest.after(10, function()
