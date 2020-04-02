@@ -71,8 +71,7 @@ function blockexchange.deserialize_part(pos1, data)
 	local pos2 = vector.add(pos1, data.size)
 
   local manip = minetest.get_voxel_manip()
-  local e1, e2 = manip:read_from_map(pos1, pos2)
-  local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
+  manip:read_from_map(pos1, pos2)
 
   for i, node_id in ipairs(data.node_ids) do
     local node_name = foreign_nodeid_to_name_mapping[node_id]
