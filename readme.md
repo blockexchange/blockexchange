@@ -10,5 +10,4 @@ State: **WIP**
 # License
 
 * Code: MIT
-* `embedded/*` AGPL 3.0 (https://github.com/Uberi/Minetest-WorldEdit/)
 * Textures: CC-BY-SA 3.0
