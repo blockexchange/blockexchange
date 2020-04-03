@@ -1,6 +1,35 @@
 
+-- hud mappings
 local pos1_player_map = {}
 local pos2_player_map = {}
+
+function blockexchange.set_pos(index, playername, pos)
+  local player = minetest.get_player_by_name(playername)
+  if player then
+    local map = blockexchange.pos1
+    local hud_map = pos1_player_map
+    if index == 2 then
+      map = pos2_player_map
+      hud_map = pos2_player_map
+    end
+
+    local pos_str = minetest.pos_to_string(pos)
+    minetest.chat_send_player(playername, "Position " .. index .. " set to " .. pos_str)
+    map[playername] = pos
+
+    if hud_map[playername] then
+      player:hud_remove(hud_map[playername])
+    end
+
+    hud_map[playername] = player:hud_add({
+      hud_elem_type = "waypoint",
+      name = "Position " .. index .. " @ " .. pos_str,
+      text = "m",
+      number = 0xFF0000,
+      world_pos = pos
+    })
+  end
+end
 
 minetest.register_chatcommand("bx_pos1", {
 	description = "",
@@ -8,20 +37,7 @@ minetest.register_chatcommand("bx_pos1", {
 		local player = minetest.get_player_by_name(name)
 		if player then
 			local pos = vector.floor(player:get_pos())
-			minetest.chat_send_player(name, "Position 1 set to " .. minetest.pos_to_string(pos))
-			blockexchange.pos1[name] = pos
-
-			if pos1_player_map[name] then
-				player:hud_remove(pos1_player_map[name])
-			end
-
-			pos1_player_map[name] = player:hud_add({
-				hud_elem_type = "waypoint",
-				name = "Position 1",
-				text = "m",
-				number = 0xFF0000,
-				world_pos = pos
-			})
+      blockexchange.set_pos(1, name, pos)
 		end
   end
 })
@@ -29,24 +45,10 @@ minetest.register_chatcommand("bx_pos1", {
 minetest.register_chatcommand("bx_pos2", {
 	description = "",
 	func = function(name)
-		local player = minetest.get_player_by_name(name)
+    local player = minetest.get_player_by_name(name)
 		if player then
 			local pos = vector.floor(player:get_pos())
-			minetest.chat_send_player(name, "Position 2 set to " .. minetest.pos_to_string(pos))
-			blockexchange.pos2[name] = pos
-
-			if pos2_player_map[name] then
-				player:hud_remove(pos2_player_map[name])
-			end
-
-			pos2_player_map[name] = player:hud_add({
-				hud_elem_type = "waypoint",
-				name = "Position 2",
-				text = "m",
-				number = 0xFF0000,
-				world_pos = pos
-			})
-
+      blockexchange.set_pos(2, name, pos)
 		end
   end
 })

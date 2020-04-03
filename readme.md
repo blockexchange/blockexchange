@@ -13,6 +13,7 @@ State: **WIP**
 * **/bx_pos1**
 * **/bx_pos2**
 * **/bx_save**
+* **/bx_allocate <uid>**
 * **/bx_load <uid>**
 
 # License

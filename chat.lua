@@ -32,6 +32,21 @@ minetest.register_chatcommand("bx_load", {
   end
 })
 
+minetest.register_chatcommand("bx_allocate", {
+  params = "<schemaid>",
+	description = "",
+	func = function(name, param)
+    local pos1 = blockexchange.pos1[name]
+
+    if not pos1 then
+      return false, "you need to set /bx_pos1 first!"
+    end
+
+		blockexchange.allocate(name, pos1, param)
+		return true
+  end
+})
+
 minetest.register_chatcommand("bx_info", {
 	description = "Shows infos about the remote blockexchange",
 	func = function(name)
