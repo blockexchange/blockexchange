@@ -7,6 +7,14 @@ minetest blockexchange mod
 
 State: **WIP**
 
+# Chat commands
+
+* **/bx_info**
+* **/bx_pos1**
+* **/bx_pos2**
+* **/bx_save**
+* **/bx_load <uid>**
+
 # License
 
 * Code: MIT
