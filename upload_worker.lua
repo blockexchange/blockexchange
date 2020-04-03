@@ -3,7 +3,7 @@ function blockexchange.upload_worker(ctx)
   ctx.current_pos = blockexchange.iterator_next(ctx.pos1, ctx.pos2, ctx.current_pos)
 
   if not ctx.current_pos then
-    blockexchange.api.finalize_schema(ctx.schema.id, ctx.node_count, function()
+    blockexchange.api.finalize_schema(ctx.token, ctx.schema.id, ctx.node_count, function()
       minetest.log("action", "[blockexchange] Upload complete with " .. ctx.total_parts .. " parts")
       ctx.success = true
     end)
@@ -38,7 +38,7 @@ function blockexchange.upload_worker(ctx)
 	end
 	--]]
 
-  blockexchange.api.create_schemapart(ctx.schema.id, relative_pos, data, function()
+  blockexchange.api.create_schemapart(ctx.token, ctx.schema.id, relative_pos, data, function()
     minetest.log("action", "[blockexchange] Upload of part " .. minetest.pos_to_string(ctx.current_pos) ..
     " completed (processing took " .. diff .. " micros)")
 

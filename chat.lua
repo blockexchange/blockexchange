@@ -27,7 +27,7 @@ minetest.register_chatcommand("bx_load", {
       return false, "you need to set /bx_pos1 first!"
     end
 
-		blockexchange.download(pos1, param)
+		blockexchange.download(name, pos1, param)
 		return true
   end
 })

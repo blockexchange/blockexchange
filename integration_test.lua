@@ -1,10 +1,13 @@
 
 minetest.log("warning", "[TEST] integration-test enabled!")
 
+local playername = "max"
+local username = "max_muster"
+local password = "n00b"
 
 local function doUpload(pos1, pos2, callback)
 	minetest.log("warning", "[TEST] uploading schema")
-	local ctx = blockexchange.upload("test", pos1, pos2, "description", {"test", "thing"})
+	local ctx = blockexchange.upload(playername, pos1, pos2, "description", {"test", "thing"})
 
 	local done_check
 
@@ -23,7 +26,7 @@ end
 
 local function doDownload(pos1, uid, callback)
 	minetest.log("warning", "[TEST] downloading schema")
-	local ctx = blockexchange.download(pos1, uid)
+	local ctx = blockexchange.download(playername, pos1, uid)
 
 	local done_check
 
@@ -44,8 +47,6 @@ local pos1 = { x=0, y=0, z=0 }
 local pos2 = { x=30, y=20, z=30 }
 local dl_pos1 = vector.add(pos1, 100)
 
-local username = "max_muster"
-local password = "n00b"
 
 minetest.register_on_mods_loaded(function()
 	minetest.log("warning", "[TEST] starting tests")
@@ -60,7 +61,7 @@ minetest.register_on_mods_loaded(function()
 				end
 
 				blockexchange.api.get_token(username, password, function(token)
-					blockexchange.tokens[username] = token
+					blockexchange.tokens[playername] = token
 					doUpload(pos1, pos2, function(schema)
 						print("Uploaded schema: " .. dump(schema))
 

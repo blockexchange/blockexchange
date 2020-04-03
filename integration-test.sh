@@ -9,12 +9,14 @@ docker run --name blockexchange_pg --rm \
 
 bash -c 'while !</dev/tcp/localhost/5432; do sleep 1; done;'
 
+docker pull blockexchange/blockexchange
 docker run --name blockexchange_server --rm \
   -e PGUSER=postgres \
   -e PGPASSWORD=enter \
   -e PGHOST=127.0.0.1 \
   -e PGDATABASE=postgres \
   -e PGPORT=5432 \
+  -e BLOCKEXCHANGE_KEY=blah \
   --network host \
   blockexchange/blockexchange &
 

@@ -7,6 +7,7 @@ end
 
 
 blockexchange = {
+  api = {},
 	api_version_major = 1,
   http = http,
   url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.land",
@@ -17,7 +18,12 @@ blockexchange = {
 }
 
 local MP = minetest.get_modpath("blockexchange")
-dofile(MP.."/api.lua")
+dofile(MP.."/api/info.lua")
+dofile(MP.."/api/register.lua")
+dofile(MP.."/api/schema.lua")
+dofile(MP.."/api/schemapart.lua")
+dofile(MP.."/api/token.lua")
+
 dofile(MP.."/common.lua")
 dofile(MP.."/iterator.lua")
 dofile(MP.."/serialize.lua")

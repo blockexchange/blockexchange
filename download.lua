@@ -1,6 +1,7 @@
 
-function blockexchange.download(pos1, schema_uid)
+function blockexchange.download(playername, pos1, schema_uid)
 	local ctx = {
+		playername = playername,
 		pos1 = pos1,
 		current_pos = table.copy(pos1),
 		current_part = 0
