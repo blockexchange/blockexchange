@@ -4,7 +4,8 @@ function blockexchange.download(playername, pos1, schema_uid)
 		playername = playername,
 		pos1 = pos1,
 		current_pos = table.copy(pos1),
-		current_part = 0
+		current_part = 0,
+		progress_percent = 0
 	}
 
 	blockexchange.api.get_schema(schema_uid, function(schema)
