@@ -12,7 +12,8 @@ blockexchange = {
   url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.land",
   part_length = 16,
   pos1 = {}, -- name -> pos
-  pos2 = {} -- name -> pos
+  pos2 = {}, -- name -> pos
+  tokens = {}, -- name -> token
 }
 
 local MP = minetest.get_modpath("blockexchange")
