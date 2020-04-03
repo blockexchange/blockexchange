@@ -15,8 +15,9 @@ local function doUpload(pos1, pos2, callback)
 		elseif ctx.failed then
 			minetest.log("warning", "[TEST] integration tests done with errors!")
 			minetest.request_shutdown("failed")
+		else
+			minetest.after(1, done_check)
 		end
-		minetest.after(1, done_check)
 	end
 
 	minetest.after(1, done_check)
@@ -35,8 +36,9 @@ local function doDownload(pos1, uid, callback)
 		elseif ctx.failed then
 			minetest.log("warning", "[TEST] integration tests done with errors!")
 			minetest.request_shutdown("failed")
+		else
+			minetest.after(1, done_check)
 		end
-		minetest.after(1, done_check)
 	end
 
 	minetest.after(1, done_check)
