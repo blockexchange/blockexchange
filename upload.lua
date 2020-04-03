@@ -1,11 +1,20 @@
 
 function blockexchange.upload(playername, pos1, pos2, description, tags)
 	pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
+
+	local total_parts =
+		math.ceil(math.abs(pos1.x - pos2.x) / blockexchange.part_length) *
+		math.ceil(math.abs(pos1.y - pos2.y) / blockexchange.part_length) *
+		math.ceil(math.abs(pos1.z - pos2.z) / blockexchange.part_length)
+
 	local ctx = {
 		playername = playername,
 		pos1 = pos1,
 		pos2 = pos2,
-		iterator = blockexchange.iterator(pos1, pos2, blockexchange.part_length),
+		current_pos = table.copy(pos1),
+		current_part = 0,
+		total_parts = total_parts,
+		progress_percent = 0,
 		node_count = {}
 	}
 
