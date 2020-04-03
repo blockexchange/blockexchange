@@ -9,12 +9,20 @@ State: **WIP**
 
 # Chat commands
 
+## Read-only
+
 * **/bx_info**
 * **/bx_pos1**
 * **/bx_pos2**
+* **/bx_load [uid]**
+* **/bx_allocate [uid]**
+* **/bx_login [username] [password]**
+* **/bx_register [username] [password] [mail?]**
+
+## Write (needs a login)
+
 * **/bx_save**
-* **/bx_allocate <uid>**
-* **/bx_load <uid>**
+* **/bx_logout**
 
 # License
 

@@ -1,19 +1,70 @@
 
 
 minetest.register_chatcommand("bx_register", {
+	params = "<username> <password> [<mail>]",
 	description = "",
-	func = function()
+	func = function(name, param)
+		local username, password, mail
+
+		username, password, mail = string.find(param, "^([^%s]+)%s+([^%s]+)%s+([^%s]+)%s*$")
+		if not username or not password or not mail then
+			username, password = string.find(param, "^([^%s]+)%s+([^%s]+)%s*$")
+		end
+
+		if not username or not password then
+			return false, "Usage: /bx_register <username> <password> [<mail>]"
+		end
+
+		blockexchange.api.register(username, password, nil, function(result)
+			if not result.success then
+				minetest.chat_send_player(name, "Register failed with error: " .. result.message or "?")
+				return
+			end
+
+			blockexchange.api.get_token(username, password, function(token)
+				blockexchange.tokens[name] = token
+				blockexchange.persist_tokens()
+				minetest.chat_send_player(name, "Registered and Logged in successfully")
+			end,
+			function(http_code)
+				minetest.log("error", "[blockexchange] get_token failed with error: " .. http_code or "?")
+				minetest.chat_send_player(name, "Login failed with error: " .. http_code or "?")
+			end)
+
+		end,
+		function(http_code)
+			minetest.log("error", "[blockexchange] register failed with error: " .. http_code or "?")
+			minetest.chat_send_player(name, "Register failed with error: " .. http_code or "?")
+		end)
   end
 })
 
 minetest.register_chatcommand("bx_login", {
+	params = "<username> <password>",
 	description = "",
-	func = function()
+	func = function(name, param)
+		local _, _, username, password = string.find(param, "^([^%s]+)%s+([^%s]+)%s*$")
+		if not username or not password then
+			return false, "Usage: /bx_login <username> <password>"
+		end
+
+		blockexchange.api.get_token(username, password, function(token)
+			blockexchange.tokens[name] = token
+			blockexchange.persist_tokens()
+			minetest.chat_send_player(name, "Logged in successfully")
+		end,
+		function(http_code)
+			minetest.log("error", "[blockexchange] get_token failed with error: " .. http_code or "?")
+			minetest.chat_send_player(name, "Login failed with error: " .. http_code or "?")
+		end)
   end
 })
 
 minetest.register_chatcommand("bx_logout", {
 	description = "",
-	func = function()
+	func = function(name)
+		blockexchange.tokens[name] = nil
+		blockexchange.persist_tokens()
+		minetest.chat_send_player(name, "Logged out successfully")
   end
 })

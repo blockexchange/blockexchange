@@ -13,8 +13,7 @@ blockexchange = {
   url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.land",
   part_length = 16,
   pos1 = {}, -- name -> pos
-  pos2 = {}, -- name -> pos
-  tokens = {}, -- name -> token
+  pos2 = {} -- name -> pos
 }
 
 local MP = minetest.get_modpath("blockexchange")
@@ -25,10 +24,12 @@ dofile(MP.."/api/schemapart.lua")
 dofile(MP.."/api/token.lua")
 
 dofile(MP.."/common.lua")
+dofile(MP.."/token.lua")
 dofile(MP.."/iterator.lua")
 dofile(MP.."/serialize.lua")
 dofile(MP.."/chat.lua")
 dofile(MP.."/chat_pos.lua")
+dofile(MP.."/chat_user.lua")
 dofile(MP.."/allocate.lua")
 dofile(MP.."/upload.lua")
 dofile(MP.."/upload_worker.lua")
