@@ -2,7 +2,7 @@
 function blockexchange.allocate(playername, pos1, schema_uid)
   blockexchange.api.get_schema(schema_uid, function(schema)
     local pos2 = vector.add(pos1, {x=schema.size_x, y=schema.size_y, z=schema.size_z})
-    pos2 = vector.add(pos2, 1)
+    pos2 = vector.subtract(pos2, 1)
 
     local total_parts =
       math.ceil(math.abs(pos1.x - pos2.x) / blockexchange.part_length) *
