@@ -11,6 +11,11 @@ function blockexchange.upload(playername, pos1, pos2, description, tags)
 
   blockexchange.api.create_schema(pos1, pos2, description, tags, function(schema)
 		ctx.schema = schema
+		minetest.log("action", "[blockexchange] schema created with uid: " .. schema.uid)
+		minetest.chat_send_player(playername,
+			"[blockexchange] schema created with uid: " ..
+			minetest.colorize("#00ff00", schema.uid)
+		)
 
     -- start upload worker with context
     minetest.after(0, blockexchange.upload_worker, ctx)
