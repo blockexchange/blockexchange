@@ -4,6 +4,7 @@ function blockexchange.download_worker(ctx)
 
 	if not ctx.current_pos then
     print("Download complete with " .. ctx.total_parts .. " parts")
+		ctx.success = true
     return
   end
 
@@ -27,6 +28,12 @@ function blockexchange.download_worker(ctx)
     " completed (processing took " .. diff .. " micros)")
 
 		minetest.after(0.5, blockexchange.download_worker, ctx)
+	end,
+	function(http_code)
+		local msg = "[blockexchange] download schemapart failed with http code: " .. (http_code or "unkown")
+		minetest.log("error", msg)
+		minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
+		ctx.failed = true
 	end)
 
 end

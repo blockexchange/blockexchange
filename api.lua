@@ -86,9 +86,9 @@ function blockexchange.api.create_schemapart(schema_id, pos, data, callback, err
   end)
 end
 
-function blockexchange.api.get_schema(schema_id, callback, err_callback)
+function blockexchange.api.get_schema(schema_uid, callback, err_callback)
   http.fetch({
-    url = url .. "/api/schema/" .. schema_id,
+    url = url .. "/api/schema/" .. schema_uid,
     timeout = 5
   }, function(res)
     if res.succeeded and res.code == 200 then
