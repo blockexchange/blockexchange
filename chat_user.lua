@@ -15,7 +15,7 @@ minetest.register_chatcommand("bx_register", {
 			return false, "Usage: /bx_register <username> <password> [<mail>]"
 		end
 
-		blockexchange.api.register(username, password, nil, function(result)
+		blockexchange.api.register(username, password, mail, function(result)
 			if not result.success then
 				minetest.chat_send_player(name, "Register failed with error: " .. result.message or "?")
 				return
