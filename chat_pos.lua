@@ -9,7 +9,7 @@ function blockexchange.set_pos(index, playername, pos)
     local map = blockexchange.pos1
     local hud_map = pos1_player_map
     if index == 2 then
-      map = pos2_player_map
+      map = blockexchange.pos2
       hud_map = pos2_player_map
     end
 
