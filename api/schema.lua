@@ -31,13 +31,13 @@ function blockexchange.api.create_schema(token, pos1, pos2, description, tags, c
   end)
 end
 
-function blockexchange.api.finalize_schema(token, schema_id, node_count, callback, err_callback)
+function blockexchange.api.finalize_schema(token, schema_uid, callback, err_callback)
 	local json = minetest.write_json({
-		node_count = node_count
-	})
+    done = true
+  })
 
   http.fetch({
-    url = url .. "/api/schema/" .. schema_id .. "/complete",
+    url = url .. "/api/schema/" .. schema_uid .. "/complete",
     extra_headers = {
       "Content-Type: application/json",
       "Authorization: " .. token

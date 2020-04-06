@@ -3,17 +3,11 @@
 local http = blockexchange.http
 local url = blockexchange.url
 
-function blockexchange.api.create_schemapart(token, schema_uid, pos, data, callback, err_callback)
-  local json = minetest.write_json({
-    schema_uid = schema_uid,
-    offset_x = pos.x,
-    offset_y = pos.y,
-    offset_z = pos.z,
-    data = data
-  });
+function blockexchange.api.create_schemamods(token, schema_uid, mod_count, callback, err_callback)
+  local json = minetest.write_json(mod_count);
 
   http.fetch({
-    url = url .. "/api/schemapart",
+    url = url .. "/api/schema/" .. schema_uid .. "/mods",
     extra_headers = {
       "Content-Type: application/json",
       "Authorization: " .. token
@@ -29,9 +23,9 @@ function blockexchange.api.create_schemapart(token, schema_uid, pos, data, callb
   end)
 end
 
-function blockexchange.api.get_schemapart(schema_id, pos, callback, err_callback)
+function blockexchange.api.get_schemamods(schema_uid, callback, err_callback)
   http.fetch({
-    url = url .. "/api/schemapart/" .. schema_id .. "/" .. pos.x .. "/" .. pos.y .. "/" .. pos.z,
+    url = url .. "/api/schema/" .. schema_uid .. "/mods",
     timeout = 5
   }, function(res)
     if res.succeeded and res.code == 200 then

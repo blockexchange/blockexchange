@@ -10,10 +10,18 @@ end
 function blockexchange.upload_worker(ctx)
 
   if not ctx.current_pos then
-    blockexchange.api.finalize_schema(ctx.token, ctx.schema.id, ctx.node_count, function()
-      minetest.log("action", "[blockexchange] Upload complete with " .. ctx.total_parts .. " parts")
-      ctx.success = true
+    blockexchange.api.create_schemamods(ctx.token, ctx.schema.uid, ctx.mod_count, function()
+      blockexchange.api.finalize_schema(ctx.token, ctx.schema.uid, function()
+        minetest.log("action", "[blockexchange] Upload complete with " .. ctx.total_parts .. " parts")
+        ctx.success = true
+      end)
+    end,
+    function(http_code)
+      local msg = "[blockexchange] create schemamod failed with http code: " .. (http_code or "unkown")
+      minetest.log("error", msg)
+      minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
     end)
+
     return
   end
 
@@ -26,7 +34,23 @@ function blockexchange.upload_worker(ctx)
   pos2.y = math.min(pos2.y, ctx.pos2.y)
   pos2.z = math.min(pos2.z, ctx.pos2.z)
 
-  local data = blockexchange.serialize_part(ctx.current_pos, pos2, ctx.node_count)
+  local data, node_count = blockexchange.serialize_part(ctx.current_pos, pos2)
+
+  -- collect mod count info
+  for k, v in pairs(node_count) do
+    local i = 1
+    for str in string.gmatch(k, "([^:]+)") do
+      if i == 1 then
+        local count = ctx.mod_count[str]
+        if not count then
+          count = 0
+        end
+        ctx.mod_count[str] = count + v
+      end
+      i = i + 1
+    end
+  end
+
   local diff = minetest.get_us_time() - start
 
 	local relative_pos = vector.subtract(ctx.current_pos, ctx.pos1)
@@ -41,7 +65,7 @@ function blockexchange.upload_worker(ctx)
 	end
 	--]]
 
-  blockexchange.api.create_schemapart(ctx.token, ctx.schema.id, relative_pos, data, function()
+  blockexchange.api.create_schemapart(ctx.token, ctx.schema.uid, relative_pos, data, function()
     minetest.log("action", "[blockexchange] Upload of part " .. minetest.pos_to_string(ctx.current_pos) ..
     " completed (processing took " .. diff .. " micros)")
 

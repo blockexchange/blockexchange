@@ -22,7 +22,7 @@ function blockexchange.upload(playername, pos1, pos2, description, tags)
 		current_part = 0,
 		total_parts = total_parts,
 		progress_percent = 0,
-		node_count = {}
+		mod_count = {}
 	}
 
   blockexchange.api.create_schema(token, pos1, pos2, description, tags, function(schema)
