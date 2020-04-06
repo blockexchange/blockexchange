@@ -1,7 +1,7 @@
 minetest.register_chatcommand("bx_save", {
-  params = "",
+  params = "<description>",
 	description = "",
-	func = function(name)
+	func = function(name, description)
     local pos1 = blockexchange.pos1[name]
     local pos2 = blockexchange.pos2[name]
 
@@ -9,7 +9,7 @@ minetest.register_chatcommand("bx_save", {
       return false, "you need to set /bx_pos1 and /bx_pos2 first!"
     end
 
-		local description = ""
+		description = description or ""
 		local tags = {}
 
     blockexchange.upload(name, pos1, pos2, description, tags)

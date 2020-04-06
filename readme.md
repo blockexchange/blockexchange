@@ -21,7 +21,7 @@ State: **WIP**
 
 ## Write (needs a login)
 
-* **/bx_save**
+* **/bx_save [description?]**
 * **/bx_logout**
 
 # License
