@@ -4,11 +4,10 @@ minetest.register_chatcommand("bx_register", {
 	params = "<username> <password> [<mail>]",
 	description = "",
 	func = function(name, param)
-		local username, password, mail
 
-		username, password, mail = string.find(param, "^([^%s]+)%s+([^%s]+)%s+([^%s]+)%s*$")
+		local _, _, username, password, mail = string.find(param, "^([^%s]+)%s+([^%s]+)%s+([^%s]+)%s*$")
 		if not username or not password or not mail then
-			username, password = string.find(param, "^([^%s]+)%s+([^%s]+)%s*$")
+			_, _, username, password = string.find(param, "^([^%s]+)%s+([^%s]+)%s*$")
 		end
 
 		if not username or not password then
