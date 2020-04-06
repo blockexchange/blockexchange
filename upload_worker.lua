@@ -12,7 +12,9 @@ function blockexchange.upload_worker(ctx)
   if not ctx.current_pos then
     blockexchange.api.create_schemamods(ctx.token, ctx.schema.uid, ctx.mod_count, function()
       blockexchange.api.finalize_schema(ctx.token, ctx.schema.uid, function()
-        minetest.log("action", "[blockexchange] Upload complete with " .. ctx.total_parts .. " parts")
+				local msg = "[blockexchange] Upload complete with " .. ctx.total_parts .. " parts"
+        minetest.log("action", msg)
+				minetest.chat_send_player(ctx.playername, msg)
         ctx.success = true
       end)
     end,
