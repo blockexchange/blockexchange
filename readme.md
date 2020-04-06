@@ -15,6 +15,7 @@ State: **WIP**
 * **/bx_pos1**
 * **/bx_pos2**
 * **/bx_load [uid]**
+* **/bx_load_here [uid]**
 * **/bx_allocate [uid]**
 * **/bx_login [username] [password]**
 * **/bx_register [username] [password] [mail?]**

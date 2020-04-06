@@ -32,6 +32,22 @@ minetest.register_chatcommand("bx_load", {
   end
 })
 
+minetest.register_chatcommand("bx_load_here", {
+  params = "<schemaid>",
+	description = "",
+	func = function(name, param)
+		local player = minetest.get_player_by_name(name)
+		if player then
+			local pos = vector.floor(player:get_pos())
+      blockexchange.set_pos(1, name, pos)
+		end
+
+    local pos1 = blockexchange.pos1[name]
+		blockexchange.download(name, pos1, param)
+		return true
+  end
+})
+
 minetest.register_chatcommand("bx_allocate", {
   params = "<schemaid>",
 	description = "",
