@@ -11,6 +11,7 @@ function blockexchange.upload(playername, pos1, pos2, description, tags)
 	if not token then
 		-- TODO check validity
 		minetest.chat_send_player(playername, "Please login first to upload a schematic")
+		return
 	end
 
 	local ctx = {
