@@ -1,6 +1,7 @@
 
 minetest.register_chatcommand("bx_search", {
   params = "<keywords>",
+  privs = { blockexchange = true },
 	description = "Search for available schemas, for example '/bx_search mesecons'",
 	func = function(playername, param)
     if not param or #param == 0 then
