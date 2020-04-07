@@ -44,7 +44,15 @@ minetest.register_chatcommand("bx_login", {
 	func = function(name, param)
 		local _, _, username, password = string.find(param, "^([^%s]+)%s+([^%s]+)%s*$")
 		if not username or not password then
-			return false, "Usage: /bx_login <username> <password>"
+			if not not blockexchange.tokens[name] then
+				-- not logged in
+				return false, "Usage: /bx_login <username> <password>"
+			end
+
+			-- logged in, show status
+			local payload = blockexchange.parse_token(blockexchange.tokens[name])
+			-- TODO: check validity
+			return true, "Logged in as '" .. payload.username .. "' with user_id: " .. payload.user_id
 		end
 
 		blockexchange.api.get_token(username, password, function(token)

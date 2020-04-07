@@ -23,7 +23,8 @@ State: **WIP**
 ## Write (needs a login)
 
 * **/bx_save [schemaname] [description]**
-* **/bx_logout**
+* **/bx_logout** logs out
+* **/bx_login** shows the login status
 
 # License
 
