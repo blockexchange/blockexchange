@@ -10,7 +10,7 @@ State: **WIP**
 # Overview
 
 The `blockexchange` mod allows you to share and use your builds across different worlds.
-It uses a central (configurable) server to exchange schemas (builds).
+It uses a central (configurable) server to exchange schemas (builds) of near infinite size.
 
 The server part lives at https://github.com/blockexchange/blockexchange_server and can be self-hosted.
 
