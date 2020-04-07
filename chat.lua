@@ -1,7 +1,12 @@
 minetest.register_chatcommand("bx_save", {
-  params = "<description>",
+  params = "<name> <description>",
 	description = "",
-	func = function(name, description)
+	func = function(name, param)
+    local _, _, schemaname, description = string.find(param, "^([^%s]+)%s+(.*)$")
+    if not schemaname or not description then
+      return false, "Usage: /bx_save <schemaname> <description>"
+    end
+
     local pos1 = blockexchange.pos1[name]
     local pos2 = blockexchange.pos2[name]
 
@@ -9,31 +14,34 @@ minetest.register_chatcommand("bx_save", {
       return false, "you need to set /bx_pos1 and /bx_pos2 first!"
     end
 
-		description = description or ""
-		local tags = {}
-
-    blockexchange.upload(name, pos1, pos2, description, tags)
+    blockexchange.upload(name, pos1, pos2, schemaname, description)
 		return true
   end
 })
 
 minetest.register_chatcommand("bx_load", {
-  params = "<schemaid>",
+  params = "<username> <schemaname>",
 	description = "",
 	func = function(name, param)
+    local _, _, username, schemaname = string.find(param, "^([^%s]+)%s+([^%s]+)%s*$")
+
+    if not username or not schemaname then
+      return false, "Usage: /bx_load <username> <schemaname>"
+    end
+
     local pos1 = blockexchange.pos1[name]
 
     if not pos1 then
       return false, "you need to set /bx_pos1 first!"
     end
 
-		blockexchange.download(name, pos1, param)
+		blockexchange.download(name, pos1, username, schemaname)
 		return true
   end
 })
 
 minetest.register_chatcommand("bx_load_here", {
-  params = "<schemaid>",
+  params = "<username> <schemaname>",
 	description = "",
 	func = function(name, param)
 		local player = minetest.get_player_by_name(name)
@@ -42,14 +50,19 @@ minetest.register_chatcommand("bx_load_here", {
       blockexchange.set_pos(1, name, pos)
 		end
 
+    local _, _, username, schemaname = string.find(param, "^([^%s]+)%s+([^%s]+)%s*$")
+    if not username or not schemaname then
+      return false, "Usage: /bx_load_here <username> <schemaname>"
+    end
+
     local pos1 = blockexchange.pos1[name]
-		blockexchange.download(name, pos1, param)
+		blockexchange.download(name, pos1, username, schemaname)
 		return true
   end
 })
 
 minetest.register_chatcommand("bx_allocate", {
-  params = "<schemaid>",
+  params = "<username> <schemaname>",
 	description = "",
 	func = function(name, param)
     local pos1 = blockexchange.pos1[name]
@@ -58,7 +71,12 @@ minetest.register_chatcommand("bx_allocate", {
       return false, "you need to set /bx_pos1 first!"
     end
 
-		blockexchange.allocate(name, pos1, param)
+    local _, _, username, schemaname = string.find(param, "^([^%s]+)%s+([^%s]+)%s*$")
+    if not username or not schemaname then
+      return false, "Usage: /bx_allocate <username> <schemaname>"
+    end
+
+		blockexchange.allocate(name, pos1, username, schemaname)
 		return true
   end
 })
