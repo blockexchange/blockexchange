@@ -42,5 +42,5 @@ dofile(MP.."/download_worker.lua")
 blockexchange.http = nil
 
 if minetest.settings:get("enable_blockexchange_integration_test") then
-	dofile(MP.."/integration_test.lua")
+	dofile(MP.."/test/integration_test.lua")
 end
