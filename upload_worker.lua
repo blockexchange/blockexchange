@@ -10,8 +10,8 @@ end
 function blockexchange.upload_worker(ctx)
 
   if not ctx.current_pos then
-    blockexchange.api.create_schemamods(ctx.token, ctx.schema.uid, ctx.mod_count, function()
-      blockexchange.api.finalize_schema(ctx.token, ctx.schema.uid, function()
+    blockexchange.api.create_schemamods(ctx.token, ctx.schema.id, ctx.mod_count, function()
+      blockexchange.api.finalize_schema(ctx.token, ctx.schema.id, function()
 				local msg = "[blockexchange] Upload complete with " .. ctx.total_parts .. " parts"
         minetest.log("action", msg)
 				minetest.chat_send_player(ctx.playername, msg)
@@ -67,7 +67,7 @@ function blockexchange.upload_worker(ctx)
 	end
 	--]]
 
-  blockexchange.api.create_schemapart(ctx.token, ctx.schema.uid, relative_pos, data, function()
+  blockexchange.api.create_schemapart(ctx.token, ctx.schema.id, relative_pos, data, function()
     minetest.log("action", "[blockexchange] Upload of part " .. minetest.pos_to_string(ctx.current_pos) ..
     " completed (processing took " .. diff .. " micros)")
 

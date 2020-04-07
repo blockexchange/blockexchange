@@ -3,9 +3,9 @@
 local http = blockexchange.http
 local url = blockexchange.url
 
-function blockexchange.api.create_schemapart(token, schema_uid, pos, data, callback, err_callback)
+function blockexchange.api.create_schemapart(token, schema_id, pos, data, callback, err_callback)
   local json = minetest.write_json({
-    schema_uid = schema_uid,
+    schema_id = schema_id,
     offset_x = pos.x,
     offset_y = pos.y,
     offset_z = pos.z,

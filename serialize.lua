@@ -84,7 +84,7 @@ function blockexchange.deserialize_part(pos1, data)
     local node_name = foreign_nodeid_to_name_mapping[node_id]
     local local_node_id = local_nodename_to_id_mapping[node_name]
     if not local_node_id then
-      if minetest.minetest.registered_nodes[node_name] then
+      if minetest.registered_nodes[node_name] then
         -- node is locally available
         local_node_id = minetest.get_content_id(node_name)
       else

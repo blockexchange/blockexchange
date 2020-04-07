@@ -7,7 +7,7 @@ local password = "n00b"
 
 local function doUpload(pos1, pos2, callback)
 	minetest.log("warning", "[TEST] uploading schema")
-	local ctx = blockexchange.upload(playername, pos1, pos2, "description", {"test", "thing"})
+	local ctx = blockexchange.upload(playername, pos1, pos2, "my_schema", "description")
 
 	local done_check
 
@@ -24,9 +24,9 @@ local function doUpload(pos1, pos2, callback)
 	minetest.after(1, done_check)
 end
 
-local function doDownload(pos1, uid, callback)
+local function doDownload(pos1, callback)
 	minetest.log("warning", "[TEST] downloading schema")
-	local ctx = blockexchange.download(playername, pos1, uid)
+	local ctx = blockexchange.download(playername, pos1, username, "my_schema")
 
 	local done_check
 
@@ -65,7 +65,7 @@ minetest.register_on_mods_loaded(function()
 					doUpload(pos1, pos2, function(schema)
 						print("Uploaded schema: " .. dump(schema))
 
-						doDownload(dl_pos1, schema.uid, function()
+						doDownload(dl_pos1, function()
 							minetest.log("warning", "[TEST] integration tests done!")
 							minetest.request_shutdown("success")
 

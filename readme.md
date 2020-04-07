@@ -14,7 +14,7 @@ State: **WIP**
 * **/bx_info**
 * **/bx_pos1**
 * **/bx_pos2**
-* **/bx_load [uid]**
+* **/bx_load [username/schemaname]**
 * **/bx_load_here [uid]**
 * **/bx_allocate [uid]**
 * **/bx_login [username] [password]**
@@ -22,7 +22,7 @@ State: **WIP**
 
 ## Write (needs a login)
 
-* **/bx_save [description?]**
+* **/bx_save [schemaname] [description?]**
 * **/bx_logout**
 
 # License

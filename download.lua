@@ -1,5 +1,5 @@
 
-function blockexchange.download(playername, pos1, schema_uid)
+function blockexchange.download(playername, pos1, username, schemaname)
 	local ctx = {
 		playername = playername,
 		pos1 = pos1,
@@ -8,7 +8,7 @@ function blockexchange.download(playername, pos1, schema_uid)
 		progress_percent = 0
 	}
 
-	blockexchange.api.get_schema(schema_uid, function(schema)
+	blockexchange.api.get_schema_by_name(username, schemaname, function(schema)
 		ctx.pos2 = vector.add(pos1, {x=schema.size_x, y=schema.size_y, z=schema.size_z})
 		ctx.schema = schema
 		ctx.total_parts =
@@ -17,6 +17,10 @@ function blockexchange.download(playername, pos1, schema_uid)
 	    math.ceil(math.abs(pos1.z - ctx.pos2.z) / blockexchange.part_length)
 
 		minetest.after(0, blockexchange.download_worker, ctx)
+	end,
+	function()
+		minetest.chat_send_player(ctx.playername, "Schema not found: '" ..
+			username .. "/" .. schemaname .. "'")
 	end)
 
 	return ctx

@@ -1,5 +1,5 @@
 
-function blockexchange.upload(playername, pos1, pos2, description, tags)
+function blockexchange.upload(playername, pos1, pos2, name, description)
 	pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
 
 	local total_parts =
@@ -26,12 +26,12 @@ function blockexchange.upload(playername, pos1, pos2, description, tags)
 		mod_count = {}
 	}
 
-  blockexchange.api.create_schema(token, pos1, pos2, description, tags, function(schema)
+  blockexchange.api.create_schema(token, pos1, pos2, name, description, function(schema)
 		ctx.schema = schema
-		minetest.log("action", "[blockexchange] schema created with uid: " .. schema.uid)
+		minetest.log("action", "[blockexchange] schema created with id: " .. schema.id)
 		minetest.chat_send_player(playername,
-			"[blockexchange] schema created with uid: " ..
-			minetest.colorize("#00ff00", schema.uid)
+			"[blockexchange] schema created with id: " ..
+			minetest.colorize("#00ff00", schema.id)
 		)
 
     -- start upload worker with context
