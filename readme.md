@@ -63,7 +63,7 @@ Schemas can be browsed and administered on the central server: https://blockexch
 * **/bx_logout** logs out
 * **/bx_login** shows the login status
 
-# Privilieges
+# Privileges
 
 * **blockexchange** can use the blockexchange commands
 
