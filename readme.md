@@ -14,6 +14,8 @@ It uses a central (configurable) server to exchange schemas (builds) of near inf
 
 The server part lives at https://github.com/blockexchange/blockexchange_server and can be self-hosted.
 
+Schemas can be browsed and administered on the central server: https://blockexchange.minetest.land
+
 # Basic usage
 
 ## Download / Search
