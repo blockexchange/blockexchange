@@ -36,7 +36,7 @@ function blockexchange.show_search_result_formspec(playername, schemas)
       size[16,12;]
       label[0,0;Search results (]] .. #list .. [[)]
       button_exit[0,11;4,1;allocate;Allocate]
-      button_exit[12,11;4,1;load;Load]
+      button_exit[4,11;4,1;load;Load]
       button_exit[12,11;4,1;exit;Exit]
       tablecolumns[text;text;text;text]
       table[0,1;15.7,10;items;User,Name,Size,Description]] .. list
