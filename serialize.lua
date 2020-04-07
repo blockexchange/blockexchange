@@ -1,3 +1,14 @@
+-- collect nodes with on_timer attributes
+local node_names_with_timer = {}
+minetest.register_on_mods_loaded(function()
+	for _,node in pairs(minetest.registered_nodes) do
+		if node.on_timer then
+			table.insert(node_names_with_timer, node.name)
+		end
+	end
+	minetest.log("action", "[blockexchange] collected " .. #node_names_with_timer .. " items with node timers")
+end)
+
 
 function blockexchange.serialize_part(pos1, pos2, node_count)
   local manip = minetest.get_voxel_manip()
@@ -43,6 +54,7 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 		node_count[node_name] = counter + count
 	end
 
+	-- serialize metadata
 	local pos_with_meta = minetest.find_nodes_with_meta(pos1, pos2)
 	for _, pos in ipairs(pos_with_meta) do
 		local relative_pos = vector.subtract(pos, pos1)
@@ -58,8 +70,27 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
       end
     end
 
-    data.metadata[minetest.pos_to_string(relative_pos)] = meta
+		data.metadata.meta = data.metadata.meta or {}
+    data.metadata.meta[minetest.pos_to_string(relative_pos)] = meta
 	end
+
+	-- serialize node timers
+	if #node_names_with_timer > 0 then
+		data.metadata.timers = {}
+		local list = minetest.find_nodes_in_area(pos1, pos2, node_names_with_timer)
+		for _, pos in pairs(list) do
+			local timer = minetest.get_node_timer(pos)
+			local relative_pos = vector.subtract(pos, pos1)
+			if timer:is_started() then
+				data.metadata.timers[minetest.pos_to_string(relative_pos)] = {
+					timeout = timer:get_timeout(),
+					elapsed = timer:get_elapsed()
+				}
+			end
+		end
+
+	end
+
 
 
   return data, node_count
@@ -121,12 +152,21 @@ function blockexchange.deserialize_part(pos1, data)
   manip:set_param2_data(param2)
   manip:write_to_map()
 
-	if data.metadata then
-	  for pos_str, metadata in pairs(data.metadata) do
+	-- deserialize metadata
+	if data.metadata and data.metadata.meta then
+	  for pos_str, metadata in pairs(data.metadata.meta) do
 	    local relative_pos = minetest.string_to_pos(pos_str)
 	    local absolute_pos = vector.add(pos1, relative_pos)
 	    minetest.get_meta(absolute_pos):from_table(metadata)
 	  end
 	end
+
+	-- deserialize node timers
+	if data.metadata and data.metadata.timers then
+		for pos_str, timer_data in pairs(data.metadata.timers) do
+	    local relative_pos = minetest.string_to_pos(pos_str)
+	    local absolute_pos = vector.add(pos1, relative_pos)
+	    minetest.get_node_timer(absolute_pos):set(timer_data.timeout, timer_data.elapsed)
+	  end	end
 
 end
