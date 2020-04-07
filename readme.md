@@ -14,6 +14,7 @@ State: **WIP**
 * **/bx_info**
 * **/bx_pos1**
 * **/bx_pos2**
+* **/bx_search [keywords]** search a schema by keywords
 * **/bx_load [username] [schemaname]**
 * **/bx_load_here [username] [schemaname]**
 * **/bx_allocate [username] [schemaname]**

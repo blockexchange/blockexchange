@@ -17,6 +17,8 @@ blockexchange = {
 }
 
 local MP = minetest.get_modpath("blockexchange")
+
+-- http api
 dofile(MP.."/api/info.lua")
 dofile(MP.."/api/register.lua")
 dofile(MP.."/api/schema.lua")
@@ -25,20 +27,29 @@ dofile(MP.."/api/schemamods.lua")
 dofile(MP.."/api/searchschema.lua")
 dofile(MP.."/api/token.lua")
 
+-- clear http reference from global scope
+blockexchange.http = nil
+
+-- internal stuff
 dofile(MP.."/placeholder_node.lua")
 dofile(MP.."/privs.lua")
 dofile(MP.."/common.lua")
 dofile(MP.."/token.lua")
 dofile(MP.."/iterator.lua")
 dofile(MP.."/serialize.lua")
+
+-- chat commands
 dofile(MP.."/chat.lua")
 dofile(MP.."/chat_pos.lua")
 dofile(MP.."/chat_user.lua")
+
+-- search
+dofile(MP.."/search/chat.lua")
+dofile(MP.."/search/formspec.lua")
+
+-- public functions
 dofile(MP.."/allocate.lua")
 dofile(MP.."/upload.lua")
 dofile(MP.."/upload_worker.lua")
 dofile(MP.."/download.lua")
 dofile(MP.."/download_worker.lua")
-
--- clear http reference from global scope
-blockexchange.http = nil
