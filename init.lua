@@ -22,6 +22,7 @@ dofile(MP.."/api/register.lua")
 dofile(MP.."/api/schema.lua")
 dofile(MP.."/api/schemapart.lua")
 dofile(MP.."/api/schemamods.lua")
+dofile(MP.."/api/searchschema.lua")
 dofile(MP.."/api/token.lua")
 
 dofile(MP.."/placeholder_node.lua")
