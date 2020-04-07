@@ -3,11 +3,23 @@
 blockexchange.tokens = {}
 
 function blockexchange.persist_tokens()
-  -- TODO
+  local file = io.open(minetest.get_worldpath() .. "/blockexchange_tokens","w")
+	local json = minetest.write_json(blockexchange.tokens)
+	if file and file:write(json) and file:close() then
+		return
+	else
+		minetest.log("error","[blockexchange] token persist failed!")
+		return
+	end
 end
 
 function blockexchange.load_tokens()
-  -- TODO
+  local file = io.open(minetest.get_worldpath() .. "/blockexchange_tokens","r")
+
+  if file then
+    local json = file:read("*a")
+    blockexchange.tokens = minetest.parse_json(json or "") or {}
+  end
 end
 
 -- http://lua-users.org/wiki/BaseSixtyFour
