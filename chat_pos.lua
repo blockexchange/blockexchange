@@ -32,7 +32,8 @@ function blockexchange.set_pos(index, playername, pos)
 end
 
 minetest.register_chatcommand("bx_pos1", {
-	description = "",
+	description = "Set position 1",
+  privs = { blockexchange = true },
 	func = function(name)
 		local player = minetest.get_player_by_name(name)
 		if player then
@@ -43,7 +44,8 @@ minetest.register_chatcommand("bx_pos1", {
 })
 
 minetest.register_chatcommand("bx_pos2", {
-	description = "",
+	description = "Set position 2",
+  privs = { blockexchange = true },
 	func = function(name)
     local player = minetest.get_player_by_name(name)
 		if player then

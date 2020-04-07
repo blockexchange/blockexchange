@@ -1,6 +1,7 @@
 minetest.register_chatcommand("bx_save", {
   params = "<name> <description>",
-	description = "",
+	description = "Uploads the selected region to the blockexchange server",
+  privs = { blockexchange = true },
 	func = function(name, param)
     local _, _, schemaname, description = string.find(param, "^([^%s]+)%s+(.*)$")
     if not schemaname or not description then
@@ -21,7 +22,8 @@ minetest.register_chatcommand("bx_save", {
 
 minetest.register_chatcommand("bx_load", {
   params = "<username> <schemaname>",
-	description = "",
+	description = "Downloads a schema from the blockexchange to the selected pos1",
+  privs = { blockexchange = true },
 	func = function(name, param)
     local _, _, username, schemaname = string.find(param, "^([^%s]+)%s+([^%s]+)%s*$")
 
@@ -42,7 +44,8 @@ minetest.register_chatcommand("bx_load", {
 
 minetest.register_chatcommand("bx_load_here", {
   params = "<username> <schemaname>",
-	description = "",
+	description = "Downloads a schema from the blockexchange to the current position",
+  privs = { blockexchange = true },
 	func = function(name, param)
 		local player = minetest.get_player_by_name(name)
 		if player then
@@ -63,7 +66,8 @@ minetest.register_chatcommand("bx_load_here", {
 
 minetest.register_chatcommand("bx_allocate", {
   params = "<username> <schemaname>",
-	description = "",
+	description = "Show where the selected schema would end up",
+  privs = { blockexchange = true },
 	func = function(name, param)
     local pos1 = blockexchange.pos1[name]
 

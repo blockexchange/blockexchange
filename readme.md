@@ -26,6 +26,10 @@ State: **WIP**
 * **/bx_logout** logs out
 * **/bx_login** shows the login status
 
+# Privilieges
+
+* **blockexchange** can use the blockexchange commands
+
 # License
 
 * Code: MIT

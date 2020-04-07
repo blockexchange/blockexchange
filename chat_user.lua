@@ -2,7 +2,8 @@
 
 minetest.register_chatcommand("bx_register", {
 	params = "<username> <password> [<mail>]",
-	description = "",
+	description = "Register and login as a new user",
+	privs = { blockexchange = true },
 	func = function(name, param)
 
 		local _, _, username, password, mail = string.find(param, "^([^%s]+)%s+([^%s]+)%s+([^%s]+)%s*$")
@@ -40,7 +41,8 @@ minetest.register_chatcommand("bx_register", {
 
 minetest.register_chatcommand("bx_login", {
 	params = "<username> <password>",
-	description = "",
+	description = "Login with an existing user and password or check the current login",
+	privs = { blockexchange = true },
 	func = function(name, param)
 		local _, _, username, password = string.find(param, "^([^%s]+)%s+([^%s]+)%s*$")
 		if not username or not password then
@@ -68,7 +70,8 @@ minetest.register_chatcommand("bx_login", {
 })
 
 minetest.register_chatcommand("bx_logout", {
-	description = "",
+	description = "Logs the current user out",
+	privs = { blockexchange = true },
 	func = function(name)
 		blockexchange.tokens[name] = nil
 		blockexchange.persist_tokens()
