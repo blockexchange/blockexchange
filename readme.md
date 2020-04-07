@@ -7,6 +7,40 @@ minetest blockexchange mod
 
 State: **WIP**
 
+# Overview
+
+The `blockexchange` mod allows you to share and use your builds across different worlds.
+It uses a central (configurable) server to exchange schemas (builds).
+
+The server part lives at https://github.com/blockexchange/blockexchange_server and can be self-hosted.
+
+# Basic usage
+
+## Download / Search
+
+* Start your minetest app
+* Download the `blockexchange` mod in the "Content" tab from the ContentDB.
+* Add the `blockexchange` mod to the secure HTTP-Mods settings (search for "http" in the "settings" tab)
+* Create a new world and activate the mod
+* Grant yourself the needed privs with `/grantme blockexchange`
+* Search for an empty place and mark it with `/bx_pos1`
+* Browse for a schema with `/bx_search <keywords>`
+* Load the schema with the "Load" button (**WARNING**: this may place the schema over existing builds!)
+* Have fun!
+
+## Upload
+
+* Start your minetest app
+* Download the `blockexchange` mod in the "Content" tab from the ContentDB.
+* Add the `blockexchange` mod to the secure HTTP-Mods settings (search for "http" in the "settings" tab)
+* Create a new world and activate the mod
+* Grant yourself the needed privs with `/grantme blockexchange`
+* Build a thing
+* Set positions on the opposite corners with `/bx_pos1` and `/bx_pos2`
+* Register an account with `/bx_register <username> <password>`
+* **OR** Login with an existing account: `/bx_login <username> <password>`
+* Save the schematic with `/bx_save <name> <description>`
+
 # Chat commands
 
 ## Read-only
@@ -30,6 +64,15 @@ State: **WIP**
 # Privilieges
 
 * **blockexchange** can use the blockexchange commands
+
+# Settings
+
+* **blockexchange.url** URL to the central server
+
+The mod also needs the http api:
+```
+secure.http_mods = blockexchange
+```
 
 # License
 
