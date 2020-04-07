@@ -24,6 +24,7 @@ dofile(MP.."/api/schemapart.lua")
 dofile(MP.."/api/schemamods.lua")
 dofile(MP.."/api/token.lua")
 
+dofile(MP.."/placeholder_node.lua")
 dofile(MP.."/common.lua")
 dofile(MP.."/token.lua")
 dofile(MP.."/iterator.lua")
