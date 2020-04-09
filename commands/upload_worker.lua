@@ -27,7 +27,7 @@ function blockexchange.upload_worker(ctx)
     return
   end
 
-  minetest.log("action", "[blockexchange] Upload pos: " .. minetest.pos_to_string(ctx.current_pos) ..
+  minetest.chat_send_player(ctx.playername, "[blockexchange] Upload pos: " .. minetest.pos_to_string(ctx.current_pos) ..
     " Progress: " .. ctx.progress_percent .. "% (" .. ctx.current_part .. "/" .. ctx.total_parts .. ")")
   local start = minetest.get_us_time()
 

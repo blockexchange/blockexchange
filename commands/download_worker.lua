@@ -10,25 +10,18 @@ end
 function blockexchange.download_worker(ctx)
 
 	if not ctx.current_pos then
-    print("Download complete with " .. ctx.total_parts .. " parts")
+    minetest.chat_send_player(ctx.playername, "Download complete with " .. ctx.total_parts .. " parts")
 		ctx.success = true
     return
   end
 
-	minetest.log("Download pos: " .. minetest.pos_to_string(ctx.current_pos) ..
+	minetest.chat_send_player(ctx.playername, "Download pos: " .. minetest.pos_to_string(ctx.current_pos) ..
     " Progress: " .. ctx.progress_percent .. "% (" .. ctx.current_part .. "/" .. ctx.total_parts .. ")")
 
 	local relative_pos = vector.subtract(ctx.current_pos, ctx.pos1)
 
 	blockexchange.api.get_schemapart(ctx.schema.id, relative_pos, function(schemapart)
-		local start = minetest.get_us_time()
-
 		blockexchange.deserialize_part(ctx.current_pos, schemapart.data);
-
-		local diff = minetest.get_us_time() - start
-
-    print("Download of part " .. minetest.pos_to_string(ctx.current_pos) ..
-    " completed (processing took " .. diff .. " micros)")
 
 		shift(ctx)
 		minetest.after(0.5, blockexchange.download_worker, ctx)
