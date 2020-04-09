@@ -31,33 +31,41 @@ function blockexchange.set_pos(index, playername, pos)
   end
 end
 
-minetest.register_chatcommand("bx_pos1", {
-	description = "Set position 1",
-  privs = { blockexchange = true },
-	func = function(name)
-		local player = minetest.get_player_by_name(name)
-		if player then
-			local pos = vector.round(player:get_pos())
-      blockexchange.set_pos(1, name, pos)
-		end
-  end
-})
-
-minetest.register_chatcommand("bx_pos2", {
-	description = "Set position 2",
-  privs = { blockexchange = true },
-	func = function(name)
-    local player = minetest.get_player_by_name(name)
-		if player then
-			local pos = vector.round(player:get_pos())
-      blockexchange.set_pos(2, name, pos)
-		end
-  end
-})
-
-
+-- cleanup
 minetest.register_on_leaveplayer(function(player)
 	local playername = player:get_player_name()
 	pos1_player_map[playername] = nil
 	pos2_player_map[playername] = nil
 end)
+
+
+if minetest.get_modpath("worldedit") then
+  -- redirect to WE's chat position commands
+  minetest.register_chatcommand("bx_pos1", minetest.registered_chatcommands["/pos1"])
+  minetest.register_chatcommand("bx_pos2", minetest.registered_chatcommands["/pos2"])
+else
+  -- use own commands
+  minetest.register_chatcommand("bx_pos1", {
+    description = "Set position 1",
+    privs = { blockexchange = true },
+    func = function(name)
+      local player = minetest.get_player_by_name(name)
+      if player then
+        local pos = vector.round(player:get_pos())
+        blockexchange.set_pos(1, name, pos)
+      end
+    end
+  })
+
+  minetest.register_chatcommand("bx_pos2", {
+    description = "Set position 2",
+    privs = { blockexchange = true },
+    func = function(name)
+      local player = minetest.get_player_by_name(name)
+      if player then
+        local pos = vector.round(player:get_pos())
+        blockexchange.set_pos(2, name, pos)
+      end
+    end
+  })
+end

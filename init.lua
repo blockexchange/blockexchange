@@ -16,6 +16,12 @@ blockexchange = {
   pos2 = {} -- name -> pos
 }
 
+if minetest.get_modpath("worldedit") then
+  -- use WE's positions
+  blockexchange.pos1 = worldedit.pos1
+  blockexchange.pos2 = worldedit.pos2
+end
+
 local MP = minetest.get_modpath("blockexchange")
 
 -- http api
