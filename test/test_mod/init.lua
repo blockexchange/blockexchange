@@ -81,6 +81,9 @@ minetest.register_on_mods_loaded(function()
 					doUpload(pos1, pos2, function(schema)
 						print("Uploaded schema: " .. dump(schema))
 
+						-- execute allocation
+						blockexchange.allocate(playername, pos1, username, schema.name)
+
 						doDownload(dl_pos1, function()
 							minetest.log("warning", "[TEST] integration tests done!")
 							minetest.request_shutdown("success")

@@ -1,4 +1,9 @@
 
+-- list of builtin mods
+local builtin_mods = {
+  air = true
+}
+
 function blockexchange.allocate(playername, pos1, username, schemaname)
   blockexchange.api.get_schema_by_name(username, schemaname, function(schema)
     local pos2 = vector.add(pos1, {x=schema.size_x, y=schema.size_y, z=schema.size_z})
@@ -9,7 +14,7 @@ function blockexchange.allocate(playername, pos1, username, schemaname)
       -- collect missing mods in a list
       local missing_mods = ""
       for modname in pairs(mods) do
-        if not minetest.get_modpath(modname) then
+        if not builtin_mods[modname] and not minetest.get_modpath(modname) then
           if #missing_mods > 0 then
             -- add comma separator
             missing_mods = missing_mods .. ","
@@ -27,6 +32,7 @@ function blockexchange.allocate(playername, pos1, username, schemaname)
         msg = msg .. " " .. minetest.colorize("#ff0000", "Missing mods: " .. missing_mods)
       end
 
+      minetest.log("action", msg)
       minetest.chat_send_player(playername, msg)
     end,
     function(http_code)
