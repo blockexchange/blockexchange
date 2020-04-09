@@ -5,6 +5,24 @@ local playername = "max"
 local username = "max_muster"
 local password = "n00b"
 
+local function doEmerge(pos1, pos2, callback)
+	local ctx = blockexchange.emerge(playername, pos1, pos2)
+
+	local done_check
+
+	done_check = function()
+		if ctx.success then
+			callback(ctx.schema)
+		elseif ctx.failed then
+			error(dump(ctx))
+		else
+			minetest.after(1, done_check)
+		end
+	end
+
+	minetest.after(1, done_check)
+end
+
 local function doUpload(pos1, pos2, callback)
 	minetest.log("warning", "[TEST] uploading schema")
 	local ctx = blockexchange.upload(playername, pos1, pos2, "my_schema", "description")
@@ -52,9 +70,7 @@ minetest.register_on_mods_loaded(function()
 	minetest.log("warning", "[TEST] starting tests")
 	minetest.after(0, function()
 		minetest.log("warning", "[TEST] emerging area")
-		minetest.emerge_area(pos1, pos2, function(_, _, remaining)
-			if remaining > 0 then return end
-
+		doEmerge(pos1, pos2, function()
 			blockexchange.api.register(username, password, nil, function(result)
 				if not result.success then
 					minetest.log("error", "register: " .. dump(result))

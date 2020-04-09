@@ -49,6 +49,8 @@ dofile(MP.."/search/formspec.lua")
 
 -- public functions
 dofile(MP.."/allocate.lua")
+dofile(MP.."/emerge.lua")
+dofile(MP.."/emerge_worker.lua")
 dofile(MP.."/upload.lua")
 dofile(MP.."/upload_worker.lua")
 dofile(MP.."/download.lua")
