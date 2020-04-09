@@ -16,7 +16,8 @@ function blockexchange.api.find_schema_by_keywords(keywords, callback, err_callb
     post_data = json
   }, function(res)
     if res.succeeded and res.code == 200 then
-      callback(true)
+			local result = minetest.parse_json(res.data)
+      callback(result)
 		elseif type(err_callback) == "function" then
       err_callback(res.code or 0)
     end
