@@ -46,7 +46,7 @@ minetest.register_chatcommand("bx_login", {
 	func = function(name, param)
 		local _, _, username, password = string.find(param, "^([^%s]+)%s+([^%s]+)%s*$")
 		if not username or not password then
-			if not not blockexchange.tokens[name] then
+			if not blockexchange.tokens[name] then
 				-- not logged in
 				return false, "Usage: /bx_login <username> <password>"
 			end
