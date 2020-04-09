@@ -37,7 +37,7 @@ minetest.register_chatcommand("bx_pos1", {
 	func = function(name)
 		local player = minetest.get_player_by_name(name)
 		if player then
-			local pos = vector.floor(player:get_pos())
+			local pos = vector.round(player:get_pos())
       blockexchange.set_pos(1, name, pos)
 		end
   end
@@ -49,7 +49,7 @@ minetest.register_chatcommand("bx_pos2", {
 	func = function(name)
     local player = minetest.get_player_by_name(name)
 		if player then
-			local pos = vector.floor(player:get_pos())
+			local pos = vector.round(player:get_pos())
       blockexchange.set_pos(2, name, pos)
 		end
   end
