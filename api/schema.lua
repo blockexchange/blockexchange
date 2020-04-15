@@ -5,9 +5,9 @@ local url = blockexchange.url
 
 function blockexchange.api.create_schema(token, pos1, pos2, name, description, callback, err_callback)
   local json = minetest.write_json({
-    size_x = pos2.x - pos1.x + 1,
-    size_y = pos2.y - pos1.y + 1,
-    size_z = pos2.z - pos1.z + 1,
+    size_x = pos2.x - pos1.x,
+    size_y = pos2.y - pos1.y,
+    size_z = pos2.z - pos1.z,
     part_length = blockexchange.part_length,
 		description = description,
 		name = name
