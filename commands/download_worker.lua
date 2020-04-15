@@ -27,11 +27,13 @@ function blockexchange.download_worker(ctx)
 		minetest.after(0.5, blockexchange.download_worker, ctx)
 	end,
 	function(http_code)
-		local msg = "[blockexchange] download schemapart failed with http code: " .. (http_code or "unkown")
+		local msg = "[blockexchange] download schemapart failed with http code: " .. (http_code or "unkown") ..
+			" retrying..."
 		minetest.log("error", msg)
 		minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
-		ctx.failed = true
-		-- TODO: retry
+
+		-- retry
+		minetest.after(2, blockexchange.download_worker, ctx)
 	end)
 
 end
