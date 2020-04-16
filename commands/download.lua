@@ -12,9 +12,9 @@ function blockexchange.download(playername, pos1, username, schemaname)
 		ctx.pos2 = vector.add(pos1, {x=schema.size_x, y=schema.size_y, z=schema.size_z})
 		ctx.schema = schema
 		ctx.total_parts =
-	    math.ceil(math.abs(pos1.x - ctx.pos2.x) / blockexchange.part_length) *
-	    math.ceil(math.abs(pos1.y - ctx.pos2.y) / blockexchange.part_length) *
-	    math.ceil(math.abs(pos1.z - ctx.pos2.z) / blockexchange.part_length)
+	    math.ceil(schema.size_x / blockexchange.part_length) *
+	    math.ceil(schema.size_y / blockexchange.part_length) *
+	    math.ceil(schema.size_z / blockexchange.part_length)
 
 		minetest.after(0, blockexchange.download_worker, ctx)
 	end,

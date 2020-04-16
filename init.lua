@@ -65,3 +65,6 @@ dofile(MP.."/commands/upload_worker.lua")
 dofile(MP.."/commands/download.lua")
 dofile(MP.."/commands/download_chat.lua")
 dofile(MP.."/commands/download_worker.lua")
+
+-- controller
+dofile(MP.."/controller.lua")
