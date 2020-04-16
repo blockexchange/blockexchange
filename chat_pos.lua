@@ -3,7 +3,26 @@
 local pos1_player_map = {}
 local pos2_player_map = {}
 
+if minetest.get_modpath("worldedit") then
+  -- use WE's positions
+  blockexchange.pos1 = worldedit.pos1
+  blockexchange.pos2 = worldedit.pos2
+end
+
 function blockexchange.set_pos(index, playername, pos)
+  if minetest.get_modpath("worldedit") then
+    -- worldedit available, use its markers
+    if index == 1 then
+      worldedit.pos1[playername] = pos
+      worldedit.mark_pos1(playername);
+    elseif index == 2 then
+      worldedit.pos2[playername] = pos
+      worldedit.mark_pos2(playername);
+    end
+
+    return
+  end
+
   local player = minetest.get_player_by_name(playername)
   if player then
     local map = blockexchange.pos1
