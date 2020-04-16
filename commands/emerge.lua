@@ -6,6 +6,7 @@ function blockexchange.emerge(playername, pos1, pos2)
     math.ceil(math.abs(pos1.z - pos2.z) / blockexchange.part_length)
 
   local ctx = {
+    type = "emerge",
     playername = playername,
     pos1 = pos1,
     pos2 = pos2,
@@ -14,6 +15,8 @@ function blockexchange.emerge(playername, pos1, pos2)
     progress_percent = 0,
     total_parts = total_parts
   }
+
+  table.insert(blockexchange.processes, ctx)
 
   -- start emerge worker with context
   minetest.after(0, blockexchange.emerge_worker, ctx)

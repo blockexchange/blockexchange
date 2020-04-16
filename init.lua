@@ -9,6 +9,7 @@ end
 blockexchange = {
   api = {},
 	api_version_major = 1,
+  processes = {}, -- list of context
   http = http,
   url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.land",
   part_length = 16,

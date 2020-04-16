@@ -15,6 +15,7 @@ function blockexchange.upload(playername, pos1, pos2, name, description)
 	end
 
 	local ctx = {
+		type = "upload",
 		playername = playername,
 		token = token,
 		pos1 = pos1,
@@ -25,6 +26,8 @@ function blockexchange.upload(playername, pos1, pos2, name, description)
 		progress_percent = 0,
 		mod_count = {}
 	}
+
+	table.insert(blockexchange.processes, ctx)
 
   blockexchange.api.create_schema(token, pos1, pos2, name, description, function(schema)
 		ctx.schema = schema
