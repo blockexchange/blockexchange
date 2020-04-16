@@ -69,6 +69,23 @@ minetest.register_chatcommand("bx_login", {
   end
 })
 
+
+minetest.register_chatcommand("bx_login_temp", {
+	description = "Login with a temporary user",
+	privs = { blockexchange = true },
+	func = function(name)
+		blockexchange.api.get_token("temp", "temp", function(token)
+			blockexchange.tokens[name] = token
+			blockexchange.persist_tokens()
+			minetest.chat_send_player(name, "Logged in successfully")
+		end,
+		function(http_code)
+			minetest.log("error", "[blockexchange] get_token failed with error: " .. http_code or "?")
+			minetest.chat_send_player(name, "Login failed with error: " .. http_code or "?")
+		end)
+  end
+})
+
 minetest.register_chatcommand("bx_logout", {
 	description = "Logs the current user out",
 	privs = { blockexchange = true },
