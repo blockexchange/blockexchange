@@ -9,7 +9,7 @@ minetest.register_chatcommand("bx_load", {
       return false, "Usage: /bx_load <username> <schemaname>"
     end
 
-    local pos1 = blockexchange.pos1[name]
+    local pos1 = blockexchange.get_pos(1, name)
 
     if not pos1 then
       return false, "you need to set /bx_pos1 first!"

@@ -5,7 +5,7 @@ minetest.register_chatcommand("bx_allocate", {
 	description = "Show where the selected schema would end up",
   privs = { blockexchange = true },
 	func = function(name, param)
-    local pos1 = blockexchange.pos1[name]
+    local pos1 = blockexchange.get_pos(1, name)
 
     if not pos1 then
       return false, "you need to set /bx_pos1 first!"

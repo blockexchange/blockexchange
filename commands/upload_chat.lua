@@ -9,8 +9,8 @@ minetest.register_chatcommand("bx_save", {
       return false, "Usage: /bx_save <schemaname> <description>"
     end
 
-    local pos1 = blockexchange.pos1[name]
-    local pos2 = blockexchange.pos2[name]
+    local pos1 = blockexchange.get_pos(1, name)
+    local pos2 = blockexchange.get_pos(2, name)
 
     if not pos1 or not pos2 then
       return false, "you need to set /bx_pos1 and /bx_pos2 first!"
@@ -39,7 +39,7 @@ minetest.register_chatcommand("bx_load_here", {
       return false, "Usage: /bx_load_here <username> <schemaname>"
     end
 
-    local pos1 = blockexchange.pos1[name]
+    local pos1 = blockexchange.get_pos(1, name)
 		blockexchange.download(name, pos1, username, schemaname)
 		return true
   end

@@ -72,7 +72,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 
   if fields.load or fields.allocate then
-    if not blockexchange.pos1[playername] then
+    if not blockexchange.get_pos(1, playername) then
       minetest.chat_send_player(playername, "Select position 1 first with /bx_pos1")
       return
     end
@@ -81,14 +81,14 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	if fields.load then
     blockexchange.download(
       playername,
-      blockexchange.pos1[playername],
+      blockexchange.get_pos(1, playername),
       schema.user.name,
       schema.name
     )
   elseif fields.allocate then
     blockexchange.allocate(
       playername,
-      blockexchange.pos1[playername],
+      blockexchange.get_pos(1, playername),
       schema.user.name,
       schema.name
     )

@@ -36,6 +36,7 @@ blockexchange.http = nil
 dofile(MP.."/placeholder_node.lua")
 dofile(MP.."/privs.lua")
 dofile(MP.."/common.lua")
+dofile(MP.."/markers.lua")
 dofile(MP.."/token.lua")
 dofile(MP.."/iterator.lua")
 dofile(MP.."/serialize.lua")
