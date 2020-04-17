@@ -39,7 +39,7 @@ Schemas can be browsed and administered on the central server: https://blockexch
 * Grant yourself the needed privs with `/grantme blockexchange`
 * Build a thing
 * Set positions on the opposite corners with `/bx_pos1` and `/bx_pos2`
-* Login with a tmeporary account: `/bx_login_temp`
+* Login with a temporary account: `/bx_login_temp`
 * Save the schematic with `/bx_save <name> <description>`
 
 # Chat commands
