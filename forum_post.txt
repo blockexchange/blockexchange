@@ -11,7 +11,7 @@ The builds (called schemas) can be browsed here: https://blockexchange.minetest.
 There should also be a 3D-preview of the schema.
 
 Instructions on how to upload/download:
-https://github.com/blockexchange/blockexchange#download--search
+[url]https://github.com/blockexchange/blockexchange#download--search[/url]
 
 Features:
 [list]
