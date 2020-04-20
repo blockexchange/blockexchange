@@ -9,6 +9,7 @@ minetest.register_on_mods_loaded(function()
 	minetest.log("action", "[blockexchange] collected " .. #node_names_with_timer .. " items with node timers")
 end)
 
+local air_content_id = minetest.get_content_id("air")
 
 function blockexchange.serialize_part(pos1, pos2, node_count)
   local manip = minetest.get_voxel_manip()
@@ -21,6 +22,7 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 
   local node_id_count = {}
 
+	-- prepare data structure
 	local data = {
 		node_ids = {},
 		param1 = {},
@@ -30,6 +32,7 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
     size = vector.add( vector.subtract(pos2, pos1), 1 )
 	}
 
+	-- loop over all blocks and fill cid,param1 and param2
   for x=pos1.x,pos2.x do
   for y=pos1.y,pos2.y do
   for z=pos1.z,pos2.z do
@@ -45,10 +48,16 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
   end
   end
 
+	-- collect statistics and node_id -> name mapping
 	node_count = node_count or {}
-
 	for node_id, count in pairs(node_id_count) do
 		local node_name = minetest.get_name_from_content_id(node_id)
+		if node_name == "ignore" then
+			-- replace ignore blocks with air
+			node_name = "air"
+			node_id = air_content_id
+		end
+
 		data.node_mapping[node_name] = node_id
 		local counter = node_count[node_name] or 0
 		node_count[node_name] = counter + count
