@@ -26,7 +26,7 @@ function blockexchange.show_search_result_formspec(playername, schemas)
       schema.user.name .. "," ..
       schema.name .. "," ..
       size .. "," ..
-      schema.description
+      schema.description:sub(1,15)
 
   end
 
