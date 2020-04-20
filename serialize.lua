@@ -10,6 +10,7 @@ minetest.register_on_mods_loaded(function()
 end)
 
 local air_content_id = minetest.get_content_id("air")
+local ignore_content_id = minetest.get_content_id("ignore")
 
 function blockexchange.serialize_part(pos1, pos2, node_count)
   local manip = minetest.get_voxel_manip()
@@ -37,11 +38,17 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
   for y=pos1.y,pos2.y do
   for z=pos1.z,pos2.z do
     local i = area:index(x,y,z)
-		table.insert(data.node_ids, node_data[i])
+
+		local node_id = node_data[i]
+		if node_id == ignore_content_id then
+			-- replace ignore blocks with air
+			node_id = air_content_id
+		end
+
+		table.insert(data.node_ids, node_id)
 		table.insert(data.param1, param1[i])
 		table.insert(data.param2, param2[i])
 
-    local node_id = node_data[i]
     local count = node_id_count[node_id] or 0
     node_id_count[node_id] = count + 1
   end
@@ -52,12 +59,6 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 	node_count = node_count or {}
 	for node_id, count in pairs(node_id_count) do
 		local node_name = minetest.get_name_from_content_id(node_id)
-		if node_name == "ignore" then
-			-- replace ignore blocks with air
-			node_name = "air"
-			node_id = air_content_id
-		end
-
 		data.node_mapping[node_name] = node_id
 		local counter = node_count[node_name] or 0
 		node_count[node_name] = counter + count
