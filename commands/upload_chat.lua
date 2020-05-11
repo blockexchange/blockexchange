@@ -2,7 +2,6 @@
 minetest.register_chatcommand("bx_save", {
   params = "<name> <description>",
 	description = "Uploads the selected region to the blockexchange server",
-  privs = { blockexchange = true },
 	func = function(name, param)
     local has_protected_upload_priv = minetest.check_player_privs(name, { blockexchange_protected_upload = true })
     local has_blockexchange_priv = minetest.check_player_privs(name, { blockexchange = true })
