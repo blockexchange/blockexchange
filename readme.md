@@ -66,7 +66,8 @@ Schemas can be browsed and administered on the central server: https://blockexch
 
 # Privileges
 
-* **blockexchange** can use the blockexchange commands
+* **blockexchange** can use the blockexchange commands (admin)
+* **blockexchange_protected_upload** can upload self-protected areas (survival-compatible)
 
 # Settings
 

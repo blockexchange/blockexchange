@@ -9,7 +9,7 @@ function blockexchange.protectioncheck_worker(ctx)
     ctx.success = true
 
     -- kick off upload
-    blockexchange.upload(ctx.playername, ctx.pos1, ctx.pos2, ctx.schemaname, ctx.description)
+    ctx.upload_ctx = blockexchange.upload(ctx.playername, ctx.pos1, ctx.pos2, ctx.schemaname, ctx.description)
     return
   end
 

@@ -25,14 +25,14 @@ end
 
 local function doUpload(pos1, pos2, callback)
 	minetest.log("warning", "[TEST] uploading schema")
-	local ctx = blockexchange.upload(playername, pos1, pos2, "my_schema", "description")
+	local ctx = blockexchange.protectioncheck(playername, pos1, pos2, "my_schema", "description")
 
 	local done_check
 
 	done_check = function()
-		if ctx.success then
-			callback(ctx.schema)
-		elseif ctx.failed then
+		if ctx.success and ctx.upload_ctx and ctx.upload_ctx.success then
+			callback(ctx.upload_ctx.schema)
+		elseif ctx.failed or (ctx.upload_ctx and ctx.upload_ctx.failed) then
 			error(dump(ctx))
 		else
 			minetest.after(1, done_check)
@@ -81,7 +81,6 @@ minetest.register_on_mods_loaded(function()
 					blockexchange.tokens[playername] = token
 					doUpload(pos1, pos2, function(schema)
 						print("Uploaded schema: " .. dump(schema))
-
 						-- execute allocation
 						blockexchange.allocate(playername, pos1, username, schema.name)
 
