@@ -55,13 +55,15 @@ dofile(MP.."/commands/allocate.lua")
 dofile(MP.."/commands/allocate_chat.lua")
 dofile(MP.."/commands/emerge.lua")
 dofile(MP.."/commands/emerge_chat.lua")
-dofile(MP.."/commands/emerge_worker.lua")
 dofile(MP.."/commands/upload.lua")
 dofile(MP.."/commands/upload_chat.lua")
-dofile(MP.."/commands/upload_worker.lua")
 dofile(MP.."/commands/download.lua")
 dofile(MP.."/commands/download_chat.lua")
-dofile(MP.."/commands/download_worker.lua")
+
+-- worker functions
+dofile(MP.."/worker/download_worker.lua")
+dofile(MP.."/worker/upload_worker.lua")
+dofile(MP.."/worker/emerge_worker.lua")
 
 -- controller
 dofile(MP.."/controller.lua")
