@@ -7,7 +7,7 @@ function blockexchange.upload(playername, pos1, pos2, name, description)
 		math.ceil(math.abs(pos1.y - pos2.y) / blockexchange.part_length) *
 		math.ceil(math.abs(pos1.z - pos2.z) / blockexchange.part_length)
 
-	local token = blockexchange.tokens[name]
+	local token = blockexchange.tokens[playername]
 
 	local ctx = {
 		type = "upload",

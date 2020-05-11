@@ -77,6 +77,7 @@ minetest.register_on_mods_loaded(function()
 				end
 
 				blockexchange.api.get_token(username, password, function(token)
+					assert(token)
 					blockexchange.tokens[playername] = token
 					doUpload(pos1, pos2, function(schema)
 						print("Uploaded schema: " .. dump(schema))
