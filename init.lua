@@ -33,7 +33,6 @@ dofile(MP.."/api/token.lua")
 blockexchange.http = nil
 
 -- internal stuff
-dofile(MP.."/placeholder_node.lua")
 dofile(MP.."/privs.lua")
 dofile(MP.."/common.lua")
 dofile(MP.."/markers.lua")
@@ -69,5 +68,6 @@ dofile(MP.."/worker/upload_worker.lua")
 dofile(MP.."/worker/emerge_worker.lua")
 dofile(MP.."/worker/protectioncheck_worker.lua")
 
--- controller
-dofile(MP.."/controller.lua")
+-- nodes
+dofile(MP.."/nodes/controller.lua")
+dofile(MP.."/nodes/placeholder.lua")
