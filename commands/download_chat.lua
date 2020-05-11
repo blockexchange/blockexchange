@@ -19,3 +19,25 @@ minetest.register_chatcommand("bx_load", {
 		return true
   end
 })
+
+minetest.register_chatcommand("bx_load_here", {
+  params = "<username> <schemaname>",
+	description = "Downloads a schema from the blockexchange to the current position",
+  privs = { blockexchange = true },
+	func = function(name, param)
+		local player = minetest.get_player_by_name(name)
+		if player then
+			local pos = vector.floor(player:get_pos())
+      blockexchange.set_pos(1, name, pos)
+		end
+
+    local _, _, username, schemaname = string.find(param, "^([^%s]+)%s+([^%s]+)%s*$")
+    if not username or not schemaname then
+      return false, "Usage: /bx_load_here <username> <schemaname>"
+    end
+
+    local pos1 = blockexchange.get_pos(1, name)
+		blockexchange.download(name, pos1, username, schemaname)
+		return true
+  end
+})
