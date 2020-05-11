@@ -43,16 +43,14 @@ dofile(MP.."/serialize.lua")
 -- utils
 dofile(MP.."/util/is_area_protected.lua")
 
--- common chat commands
-dofile(MP.."/chat_info.lua")
-dofile(MP.."/chat_pos.lua")
-dofile(MP.."/chat_user.lua")
-
 -- search
 dofile(MP.."/search/chat.lua")
 dofile(MP.."/search/formspec.lua")
 
 -- commands
+dofile(MP.."/commands/info.lua")
+dofile(MP.."/commands/pos.lua")
+dofile(MP.."/commands/user.lua")
 dofile(MP.."/commands/allocate.lua")
 dofile(MP.."/commands/allocate_chat.lua")
 dofile(MP.."/commands/emerge.lua")
