@@ -37,6 +37,7 @@ dofile(MP.."/privs.lua")
 dofile(MP.."/markers.lua")
 dofile(MP.."/token.lua")
 dofile(MP.."/serialize.lua")
+dofile(MP.."/license.lua")
 
 -- utils
 dofile(MP.."/util/sort_pos.lua")
@@ -49,6 +50,7 @@ dofile(MP.."/search/formspec.lua")
 
 -- commands
 dofile(MP.."/commands/info.lua")
+dofile(MP.."/commands/license.lua")
 dofile(MP.."/commands/pos.lua")
 dofile(MP.."/commands/user.lua")
 dofile(MP.."/commands/allocate.lua")

@@ -8,6 +8,7 @@ function blockexchange.upload(playername, pos1, pos2, name, description)
 		math.ceil(math.abs(pos1.z - pos2.z) / blockexchange.part_length)
 
 	local token = blockexchange.tokens[playername]
+	local license = blockexchange.licenses[playername] or "CC0"
 
 	local ctx = {
 		type = "upload",
@@ -24,7 +25,7 @@ function blockexchange.upload(playername, pos1, pos2, name, description)
 
 	table.insert(blockexchange.processes, ctx)
 
-  blockexchange.api.create_schema(token, pos1, pos2, name, description, function(schema)
+  blockexchange.api.create_schema(token, pos1, pos2, name, description, license, function(schema)
 		ctx.schema = schema
 		minetest.log("action", "[blockexchange] schema created with id: " .. schema.id)
 		minetest.chat_send_player(playername,
