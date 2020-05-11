@@ -57,6 +57,7 @@ dofile(MP.."/commands/emerge.lua")
 dofile(MP.."/commands/emerge_chat.lua")
 dofile(MP.."/commands/upload.lua")
 dofile(MP.."/commands/upload_chat.lua")
+dofile(MP.."/commands/protectioncheck.lua")
 dofile(MP.."/commands/download.lua")
 dofile(MP.."/commands/download_chat.lua")
 

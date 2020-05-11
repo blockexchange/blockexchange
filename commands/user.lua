@@ -3,8 +3,11 @@
 minetest.register_chatcommand("bx_register", {
 	params = "<username> <password> [<mail>]",
 	description = "Register and login as a new user",
-	privs = { blockexchange = true },
 	func = function(name, param)
+		if not minetest.check_player_privs(name, { blockexchange = true }) and
+			not minetest.check_player_privs(name, { blockexchange_protected_upload = true }) then
+				return false, "Required privs: 'blockexchange' or 'blockexchange_protected_upload'"
+		end
 
 		local _, _, username, password, mail = string.find(param, "^([^%s]+)%s+([^%s]+)%s+([^%s]+)%s*$")
 		if not username or not password or not mail then
@@ -42,8 +45,12 @@ minetest.register_chatcommand("bx_register", {
 minetest.register_chatcommand("bx_login", {
 	params = "<username> <password>",
 	description = "Login with an existing user and password or check the current login",
-	privs = { blockexchange = true },
 	func = function(name, param)
+		if not minetest.check_player_privs(name, { blockexchange = true }) and
+			not minetest.check_player_privs(name, { blockexchange_protected_upload = true }) then
+				return false, "Required privs: 'blockexchange' or 'blockexchange_protected_upload'"
+		end
+
 		local _, _, username, password = string.find(param, "^([^%s]+)%s+([^%s]+)%s*$")
 		if not username or not password then
 			if not blockexchange.tokens[name] then
@@ -72,8 +79,12 @@ minetest.register_chatcommand("bx_login", {
 
 minetest.register_chatcommand("bx_login_temp", {
 	description = "Login with a temporary user",
-	privs = { blockexchange = true },
 	func = function(name)
+		if not minetest.check_player_privs(name, { blockexchange = true }) and
+			not minetest.check_player_privs(name, { blockexchange_protected_upload = true }) then
+				return false, "Required privs: 'blockexchange' or 'blockexchange_protected_upload'"
+		end
+
 		blockexchange.api.get_token("temp", "temp", function(token)
 			blockexchange.tokens[name] = token
 			blockexchange.persist_tokens()
@@ -88,7 +99,6 @@ minetest.register_chatcommand("bx_login_temp", {
 
 minetest.register_chatcommand("bx_logout", {
 	description = "Logs the current user out",
-	privs = { blockexchange = true },
 	func = function(name)
 		blockexchange.tokens[name] = nil
 		blockexchange.persist_tokens()

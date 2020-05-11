@@ -7,6 +7,9 @@ function blockexchange.protectioncheck_worker(ctx)
     minetest.log("action", msg)
 		minetest.chat_send_player(ctx.playername, msg)
     ctx.success = true
+
+    -- kick off upload
+    blockexchange.upload(ctx.playername, ctx.pos1, ctx.pos2, ctx.schemaname, ctx.description)
     return
   end
 
@@ -32,7 +35,11 @@ function blockexchange.protectioncheck_worker(ctx)
     minetest.after(0.5, blockexchange.protectioncheck_worker, ctx)
   else
     -- check failed
-    print("failed!")
+    minetest.chat_send_player(ctx.playername,
+      "[blockexchange] protection check failed between: " ..
+      minetest.pos_to_string(ctx.current_pos) .. " and " ..
+      minetest.pos_to_string(pos2)
+    )
   end
 
 
