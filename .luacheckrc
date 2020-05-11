@@ -12,5 +12,8 @@ read_globals = {
 	"minetest",
 	"vector", "ItemStack",
 	"dump", "dump2",
-	"VoxelArea"
+	"VoxelArea",
+
+	-- opt deps
+	"areas"
 }

@@ -41,6 +41,9 @@ dofile(MP.."/token.lua")
 dofile(MP.."/iterator.lua")
 dofile(MP.."/serialize.lua")
 
+-- utils
+dofile(MP.."/util/is_area_protected.lua")
+
 -- common chat commands
 dofile(MP.."/chat_info.lua")
 dofile(MP.."/chat_pos.lua")
@@ -64,6 +67,7 @@ dofile(MP.."/commands/download_chat.lua")
 dofile(MP.."/worker/download_worker.lua")
 dofile(MP.."/worker/upload_worker.lua")
 dofile(MP.."/worker/emerge_worker.lua")
+dofile(MP.."/worker/protectioncheck_worker.lua")
 
 -- controller
 dofile(MP.."/controller.lua")
