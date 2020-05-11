@@ -34,14 +34,14 @@ blockexchange.http = nil
 
 -- internal stuff
 dofile(MP.."/privs.lua")
-dofile(MP.."/common.lua")
 dofile(MP.."/markers.lua")
 dofile(MP.."/token.lua")
-dofile(MP.."/iterator.lua")
 dofile(MP.."/serialize.lua")
 
 -- utils
+dofile(MP.."/util/sort_pos.lua")
 dofile(MP.."/util/is_area_protected.lua")
+dofile(MP.."/util/iterator_next.lua")
 
 -- search
 dofile(MP.."/search/chat.lua")
