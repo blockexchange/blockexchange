@@ -9,6 +9,12 @@ minetest.register_chatcommand("bx_save", {
       return false, "Usage: /bx_save <schemaname> <description>"
     end
 
+    local token = blockexchange.tokens[name]
+    if not token then
+      -- TODO check validity
+      return false, "Please login first to upload a schematic"
+    end
+
     local pos1 = blockexchange.get_pos(1, name)
     local pos2 = blockexchange.get_pos(2, name)
 

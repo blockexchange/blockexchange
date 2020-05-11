@@ -7,12 +7,7 @@ function blockexchange.upload(playername, pos1, pos2, name, description)
 		math.ceil(math.abs(pos1.y - pos2.y) / blockexchange.part_length) *
 		math.ceil(math.abs(pos1.z - pos2.z) / blockexchange.part_length)
 
-	local token = blockexchange.tokens[playername]
-	if not token then
-		-- TODO check validity
-		minetest.chat_send_player(playername, "Please login first to upload a schematic")
-		return
-	end
+	local token = blockexchange.tokens[name]
 
 	local ctx = {
 		type = "upload",
