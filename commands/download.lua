@@ -11,7 +11,7 @@ function blockexchange.download(playername, pos1, username, schemaname)
 
 	table.insert(blockexchange.processes, ctx)
 
-	blockexchange.api.get_schema_by_name(username, schemaname, function(schema)
+	blockexchange.api.get_schema_by_name(username, schemaname, true, function(schema)
 		ctx.pos2 = vector.add(pos1, {x=schema.size_x, y=schema.size_y, z=schema.size_z})
 		ctx.schema = schema
 		ctx.total_parts =

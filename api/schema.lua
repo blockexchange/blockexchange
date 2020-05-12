@@ -68,9 +68,15 @@ function blockexchange.api.get_schema_by_id(schema_id, callback, err_callback)
   end)
 end
 
-function blockexchange.api.get_schema_by_name(username, schemaname, callback, err_callback)
+function blockexchange.api.get_schema_by_name(username, schemaname, download, callback, err_callback)
+  local schema_url = url .. "/api/search/schema/byname/" .. username .. "/" .. schemaname
+  if download then
+    -- increment download counter
+    schema_url = schema_url .. "?download=true"
+  end
+
   http.fetch({
-    url = url .. "/api/search/schema/byname/" .. username .. "/" .. schemaname,
+    url = schema_url,
     timeout = 5
   }, function(res)
     if res.succeeded and res.code == 200 then
