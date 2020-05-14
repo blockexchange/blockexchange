@@ -7,11 +7,12 @@ local function shift(ctx)
   ctx.progress_percent = math.floor(ctx.current_part / ctx.total_parts * 100 * 10) / 10
 end
 
-function blockexchange.download_worker(ctx)
+blockexchange.register_process_type("download", function(ctx, process)
 
 	if not ctx.current_pos then
     minetest.chat_send_player(ctx.playername, "Download complete with " .. ctx.total_parts .. " parts")
 		ctx.success = true
+		process.stop()
     return
   end
 
@@ -24,16 +25,12 @@ function blockexchange.download_worker(ctx)
 		blockexchange.deserialize_part(ctx.current_pos, schemapart.data);
 
 		shift(ctx)
-		minetest.after(0.5, blockexchange.download_worker, ctx)
 	end,
 	function(http_code)
 		local msg = "[blockexchange] download schemapart failed with http code: " .. (http_code or "unkown") ..
 			" retrying..."
 		minetest.log("error", msg)
 		minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
-
-		-- retry
-		minetest.after(2, blockexchange.download_worker, ctx)
 	end)
 
-end
+end)

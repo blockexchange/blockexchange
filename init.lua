@@ -10,7 +10,6 @@ end
 blockexchange = {
   api = {},
 	api_version_major = 1,
-  processes = {}, -- list of context
   http = http,
   url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.land",
   part_length = 16,
@@ -39,6 +38,10 @@ dofile(MP.."/token.lua")
 dofile(MP.."/serialize.lua")
 dofile(MP.."/license.lua")
 
+-- process handling
+dofile(MP.."/process/register.lua")
+dofile(MP.."/process/scheduler.lua")
+
 -- utils
 dofile(MP.."/util/sort_pos.lua")
 dofile(MP.."/util/is_area_protected.lua")
@@ -50,6 +53,7 @@ dofile(MP.."/search/formspec.lua")
 
 -- commands
 dofile(MP.."/commands/info.lua")
+dofile(MP.."/commands/process_chat.lua")
 dofile(MP.."/commands/license.lua")
 dofile(MP.."/commands/pos.lua")
 dofile(MP.."/commands/user.lua")

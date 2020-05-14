@@ -23,8 +23,6 @@ function blockexchange.upload(playername, pos1, pos2, name, description)
 		mod_count = {}
 	}
 
-	table.insert(blockexchange.processes, ctx)
-
   blockexchange.api.create_schema(token, pos1, pos2, name, description, license, function(schema)
 		ctx.schema = schema
 		minetest.log("action", "[blockexchange] schema created with id: " .. schema.id)
@@ -34,7 +32,7 @@ function blockexchange.upload(playername, pos1, pos2, name, description)
 		)
 
     -- start upload worker with context
-    minetest.after(0, blockexchange.upload_worker, ctx)
+		blockexchange.register_process(ctx)
   end,
 	function(http_code)
 		local msg = "[blockexchange] create schema failed with http code: " .. (http_code or "unknown")

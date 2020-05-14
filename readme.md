@@ -55,6 +55,7 @@ Schemas can be browsed and administered on the central server: https://blockexch
 * **/bx_load [username] [schemaname]**
 * **/bx_load_here [username] [schemaname]**
 * **/bx_allocate [username] [schemaname]**
+* **/bx_ps** shows all current blockexchange processes
 * **/bx_login_temp** logs in with a temporary user (the saved schemas are only temporary!)
 * **/bx_login [username] [password]**
 * **/bx_register [username] [password] [mail?]**

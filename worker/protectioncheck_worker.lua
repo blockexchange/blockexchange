@@ -1,6 +1,6 @@
 
 
-function blockexchange.protectioncheck_worker(ctx)
+blockexchange.register_process_type("protectioncheck", function(ctx, process)
 
   if not ctx.current_pos then
 		local msg = "[blockexchange] Protection check complete with " .. ctx.total_parts .. " parts"
@@ -10,6 +10,7 @@ function blockexchange.protectioncheck_worker(ctx)
 
     -- kick off upload
     ctx.upload_ctx = blockexchange.upload(ctx.playername, ctx.pos1, ctx.pos2, ctx.schemaname, ctx.description)
+    process.stop()
     return
   end
 
@@ -30,9 +31,6 @@ function blockexchange.protectioncheck_worker(ctx)
     -- increment stats
     ctx.current_part = ctx.current_part + 1
     ctx.progress_percent = math.floor(ctx.current_part / ctx.total_parts * 100 * 10) / 10
-
-    -- call again later
-    minetest.after(0.5, blockexchange.protectioncheck_worker, ctx)
   else
     -- check failed
     minetest.chat_send_player(ctx.playername,
@@ -44,4 +42,4 @@ function blockexchange.protectioncheck_worker(ctx)
 
 
 
-end
+end)

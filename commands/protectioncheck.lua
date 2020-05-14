@@ -18,10 +18,8 @@ function blockexchange.protectioncheck(playername, pos1, pos2, schemaname, descr
     description = description
   }
 
-  table.insert(blockexchange.processes, ctx)
-
   -- start emerge worker with context
-  minetest.after(0, blockexchange.protectioncheck_worker, ctx)
+  blockexchange.register_process(ctx)
 
   return ctx
 end

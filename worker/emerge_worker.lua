@@ -1,12 +1,13 @@
 
 
-function blockexchange.emerge_worker(ctx)
+blockexchange.register_process_type("emerge", function(ctx, process)
 
   if not ctx.current_pos then
 		local msg = "[blockexchange] Emerge complete with " .. ctx.total_parts .. " parts"
     minetest.log("action", msg)
 		minetest.chat_send_player(ctx.playername, msg)
     ctx.success = true
+    process.stop()
     return
   end
 
@@ -26,11 +27,7 @@ function blockexchange.emerge_worker(ctx)
       -- increment stats
       ctx.current_part = ctx.current_part + 1
       ctx.progress_percent = math.floor(ctx.current_part / ctx.total_parts * 100 * 10) / 10
-
-      -- call again later
-      minetest.after(0.5, blockexchange.emerge_worker, ctx)
     end
   end)
 
-
-end
+end)

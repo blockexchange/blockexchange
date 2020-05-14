@@ -16,10 +16,8 @@ function blockexchange.emerge(playername, pos1, pos2)
     total_parts = total_parts
   }
 
-  table.insert(blockexchange.processes, ctx)
-
   -- start emerge worker with context
-  minetest.after(0, blockexchange.emerge_worker, ctx)
+  blockexchange.register_process(ctx)
 
   return ctx
 end

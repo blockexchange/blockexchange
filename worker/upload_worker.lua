@@ -7,42 +7,32 @@ local function shift(ctx)
   ctx.progress_percent = math.floor(ctx.current_part / ctx.total_parts * 100 * 10) / 10
 end
 
-function blockexchange.upload_worker(ctx)
+blockexchange.register_process_type("upload", function(ctx, process)
 
   if not ctx.current_pos then
 		-- upload of individual parts finished, finalize schema and update stats
-		if not ctx.schemamods_created then
-	    blockexchange.api.create_schemamods(ctx.token, ctx.schema.id, ctx.mod_count, function()
-				ctx.schemamods_created = true
-				minetest.after(0, blockexchange.upload_worker, ctx)
-	    end,
-	    function(http_code)
-	      local msg = "[blockexchange] create schemamod failed with http code: " .. (http_code or "unkown") ..
-					" retrying..."
-	      minetest.log("error", msg)
-	      minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
+    blockexchange.api.create_schemamods(ctx.token, ctx.schema.id, ctx.mod_count, function()
+      blockexchange.api.finalize_schema(ctx.token, ctx.schema.id, function()
+        local msg = "[blockexchange] Upload complete with " .. ctx.total_parts .. " parts"
+        minetest.log("action", msg)
+        minetest.chat_send_player(ctx.playername, msg)
+        ctx.success = true
+      end,
+      function(http_code)
+        local msg = "[blockexchange] finalize schema failed with http code: " .. (http_code or "unkown") ..
+        " retrying..."
+        minetest.log("error", msg)
+        minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
+      end)
+    end,
+    function(http_code)
+      local msg = "[blockexchange] create schemamod failed with http code: " .. (http_code or "unkown") ..
+				" retrying..."
+      minetest.log("error", msg)
+      minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
+    end)
 
-				-- retry
-				minetest.after(2, blockexchange.upload_worker, ctx)
-	    end)
-		else
-			blockexchange.api.finalize_schema(ctx.token, ctx.schema.id, function()
-				local msg = "[blockexchange] Upload complete with " .. ctx.total_parts .. " parts"
-				minetest.log("action", msg)
-				minetest.chat_send_player(ctx.playername, msg)
-				ctx.success = true
-			end,
-			function(http_code)
-				local msg = "[blockexchange] finalize schema failed with http code: " .. (http_code or "unkown") ..
-					" retrying..."
-	      minetest.log("error", msg)
-	      minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
-
-				-- retry
-				minetest.after(2, blockexchange.upload_worker, ctx)
-			end)
-		end
-
+    process.stop()
     return
   end
 
@@ -91,17 +81,12 @@ function blockexchange.upload_worker(ctx)
     " completed (processing took " .. diff .. " micros)")
 
     shift(ctx)
-
-		minetest.after(0.5, blockexchange.upload_worker, ctx)
   end,
 	function(http_code)
 			local msg = "[blockexchange] create schemapart failed with http code: " .. (http_code or "unkown") ..
 				" retrying..."
 			minetest.log("error", msg)
 			minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
-
-			-- retry
-      minetest.after(2, blockexchange.upload_worker, ctx)
 	end)
 
-end
+end)

@@ -9,8 +9,6 @@ function blockexchange.download(playername, pos1, username, schemaname)
 		progress_percent = 0
 	}
 
-	table.insert(blockexchange.processes, ctx)
-
 	blockexchange.api.get_schema_by_name(username, schemaname, true, function(schema)
 		ctx.pos2 = vector.add(pos1, {x=schema.size_x, y=schema.size_y, z=schema.size_z})
 		ctx.schema = schema
@@ -19,7 +17,7 @@ function blockexchange.download(playername, pos1, username, schemaname)
 	    math.ceil(schema.size_y / blockexchange.part_length) *
 	    math.ceil(schema.size_z / blockexchange.part_length)
 
-		minetest.after(0, blockexchange.download_worker, ctx)
+		blockexchange.register_process(ctx)
 	end,
 	function()
 		minetest.chat_send_player(ctx.playername, "Schema not found: '" ..
