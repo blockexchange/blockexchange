@@ -17,7 +17,7 @@ function blockexchange.download(playername, pos1, username, schemaname)
 	    math.ceil(schema.size_y / blockexchange.part_length) *
 	    math.ceil(schema.size_z / blockexchange.part_length)
 
-		blockexchange.register_process(ctx)
+		blockexchange.start_process(ctx)
 	end,
 	function()
 		minetest.chat_send_player(ctx.playername, "Schema not found: '" ..

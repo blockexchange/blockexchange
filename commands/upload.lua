@@ -32,7 +32,7 @@ function blockexchange.upload(playername, pos1, pos2, name, description)
 		)
 
     -- start upload worker with context
-		blockexchange.register_process(ctx)
+		blockexchange.start_process(ctx)
   end,
 	function(http_code)
 		local msg = "[blockexchange] create schema failed with http code: " .. (http_code or "unknown")

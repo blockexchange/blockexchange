@@ -17,7 +17,7 @@ function blockexchange.emerge(playername, pos1, pos2)
   }
 
   -- start emerge worker with context
-  blockexchange.register_process(ctx)
+  blockexchange.start_process(ctx)
 
   return ctx
 end

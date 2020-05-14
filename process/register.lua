@@ -12,6 +12,6 @@ end
 blockexchange.processes = {}
 
 -- schedules a process for execution
-function blockexchange.register_process(ctx)
+function blockexchange.start_process(ctx)
   table.insert(blockexchange.processes, ctx)
 end
