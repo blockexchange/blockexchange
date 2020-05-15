@@ -21,6 +21,7 @@ blockexchange.register_process_type("upload", function(ctx, process)
 
   if not ctx.current_pos then
 		-- upload of individual parts finished, finalize schema and update stats
+    -- TODO: move to own process-types/workers
     blockexchange.api.create_schemamods(ctx.token, ctx.schema.id, ctx.mod_count, function()
       blockexchange.api.finalize_schema(ctx.token, ctx.schema.id, function()
         local msg = "[blockexchange] Upload complete with " .. ctx.total_parts .. " parts"
@@ -101,6 +102,8 @@ blockexchange.register_process_type("upload", function(ctx, process)
 				" retrying..."
 			minetest.log("error", msg)
 			minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
+      -- wait a couple seconds
+      process.defer(5)
 	end)
 
 end)

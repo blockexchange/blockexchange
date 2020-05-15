@@ -16,8 +16,11 @@ local function scheduler()
   -- execution timer
   local t0 = minetest.get_us_time()
 
+  -- current time
+  local now = os.time()
 
   for _, ctx in ipairs(blockexchange.processes) do
+
     local t1 = minetest.get_us_time()
     local micros = t1 - t0
 
@@ -30,12 +33,37 @@ local function scheduler()
     local handler = blockexchange.process_type_map[ctx.type]
     assert(handler)
 
+    -- setup process control callbacks
     local stopped = false
+    local defer_seconds
     local process_control = {
-      stop = function() stopped = true end
+      -- stops the process
+      stop = function() stopped = true end,
+      -- defers execution for this many seconds
+      defer = function(seconds) defer_seconds = seconds end
     }
 
-    handler(ctx, process_control)
+    -- check if process is deferred
+    local execute_now = true
+    if ctx._meta.deferred then
+      if ctx._meta.defered < now then
+        -- can be executed again, clear flag
+        ctx._meta.defered = nil
+      else
+        -- don't execute now
+        execute_now = false
+      end
+    end
+
+    -- main execution in handler/worker function
+    if execute_now then
+      handler(ctx, process_control)
+    end
+
+    if defer_seconds then
+      -- reschedule later
+      ctx._meta.defered = now + defer_seconds
+    end
 
     if not stopped then
       table.insert(new_processes, ctx)

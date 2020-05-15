@@ -38,6 +38,7 @@ blockexchange.register_process_type("protectioncheck", function(ctx, process)
       minetest.pos_to_string(ctx.current_pos) .. " and " ..
       minetest.pos_to_string(pos2)
     )
+    process.stop()
   end
 
 

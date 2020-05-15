@@ -45,6 +45,8 @@ blockexchange.register_process_type("download", function(ctx, process)
 			" retrying..."
 		minetest.log("error", msg)
 		minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
+    -- wait a couple seconds
+    process.defer(5)
 	end)
 
 end)
