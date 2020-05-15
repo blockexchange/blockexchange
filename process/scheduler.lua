@@ -1,3 +1,4 @@
+-- TODO: process persistence across restarts
 
 local has_monitoring = minetest.get_modpath("monitoring")
 
