@@ -13,5 +13,12 @@ blockexchange.processes = {}
 
 -- schedules a process for execution
 function blockexchange.start_process(ctx)
+  -- add process metadata
+  ctx._meta = {
+    -- process id
+    id = math.floor(math.random() * 10000),
+    -- start time of the process
+    start_time = os.time
+  }
   table.insert(blockexchange.processes, ctx)
 end

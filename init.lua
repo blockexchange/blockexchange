@@ -53,7 +53,8 @@ dofile(MP.."/search/formspec.lua")
 
 -- commands
 dofile(MP.."/commands/info.lua")
-dofile(MP.."/commands/process_chat.lua")
+dofile(MP.."/commands/ps.lua")
+dofile(MP.."/commands/kill.lua")
 dofile(MP.."/commands/license.lua")
 dofile(MP.."/commands/pos.lua")
 dofile(MP.."/commands/user.lua")
