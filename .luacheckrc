@@ -15,5 +15,5 @@ read_globals = {
 	"VoxelArea",
 
 	-- opt deps
-	"areas"
+	"areas", "monitoring"
 }

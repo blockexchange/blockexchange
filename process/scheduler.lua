@@ -1,8 +1,21 @@
 
+local has_monitoring = minetest.get_modpath("monitoring")
+
+local time_budget, process_count
+
+if has_monitoring then
+  time_budget = monitoring.counter("blockexchange_time_budget", "count of microseconds used in cpu time")
+  process_count = monitoring.gauge("blockexchange_processes", "number of running processes")
+end
+
 local function scheduler()
 
   -- list of new processes
   local new_processes = {}
+
+  -- execution timer
+  local t0 = minetest.get_us_time()
+
 
   for _, ctx in ipairs(blockexchange.processes) do
     assert(ctx.type)
@@ -23,6 +36,15 @@ local function scheduler()
 
   -- assign new processes
   blockexchange.processes = new_processes
+
+  -- measure exec time in this step
+  if has_monitoring then
+    local t1 = minetest.get_us_time()
+    local micros = t1 - t0
+    time_budget.inc(micros)
+    process_count.set(#new_processes)
+  end
+
 
   -- re-schedule again after some delay
   minetest.after(0.5, scheduler)

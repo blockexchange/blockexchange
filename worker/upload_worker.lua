@@ -1,3 +1,13 @@
+local has_monitoring = minetest.get_modpath("monitoring")
+
+local uploaded_blocks
+
+if has_monitoring then
+  uploaded_blocks = monitoring.counter(
+    "blockexchange_uploaded_blocks",
+    "number of successfully uploaded mapblocks"
+  )
+end
 
 local function shift(ctx)
   ctx.current_pos = blockexchange.iterator_next(ctx.pos1, ctx.pos2, ctx.current_pos)
@@ -79,6 +89,10 @@ blockexchange.register_process_type("upload", function(ctx, process)
   blockexchange.api.create_schemapart(ctx.token, ctx.schema.id, relative_pos, data, function()
     minetest.log("action", "[blockexchange] Upload of part " .. minetest.pos_to_string(ctx.current_pos) ..
     " completed (processing took " .. diff .. " micros)")
+
+    if has_monitoring then
+      uploaded_blocks.inc(1)
+    end
 
     shift(ctx)
   end,

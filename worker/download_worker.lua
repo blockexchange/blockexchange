@@ -1,3 +1,13 @@
+local has_monitoring = minetest.get_modpath("monitoring")
+
+local downloaded_blocks
+
+if has_monitoring then
+  downloaded_blocks = monitoring.counter(
+    "blockexchange_downloaded_blocks",
+    "number of successfully downloaded mapblocks"
+  )
+end
 
 local function shift(ctx)
 	ctx.current_pos = blockexchange.iterator_next(ctx.pos1, ctx.pos2, ctx.current_pos)
@@ -23,6 +33,10 @@ blockexchange.register_process_type("download", function(ctx, process)
 
 	blockexchange.api.get_schemapart(ctx.schema.id, relative_pos, function(schemapart)
 		blockexchange.deserialize_part(ctx.current_pos, schemapart.data);
+
+		if has_monitoring then
+			downloaded_blocks.inc(1)
+		end
 
 		shift(ctx)
 	end,
