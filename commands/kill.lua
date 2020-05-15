@@ -1,6 +1,6 @@
 
 minetest.register_chatcommand("bx_kill", {
-	description = "Kills a blockexchange processes",
+	description = "Kills a blockexchange process",
 	params = "<id>",
 	privs = { blockexchange = true },
 	func = function(_, id_str)
