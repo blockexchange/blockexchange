@@ -47,15 +47,14 @@ Schemas can be browsed and administered on the central server: https://blockexch
 ## Read-only
 
 * **/bx_info** shows infos about the connected blockexchange server
-* **/bx_pos1**
-* **/bx_pos2**
+* **/bx_pos1** mark position 1
+* **/bx_pos2** mark position 2
 * **/bx_emerge** emerge the selected area
 * **/bx_license** sets or displays the license of your uploaded schematics (defaults to CC0)
 * **/bx_search [keywords]** search a schema by keywords
 * **/bx_load [username] [schemaname]**
 * **/bx_load_here [username] [schemaname]**
 * **/bx_allocate [username] [schemaname]**
-* **/bx_ps** shows all current blockexchange processes
 * **/bx_login_temp** logs in with a temporary user (the saved schemas are only temporary!)
 * **/bx_login [username] [password]**
 * **/bx_register [username] [password] [mail?]**
@@ -65,6 +64,14 @@ Schemas can be browsed and administered on the central server: https://blockexch
 * **/bx_save [schemaname] [description]**
 * **/bx_logout** logs out
 * **/bx_login** shows the login status
+
+## Process management
+
+Download/Upload and allocate spawns background processes which can
+be managed with chat-commands:
+
+* **/bx_ps** shows all current blockexchange processes
+* **/bx_kill [id]** Kills a process by its id
 
 # Privileges
 
