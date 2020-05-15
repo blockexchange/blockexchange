@@ -13,6 +13,8 @@ blockexchange = {
   http = http,
   url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.land",
   part_length = 16,
+  -- maximum usage of microseconds per second for blockexchange processes
+  max_cpu_micros_per_second = 50000,
   pos1 = {}, -- name -> pos
   pos2 = {} -- name -> pos
 }

@@ -18,6 +18,14 @@ local function scheduler()
 
 
   for _, ctx in ipairs(blockexchange.processes) do
+    local t1 = minetest.get_us_time()
+    local micros = t1 - t0
+
+    if micros > (blockexchange.max_cpu_micros_per_second / 2) then
+      -- cpu usage exceeded, take a break
+      break
+    end
+
     assert(ctx.type)
     local handler = blockexchange.process_type_map[ctx.type]
     assert(handler)
@@ -38,8 +46,9 @@ local function scheduler()
   blockexchange.processes = new_processes
 
   -- measure exec time in this step
+  local t1 = minetest.get_us_time()
+
   if has_monitoring then
-    local t1 = minetest.get_us_time()
     local micros = t1 - t0
     time_budget.inc(micros)
     process_count.set(#new_processes)
