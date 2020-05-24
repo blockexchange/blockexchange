@@ -18,7 +18,7 @@ function blockexchange.start_process(ctx)
     -- process id
     id = math.floor(math.random() * 10000),
     -- start time of the process
-    start_time = os.time
+    start_time = os.time()
   }
   table.insert(blockexchange.processes, ctx)
 end
