@@ -4,13 +4,13 @@ blockexchange.tokens = {}
 
 function blockexchange.persist_tokens()
   local file = io.open(minetest.get_worldpath() .. "/blockexchange_tokens","w")
-	local json = minetest.write_json(blockexchange.tokens)
-	if file and file:write(json) and file:close() then
-		return
-	else
-		minetest.log("error","[blockexchange] token persist failed!")
-		return
-	end
+  local json = minetest.write_json(blockexchange.tokens)
+  if file and file:write(json) and file:close() then
+    return
+  else
+    minetest.log("error","[blockexchange] token persist failed!")
+    return
+  end
 end
 
 function blockexchange.load_tokens()

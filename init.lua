@@ -3,13 +3,13 @@ local http = minetest.request_http_api()
 
 if not http then
   minetest.log("error", "the 'blockexchange' mod needs access to the http api!")
-	return
+  return
 end
 
 
 blockexchange = {
   api = {},
-	api_version_major = 1,
+  api_version_major = 1,
   http = http,
   url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.land",
   part_length = 16,

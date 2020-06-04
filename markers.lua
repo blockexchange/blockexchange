@@ -4,21 +4,21 @@ local pos1_player_map = {}
 local pos2_player_map = {}
 
 function blockexchange.get_pos(index, playername)
-	if minetest.get_modpath("worldedit") then
-	  -- use WE's positions
-		if index == 1 then
-			return worldedit.pos1[playername]
-		else
-			return worldedit.pos2[playername]
-		end
-	end
+  if minetest.get_modpath("worldedit") then
+    -- use WE's positions
+    if index == 1 then
+      return worldedit.pos1[playername]
+    else
+      return worldedit.pos2[playername]
+    end
+  end
 
-	-- use local positions
-	if index == 1 then
-		return blockexchange.pos1[playername]
-	else
-		return blockexchange.pos2[playername]
-	end
+  -- use local positions
+  if index == 1 then
+    return blockexchange.pos1[playername]
+  else
+    return blockexchange.pos2[playername]
+  end
 end
 
 function blockexchange.set_pos(index, playername, pos)
@@ -64,7 +64,7 @@ end
 
 -- cleanup
 minetest.register_on_leaveplayer(function(player)
-	local playername = player:get_player_name()
-	pos1_player_map[playername] = nil
-	pos2_player_map[playername] = nil
+  local playername = player:get_player_name()
+  pos1_player_map[playername] = nil
+  pos2_player_map[playername] = nil
 end)
