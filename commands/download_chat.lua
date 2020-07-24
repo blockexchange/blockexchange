@@ -3,7 +3,7 @@ minetest.register_chatcommand("bx_load", {
 	description = "Downloads a schema from the blockexchange to the selected pos1",
   privs = { blockexchange = true },
 	func = function(name, param)
-    local _, _, username, schemaname = string.find(param, "^([^%s]+)%s+([^%s]+)%s*$")
+    local _, _, username, schemaname = string.find(param, "^([^%s]+)%s+(.*)$")
 
     if not username or not schemaname then
       return false, "Usage: /bx_load <username> <schemaname>"
@@ -31,7 +31,7 @@ minetest.register_chatcommand("bx_load_here", {
       blockexchange.set_pos(1, name, pos)
 		end
 
-    local _, _, username, schemaname = string.find(param, "^([^%s]+)%s+([^%s]+)%s*$")
+    local _, _, username, schemaname = string.find(param, "^([^%s]+)%s+(.*)$")
     if not username or not schemaname then
       return false, "Usage: /bx_load_here <username> <schemaname>"
     end

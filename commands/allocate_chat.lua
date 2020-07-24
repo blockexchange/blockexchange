@@ -11,7 +11,7 @@ minetest.register_chatcommand("bx_allocate", {
       return false, "you need to set /bx_pos1 first!"
     end
 
-    local _, _, username, schemaname = string.find(param, "^([^%s]+)%s+([^%s]+)%s*$")
+    local _, _, username, schemaname = string.find(param, "^([^%s]+)%s+(.*)$")
     if not username or not schemaname then
       return false, "Usage: /bx_allocate <username> <schemaname>"
     end

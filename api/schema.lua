@@ -69,7 +69,8 @@ function blockexchange.api.get_schema_by_id(schema_id, callback, err_callback)
 end
 
 function blockexchange.api.get_schema_by_name(username, schemaname, download, callback, err_callback)
-  local schema_url = url .. "/api/search/schema/byname/" .. username .. "/" .. schemaname
+  -- replace spaces with %20
+  local schema_url = url .. "/api/search/schema/byname/" .. username .. "/" .. schemaname:gsub(" ", '%%20')
   if download then
     -- increment download counter
     schema_url = schema_url .. "?download=true"
