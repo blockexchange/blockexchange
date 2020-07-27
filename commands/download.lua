@@ -10,12 +10,12 @@ function blockexchange.download(playername, pos1, username, schemaname)
 	}
 
 	blockexchange.api.get_schema_by_name(username, schemaname, true, function(schema)
-		ctx.pos2 = vector.add(pos1, {x=schema.size_x, y=schema.size_y, z=schema.size_z})
+		ctx.pos2 = vector.add(pos1, {x=schema.max_x, y=schema.max_y, z=schema.max_z})
 		ctx.schema = schema
 		ctx.total_parts =
-	    math.ceil(schema.size_x / blockexchange.part_length) *
-	    math.ceil(schema.size_y / blockexchange.part_length) *
-	    math.ceil(schema.size_z / blockexchange.part_length)
+	    math.ceil(schema.max_x / blockexchange.part_length) *
+	    math.ceil(schema.max_y / blockexchange.part_length) *
+	    math.ceil(schema.max_z / blockexchange.part_length)
 
 		blockexchange.start_process(ctx)
 	end,

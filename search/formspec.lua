@@ -20,7 +20,9 @@ function blockexchange.show_search_result_formspec(playername, schemas)
   -- render list items
   for _, schema in ipairs(schemas) do
 
-    local size = schema.size_x .. " / " .. schema.size_y .. " / " .. schema.size_z
+    local size = (schema.max_x+1) .. " / " ..
+      (schema.max_y+1) .. " / " ..
+      (schema.max_z+1)
 
     list = list .. "," ..
       schema.user.name .. "," ..
