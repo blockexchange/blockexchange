@@ -33,6 +33,8 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
     size = vector.add( vector.subtract(pos2, pos1), 1 )
   }
 
+	local air_only = true
+
   -- loop over all blocks and fill cid,param1 and param2
   for x=pos1.x,pos2.x do
   for y=pos1.y,pos2.y do
@@ -44,6 +46,11 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
       -- replace ignore blocks with air
       node_id = air_content_id
     end
+
+		if air_only and node_id ~= air_content_id then
+			-- non-air node found, toggle flag
+			air_only = false
+		end
 
     table.insert(data.node_ids, node_id)
     table.insert(data.param1, param1[i])
@@ -103,7 +110,7 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 
 
 
-  return data, node_count
+  return data, node_count, air_only
 end
 
 -- local nodename->id cache

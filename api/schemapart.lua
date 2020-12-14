@@ -35,8 +35,12 @@ function blockexchange.api.get_schemapart(schema_id, pos, callback, err_callback
     timeout = 5
   }, function(res)
     if res.succeeded and res.code == 200 then
+			-- schema part found
       local schemapart = minetest.parse_json(res.data)
       callback(schemapart)
+		elseif res.code == 404 then
+			-- air only part
+			callback(nil)
 		elseif type(err_callback) == "function" then
       err_callback(res.code or 0)
     end

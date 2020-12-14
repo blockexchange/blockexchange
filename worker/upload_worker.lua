@@ -56,7 +56,7 @@ blockexchange.register_process_type("upload", function(ctx, process)
   pos2.y = math.min(pos2.y, ctx.pos2.y)
   pos2.z = math.min(pos2.z, ctx.pos2.z)
 
-  local data, node_count = blockexchange.serialize_part(ctx.current_pos, pos2)
+  local data, node_count, air_only = blockexchange.serialize_part(ctx.current_pos, pos2)
 
   -- collect mod count info
   for k, v in pairs(node_count) do
@@ -74,36 +74,31 @@ blockexchange.register_process_type("upload", function(ctx, process)
   end
 
   local diff = minetest.get_us_time() - start
-
 	local relative_pos = vector.subtract(ctx.current_pos, ctx.pos1)
 
-	--[[
-	local json = minetest.write_json(data, true);
-	local file = io.open(minetest.get_worldpath().."/schemapart_" .. ctx.schema.id .. "_" ..
-		minetest.pos_to_string(relative_pos) .. ".json", "w" );
-	if file then
-		file:write(json)
-		file:close()
+	if air_only then
+		-- don't upload air-only
+		shift(ctx)
+	else
+		-- upload part
+	  blockexchange.api.create_schemapart(ctx.token, ctx.schema.id, relative_pos, data, function()
+	    minetest.log("action", "[blockexchange] Upload of part " .. minetest.pos_to_string(ctx.current_pos) ..
+	    " completed (processing took " .. diff .. " micros)")
+
+	    if has_monitoring then
+	      uploaded_blocks.inc(1)
+	    end
+
+	    shift(ctx)
+	  end,
+		function(http_code)
+				local msg = "[blockexchange] create schemapart failed with http code: " .. (http_code or "unkown") ..
+					" retrying..."
+				minetest.log("error", msg)
+				minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
+	      -- wait a couple seconds
+	      process.defer(5)
+		end)
 	end
-	--]]
-
-  blockexchange.api.create_schemapart(ctx.token, ctx.schema.id, relative_pos, data, function()
-    minetest.log("action", "[blockexchange] Upload of part " .. minetest.pos_to_string(ctx.current_pos) ..
-    " completed (processing took " .. diff .. " micros)")
-
-    if has_monitoring then
-      uploaded_blocks.inc(1)
-    end
-
-    shift(ctx)
-  end,
-	function(http_code)
-			local msg = "[blockexchange] create schemapart failed with http code: " .. (http_code or "unkown") ..
-				" retrying..."
-			minetest.log("error", msg)
-			minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
-      -- wait a couple seconds
-      process.defer(5)
-	end)
 
 end)

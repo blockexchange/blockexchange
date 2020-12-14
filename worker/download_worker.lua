@@ -32,9 +32,15 @@ blockexchange.register_process_type("download", function(ctx, process)
 	local relative_pos = vector.subtract(ctx.current_pos, ctx.pos1)
 
 	blockexchange.api.get_schemapart(ctx.schema.id, relative_pos, function(schemapart)
-		blockexchange.deserialize_part(ctx.current_pos, schemapart.data);
+		if schemapart then
+			-- only deserialize if the part was found (non-empty)
+			blockexchange.deserialize_part(ctx.current_pos, schemapart.data);
+
+			-- TODO: overwrite inworld parts if downloaded part is air-only
+		end
 
 		if has_monitoring then
+			-- count 200 and 404 blocks
 			downloaded_blocks.inc(1)
 		end
 
