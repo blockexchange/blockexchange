@@ -97,6 +97,20 @@ minetest.register_chatcommand("bx_login_temp", {
   end
 })
 
+minetest.register_chatcommand("bx_token", {
+	description = "Login with given token",
+	func = function(name, token)
+		if not minetest.check_player_privs(name, { blockexchange = true }) and
+			not minetest.check_player_privs(name, { blockexchange_protected_upload = true }) then
+				return false, "Required privs: 'blockexchange' or 'blockexchange_protected_upload'"
+		end
+
+		blockexchange.tokens[name] = token
+		blockexchange.persist_tokens()
+		return true, "token set successfully"
+  end
+})
+
 minetest.register_chatcommand("bx_logout", {
 	description = "Logs the current user out",
 	func = function(name)
