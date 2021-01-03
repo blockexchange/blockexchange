@@ -39,7 +39,7 @@ Schemas can be browsed and administered on the central server: https://blockexch
 * Grant yourself the needed privs with `/grantme blockexchange`
 * Build a thing
 * Set positions on the opposite corners with `/bx_pos1` and `/bx_pos2`
-* Login with a temporary account: `/bx_login_temp`
+* Login with an access token generated from https://blockexchange.minetest.land: `/bx_login [username] [access_token]`
 * Save the schematic with `/bx_save <name> <description>`
 
 # Chat commands
@@ -55,10 +55,7 @@ Schemas can be browsed and administered on the central server: https://blockexch
 * **/bx_load [username] [schemaname]**
 * **/bx_load_here [username] [schemaname]**
 * **/bx_allocate [username] [schemaname]**
-* **/bx_login_temp** logs in with a temporary user (the saved schemas are only temporary!)
-* **/bx_token [token]** Login with a token created in the Web-UI
-* **/bx_login [username] [password]**
-* **/bx_register [username] [password] [mail?]**
+* **/bx_login [username] [access_token]**
 
 ## Write (needs a login)
 

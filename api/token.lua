@@ -2,10 +2,10 @@
 local http = blockexchange.http
 local url = blockexchange.url
 
-function blockexchange.api.get_token(name, password, callback, err_callback)
+function blockexchange.api.get_token(name, access_token, callback, err_callback)
   local json = minetest.write_json({
     name = name,
-    password = password
+    access_token = access_token
   });
 
   http.fetch({
