@@ -1,5 +1,5 @@
 
-function blockexchange.upload(playername, pos1, pos2, name, description)
+function blockexchange.upload(playername, pos1, pos2, name)
 	pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
 
 	local total_parts =
@@ -23,7 +23,7 @@ function blockexchange.upload(playername, pos1, pos2, name, description)
 		mod_count = {}
 	}
 
-  blockexchange.api.create_schema(token, pos1, pos2, name, description, license, function(schema)
+  blockexchange.api.create_schema(token, pos1, pos2, name, "", license, function(schema)
 		ctx.schema = schema
 		minetest.log("action", "[blockexchange] schema created with id: " .. schema.id)
 		minetest.chat_send_player(playername,

@@ -1,5 +1,5 @@
 
-function blockexchange.protectioncheck(playername, pos1, pos2, schemaname, description)
+function blockexchange.protectioncheck(playername, pos1, pos2, schemaname)
   local total_parts =
     math.ceil(math.abs(pos1.x - pos2.x) / blockexchange.part_length) *
     math.ceil(math.abs(pos1.y - pos2.y) / blockexchange.part_length) *
@@ -15,7 +15,7 @@ function blockexchange.protectioncheck(playername, pos1, pos2, schemaname, descr
     progress_percent = 0,
     total_parts = total_parts,
     schemaname = schemaname,
-    description = description
+    description = ""
   }
 
   -- start emerge worker with context

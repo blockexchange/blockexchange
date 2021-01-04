@@ -59,7 +59,7 @@ Schemas can be browsed and administered on the central server: https://blockexch
 
 ## Write (needs a login)
 
-* **/bx_save [schemaname] [description]**
+* **/bx_save [schemaname]**
 * **/bx_logout** logs out
 * **/bx_login** shows the login status
 
