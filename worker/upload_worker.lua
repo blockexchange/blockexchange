@@ -78,6 +78,21 @@ blockexchange.register_process_type("upload", function(ctx, process)
   local diff = minetest.get_us_time() - start
 	local relative_pos = vector.subtract(ctx.current_pos, ctx.pos1)
 
+	if node_count["blockexchange:controller"] > 0 then
+		-- controller found, save upload data to node metadata
+
+		-- find controller positions
+		local pos_list = minetest.find_nodes_in_area(ctx.current_pos, pos2, {"blockexchange:controller"})
+		for _, pos in ipairs(pos_list) do
+			local meta = minetest.get_meta(pos)
+			meta:set_string("owner", ctx.playername)
+			meta:set_string("schemaname", ctx.schemaname)
+			meta:set_string("pos1", minetest.pos_to_string(ctx.pos1))
+			meta:set_string("pos2", minetest.pos_to_string(ctx.pos2))
+			meta:set_string("infotext", "Controller for schema '" .. ctx.schemaname .. "' owned by '" .. ctx.playername .. "'")
+		end
+	end
+
 	if air_only then
 		-- don't upload air-only
 		shift(ctx)
