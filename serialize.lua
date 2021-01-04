@@ -116,13 +116,13 @@ end
 -- local nodename->id cache
 local local_nodename_to_id_mapping = {} -- name -> id
 
-function blockexchange.deserialize_part(pos1, data)
+function blockexchange.deserialize_part(pos1, pos2, data)
   local foreign_nodeid_to_name_mapping = {} -- id -> name
   for k, v in pairs(data.node_mapping) do
     foreign_nodeid_to_name_mapping[v] = k
   end
 
-  local pos2 = vector.add(pos1, vector.subtract(data.size, 1))
+	local node_names = {}
 
   local manip = minetest.get_voxel_manip()
   local e1, e2 = manip:read_from_map(pos1, pos2)
@@ -130,6 +130,8 @@ function blockexchange.deserialize_part(pos1, data)
 
   for i, node_id in ipairs(data.node_ids) do
     local node_name = foreign_nodeid_to_name_mapping[node_id]
+		node_names[node_name] = true
+
     local local_node_id = local_nodename_to_id_mapping[node_name]
     if not local_node_id then
       if minetest.registered_nodes[node_name] then
@@ -184,6 +186,8 @@ function blockexchange.deserialize_part(pos1, data)
       local relative_pos = minetest.string_to_pos(pos_str)
       local absolute_pos = vector.add(pos1, relative_pos)
       minetest.get_node_timer(absolute_pos):set(timer_data.timeout, timer_data.elapsed)
-    end  end
+    end
+  end
 
+	return node_names
 end

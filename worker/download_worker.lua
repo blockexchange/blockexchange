@@ -36,10 +36,30 @@ blockexchange.register_process_type("download", function(ctx, process)
 	blockexchange.api.get_schemapart(ctx.schema.id, relative_pos, function(schemapart)
 		if schemapart then
 			-- only deserialize if the part was found (non-empty)
-			blockexchange.deserialize_part(ctx.current_pos, schemapart.data);
+			local pos2 = vector.add(ctx.current_pos, vector.subtract(schemapart.data.size, 1))
+			local node_names = blockexchange.deserialize_part(ctx.current_pos, pos2, schemapart.data);
 
 			minetest.log("action", "[blockexchange] Download of part " .. minetest.pos_to_string(ctx.current_pos) ..
 	    " completed")
+
+			if node_names["blockexchange:controller"] then
+				-- controller found, save schema data to node metadata
+
+				-- find controller positions
+				local pos_list = minetest.find_nodes_in_area(ctx.current_pos, pos2, {"blockexchange:controller"})
+				for _, pos in ipairs(pos_list) do
+					local meta = minetest.get_meta(pos)
+					meta:set_string("owner", ctx.playername)
+					meta:set_string("username", ctx.username)
+					meta:set_string("schemaname", ctx.schemaname)
+					meta:set_string("pos1", minetest.pos_to_string(ctx.pos1))
+					meta:set_string("pos2", minetest.pos_to_string(ctx.pos2))
+					meta:set_string("infotext",
+						"Controller for schema '".. ctx.username .. "/" .. ctx.schemaname .. "' " ..
+						"owned by '" .. ctx.playername .. "'"
+					)
+				end
+			end
 
 			-- TODO: overwrite inworld parts if downloaded part is air-only
 		end

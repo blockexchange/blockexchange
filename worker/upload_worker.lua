@@ -78,7 +78,7 @@ blockexchange.register_process_type("upload", function(ctx, process)
 	local diff = minetest.get_us_time() - start
 	local relative_pos = vector.subtract(ctx.current_pos, ctx.pos1)
 
-	if node_count["blockexchange:controller"] > 0 then
+	if node_count["blockexchange:controller"] then
 		-- controller found, save upload data to node metadata
 
 		-- find controller positions

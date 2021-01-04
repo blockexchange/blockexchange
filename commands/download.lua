@@ -3,6 +3,7 @@ function blockexchange.download(playername, pos1, username, schemaname)
 	local ctx = {
 		type = "download",
 		playername = playername,
+		username = username,
 		schemaname = schemaname,
 		pos1 = pos1,
 		current_pos = table.copy(pos1),
