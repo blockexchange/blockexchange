@@ -27,6 +27,7 @@ local function scheduler()
 
     if micros > (blockexchange.max_cpu_micros_per_second / 2) then
       -- cpu usage exceeded, take a break
+			table.insert(new_processes, ctx)
       break
     end
 

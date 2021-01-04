@@ -75,6 +75,9 @@ dofile(MP.."/worker/upload_worker.lua")
 dofile(MP.."/worker/emerge_worker.lua")
 dofile(MP.."/worker/protectioncheck_worker.lua")
 
+-- hud
+dofile(MP.."/hud.lua")
+
 -- nodes
 dofile(MP.."/nodes/controller.lua")
 dofile(MP.."/nodes/placeholder.lua")

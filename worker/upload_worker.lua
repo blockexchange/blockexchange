@@ -19,6 +19,8 @@ end
 
 blockexchange.register_process_type("upload", function(ctx, process)
 
+	local hud_taskname = "[" .. ctx._meta.id .. "] Uploading '" .. ctx.schemaname .. "'"
+
   if not ctx.current_pos then
 		-- upload of individual parts finished, finalize schema and update stats
     -- TODO: move to own process-types/workers
@@ -43,12 +45,12 @@ blockexchange.register_process_type("upload", function(ctx, process)
       minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
     end)
 
+		blockexchange.hud_remove(ctx.playername, hud_taskname)
     process.stop()
     return
   end
 
-  minetest.chat_send_player(ctx.playername, "[blockexchange] Upload pos: " .. minetest.pos_to_string(ctx.current_pos) ..
-    " Progress: " .. ctx.progress_percent .. "% (" .. ctx.current_part .. "/" .. ctx.total_parts .. ")")
+	blockexchange.hud_update_progress(ctx.playername, hud_taskname, ctx.progress_percent, 0x00FF00)
   local start = minetest.get_us_time()
 
 	local pos2 = vector.add(ctx.current_pos, blockexchange.part_length - 1)

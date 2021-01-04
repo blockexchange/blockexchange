@@ -13,6 +13,7 @@ function blockexchange.upload(playername, pos1, pos2, name)
 	local ctx = {
 		type = "upload",
 		playername = playername,
+		schemaname = name,
 		token = token,
 		pos1 = pos1,
 		pos2 = pos2,

@@ -1,18 +1,19 @@
 
 
 blockexchange.register_process_type("emerge", function(ctx, process)
+	local hud_taskname = "[" .. ctx._meta.id .. "] Emerging " .. minetest.pos_to_string(ctx.pos1)
 
   if not ctx.current_pos then
 		local msg = "[blockexchange] Emerge complete with " .. ctx.total_parts .. " parts"
     minetest.log("action", msg)
 		minetest.chat_send_player(ctx.playername, msg)
     ctx.success = true
+		blockexchange.hud_remove(ctx.playername, hud_taskname)
     process.stop()
     return
   end
 
-  minetest.log("action", "[blockexchange] Emerge pos: " .. minetest.pos_to_string(ctx.current_pos) ..
-    " Progress: " .. ctx.progress_percent .. "% (" .. ctx.current_part .. "/" .. ctx.total_parts .. ")")
+	blockexchange.hud_update_progress(ctx.playername, hud_taskname, ctx.progress_percent, 0x00FF00)
 
 	local pos2 = vector.add(ctx.current_pos, blockexchange.part_length - 1)
 	pos2.x = math.min(pos2.x, ctx.pos2.x)

@@ -2,6 +2,8 @@
 
 blockexchange.register_process_type("protectioncheck", function(ctx, process)
 
+	local hud_taskname = "[" .. ctx._meta.id .. "] Protectioncheck '" .. ctx.schemaname .. "'"
+
   if not ctx.current_pos then
 		local msg = "[blockexchange] Protection check complete with " .. ctx.total_parts .. " parts"
     minetest.log("action", msg)
@@ -10,12 +12,12 @@ blockexchange.register_process_type("protectioncheck", function(ctx, process)
 
     -- kick off upload
     ctx.upload_ctx = blockexchange.upload(ctx.playername, ctx.pos1, ctx.pos2, ctx.schemaname, ctx.description)
+		blockexchange.hud_remove(ctx.playername, hud_taskname)
     process.stop()
     return
   end
 
-  minetest.log("action", "[blockexchange] Protection check: " .. minetest.pos_to_string(ctx.current_pos) ..
-    " Progress: " .. ctx.progress_percent .. "% (" .. ctx.current_part .. "/" .. ctx.total_parts .. ")")
+	blockexchange.hud_update_progress(ctx.playername, hud_taskname, ctx.progress_percent, 0x00FF00)
 
 	local pos2 = vector.add(ctx.current_pos, blockexchange.part_length - 1)
 	pos2.x = math.min(pos2.x, ctx.pos2.x)
@@ -38,6 +40,7 @@ blockexchange.register_process_type("protectioncheck", function(ctx, process)
       minetest.pos_to_string(ctx.current_pos) .. " and " ..
       minetest.pos_to_string(pos2)
     )
+		blockexchange.hud_remove(ctx.playername, hud_taskname)
     process.stop()
   end
 
