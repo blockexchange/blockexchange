@@ -8,7 +8,8 @@ local function show_formspec(pos, playername)
 
 		"button_exit[0,2.5;7,1;download;Download from blockexchange]" ..
 		"button_exit[0,3.5;7,1;upload;Upload to blockexchange]" ..
-		"button_exit[0,4.5;7,1;abort;Abort]" ..
+		"button_exit[0,4.5;7,1;mark;Mark area]" ..
+		"button_exit[0,5.5;7,1;abort;Abort]" ..
 		""
 
 	minetest.show_formspec(playername,
@@ -48,6 +49,13 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		blockexchange.upload(playername, pos1, pos2, schemaname)
 	end
 
+	if fields.mark then
+		local pos1 = minetest.string_to_pos(meta:get_string("pos1"))
+		local pos2 = minetest.string_to_pos(meta:get_string("pos2"))
+
+		blockexchange.set_pos(1, playername, pos1)
+		blockexchange.set_pos(2, playername, pos2)
+	end
 end)
 
 
