@@ -2,21 +2,21 @@
 local http = minetest.request_http_api()
 
 if not http then
-  minetest.log("error", "the 'blockexchange' mod needs access to the http api!")
-  return
+	minetest.log("error", "the 'blockexchange' mod needs access to the http api!")
+	return
 end
 
 
 blockexchange = {
-  api = {},
-  api_version_major = 1,
-  http = http,
-  url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.land",
-  part_length = 16,
-  -- maximum usage of microseconds per second for blockexchange processes
-  max_cpu_micros_per_second = 50000,
-  pos1 = {}, -- name -> pos
-  pos2 = {} -- name -> pos
+	api = {},
+	api_version_major = 1,
+	http = http,
+	url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.land",
+	part_length = 16,
+	-- maximum usage of microseconds per second for blockexchange processes
+	max_cpu_micros_per_second = 50000,
+	pos1 = {}, -- name -> pos
+	pos2 = {} -- name -> pos
 }
 
 local MP = minetest.get_modpath("blockexchange")
