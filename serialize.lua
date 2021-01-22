@@ -12,6 +12,20 @@ end)
 local air_content_id = minetest.get_content_id("air")
 local ignore_content_id = minetest.get_content_id("ignore")
 
+-- checks if a table is empty
+local function is_empty(tbl)
+	if not tbl then
+		return true
+	end
+
+	for k in pairs(tbl) do
+		if k then
+			return false
+		end
+	end
+	return true
+end
+
 function blockexchange.serialize_part(pos1, pos2, node_count)
   local manip = minetest.get_voxel_manip()
   local e1, e2 = manip:read_from_map(pos1, pos2)
@@ -87,8 +101,11 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
       end
     end
 
-    data.metadata.meta = data.metadata.meta or {}
-    data.metadata.meta[minetest.pos_to_string(relative_pos)] = meta
+		-- re-check if metadata actually exists (may happen with minetest.find_nodes_with_meta)
+		if not is_empty(meta.fields) or not is_empty(meta.inventory) then
+	    data.metadata.meta = data.metadata.meta or {}
+	    data.metadata.meta[minetest.pos_to_string(relative_pos)] = meta
+		end
   end
 
   -- serialize node timers
