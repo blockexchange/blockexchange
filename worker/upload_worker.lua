@@ -95,6 +95,8 @@ blockexchange.register_process_type("upload", function(ctx, process)
 
 	if air_only then
 		-- don't upload air-only
+		minetest.log("action", "[blockexchange] NOT Upload of part " .. minetest.pos_to_string(ctx.current_pos) ..
+		" because it is air-only (processing took " .. diff .. " micros)")
 		shift(ctx)
 	else
 		-- upload part
