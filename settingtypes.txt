@@ -1,0 +1,2 @@
+# the url to the central blockexchange server
+blockexchange.url (blockexchange server url) string https://blockexchange.minetest.land
