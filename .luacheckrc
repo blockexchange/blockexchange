@@ -1,6 +1,9 @@
 globals = {
 	"blockexchange",
-	"worldedit"
+	"worldedit",
+	["minetest"] = {
+		["request_http_api"] = true
+	}
 }
 
 read_globals = {
@@ -15,5 +18,8 @@ read_globals = {
 	"VoxelArea",
 
 	-- opt deps
-	"areas", "monitoring"
+	"areas", "monitoring",
+
+	-- testing
+	"mineunit", "sourcefile", "assert"
 }
