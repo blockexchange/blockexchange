@@ -4,10 +4,7 @@ mineunit("core")
 mineunit("player")
 mineunit("default/functions")
 
-minetest.request_http_api = function()
-	return {}
-end
-
+sourcefile("spec/common")
 sourcefile("init")
 
 describe("blockexchange.sort_pos", function()
@@ -18,5 +15,10 @@ describe("blockexchange.sort_pos", function()
 		assert.not_nil(pos1)
 		assert.not_nil(pos2)
 		assert.equals(0, pos1.x)
+		assert.equals(0, pos1.y)
+		assert.equals(0, pos1.z)
+		assert.equals(1, pos2.x)
+		assert.equals(2, pos2.y)
+		assert.equals(3, pos2.z)
 	end)
 end)
