@@ -1,7 +1,8 @@
 
 
-blockexchange.register_process_type("emerge", function(ctx, process)
-	local hud_taskname = "[" .. ctx._meta.id .. "] Emerging " .. minetest.pos_to_string(ctx.pos1)
+function blockexchange.emerge_worker(ctx)
+	local hud_taskname = "[Emerge] '" .. minetest.pos_to_string(ctx.pos1) ..
+		" - " .. minetest.pos_to_string(ctx.pos2) .. "'"
 
   if not ctx.current_pos then
 		local msg = "[blockexchange] Emerge complete with " .. ctx.total_parts .. " parts"
@@ -9,7 +10,6 @@ blockexchange.register_process_type("emerge", function(ctx, process)
 		minetest.chat_send_player(ctx.playername, msg)
     ctx.success = true
 		blockexchange.hud_remove(ctx.playername, hud_taskname)
-    process.stop()
     return
   end
 
@@ -28,7 +28,8 @@ blockexchange.register_process_type("emerge", function(ctx, process)
       -- increment stats
       ctx.current_part = ctx.current_part + 1
       ctx.progress_percent = math.floor(ctx.current_part / ctx.total_parts * 100 * 10) / 10
+			minetest.after(1, blockexchange.emerge_worker, ctx)
     end
   end)
 
-end)
+end

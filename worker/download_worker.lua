@@ -17,15 +17,13 @@ local function shift(ctx)
   ctx.progress_percent = math.floor(ctx.current_part / ctx.total_parts * 100 * 10) / 10
 end
 
-blockexchange.register_process_type("download", function(ctx, process)
-
-	local hud_taskname = "[" .. ctx._meta.id .. "] Downloading '" .. ctx.schemaname .. "'"
+function blockexchange.download_worker(ctx)
+	local hud_taskname = "[Download] '" .. ctx.playername .. "/".. ctx.schemaname .. "'"
 
 	if not ctx.current_pos then
     minetest.chat_send_player(ctx.playername, "Download complete with " .. ctx.total_parts .. " parts")
 		ctx.success = true
 		blockexchange.hud_remove(ctx.playername, hud_taskname)
-		process.stop()
     return
   end
 
@@ -70,6 +68,7 @@ blockexchange.register_process_type("download", function(ctx, process)
 		end
 
 		shift(ctx)
+		minetest.after(0.5, blockexchange.download_worker, ctx)
 	end,
 	function(http_code)
 		local msg = "[blockexchange] download schemapart failed with http code: " .. (http_code or "unkown") ..
@@ -77,7 +76,7 @@ blockexchange.register_process_type("download", function(ctx, process)
 		minetest.log("error", msg)
 		minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
     -- wait a couple seconds
-    process.defer(5)
+    minetest.after(5, blockexchange.download_worker, ctx)
 	end)
 
-end)
+end

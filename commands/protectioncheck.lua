@@ -19,7 +19,7 @@ function blockexchange.protectioncheck(playername, pos1, pos2, schemaname)
   }
 
   -- start emerge worker with context
-  blockexchange.start_process(ctx)
+  blockexchange.protectioncheck_worker(ctx)
 
   return ctx
 end

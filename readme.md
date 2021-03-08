@@ -63,14 +63,6 @@ Schemas can be browsed and administered on the central server: https://blockexch
 * **/bx_logout** logs out
 * **/bx_login** shows the login status
 
-## Process management
-
-Download/Upload and allocate spawns background processes which can
-be managed with chat-commands:
-
-* **/bx_ps** shows all current blockexchange processes
-* **/bx_kill [id]** Kills a process by its id
-
 # Privileges
 
 * **blockexchange** can use the blockexchange commands (admin)
