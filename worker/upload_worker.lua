@@ -95,6 +95,7 @@ function blockexchange.upload_worker(ctx)
 		minetest.log("action", "[blockexchange] NOT Uploading part " .. minetest.pos_to_string(ctx.current_pos) ..
 		" because it is air-only (processing took " .. diff .. " micros)")
 		shift(ctx)
+		minetest.after(0.5, blockexchange.upload_worker, ctx)
 	else
 		-- upload part
 		blockexchange.api.create_schemapart(ctx.token, ctx.schema.id, relative_pos, data, function()
