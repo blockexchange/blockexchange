@@ -1,0 +1,18 @@
+name: busted
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+    - uses: actions/checkout@v2.3.4
+    - name: apt
+      run: sudo apt-get install -y luarocks
+    - name: busted install
+      run: luarocks install --local busted
+    - name: busted run
+      run: $HOME/.luarocks/bin/busted .
