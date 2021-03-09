@@ -69,7 +69,12 @@ minetest.register_node("blockexchange:controller", {
 		oddly_breakable_by_hand=3
 	},
 	on_rightclick = function(pos, _, player)
+		local meta = minetest.get_meta(pos)
 		local playername = player:get_player_name()
-		show_formspec(pos, playername)
+		if meta:get_string("schemaname") ~= "" then
+			show_formspec(pos, playername)
+		else
+			minetest.chat_send_player(playername, "Initialize this controller by uploading the surrounding area")
+		end
 	end,
 })
