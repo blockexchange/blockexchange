@@ -11,6 +11,7 @@ end)
 
 local air_content_id = minetest.get_content_id("air")
 local ignore_content_id = minetest.get_content_id("ignore")
+local placeholder_id = minetest.get_content_id("blockexchange:placeholder")
 
 -- checks if a table is empty
 local function is_empty(tbl)
@@ -145,6 +146,9 @@ function blockexchange.deserialize_part(pos1, pos2, data)
 	local e1, e2 = manip:read_from_map(pos1, pos2)
 	local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
 
+	local next_unknown_nodeid = -1
+	local unknown_nodes_id_to_name_mapping = {}
+
 	for i, node_id in ipairs(data.node_ids) do
 		local node_name = foreign_nodeid_to_name_mapping[node_id]
 		node_names[node_name] = true
@@ -155,9 +159,10 @@ function blockexchange.deserialize_part(pos1, pos2, data)
 				-- node is locally available
 				local_node_id = minetest.get_content_id(node_name)
 			else
-				-- node is not available here
-				-- TODO: make replacements configurable
-				local_node_id = minetest.get_content_id("blockexchange:placeholder")
+				-- node is not available here, give out negative nodeids
+				local_node_id = next_unknown_nodeid
+				unknown_nodes_id_to_name_mapping[local_node_id] = node_name
+				next_unknown_nodeid = next_unknown_nodeid - 1
 			end
 			local_nodename_to_id_mapping[node_name] = local_node_id
 
@@ -170,12 +175,24 @@ function blockexchange.deserialize_part(pos1, pos2, data)
 	local param1 = manip:get_light_data()
 	local param2 = manip:get_param2_data()
 
+	local placeholder_pos_hashes = {}
+
 	local j = 1
 	for x=pos1.x,pos2.x do
 		for y=pos1.y,pos2.y do
 			for z=pos1.z,pos2.z do
 				local i = area:index(x,y,z)
-				node_data[i] = data.node_ids[j]
+				if data.node_ids[j] < 0 then
+					-- unknown node, set placeholder
+					node_data[i] = placeholder_id
+					-- mark node for later
+					local hash = minetest.hash_node_position({x=x, y=y, z=z})
+					placeholder_pos_hashes[hash] = data.node_ids[j]
+				else
+					node_data[i] = data.node_ids[j]
+				end
+
+				-- place param1 and param2 regardless of known/unknown node
 				param1[i] = data.param1[j]
 				param2[i] = data.param2[j]
 				j = j + 1
@@ -193,7 +210,17 @@ function blockexchange.deserialize_part(pos1, pos2, data)
 		for pos_str, metadata in pairs(data.metadata.meta) do
 			local relative_pos = minetest.string_to_pos(pos_str)
 			local absolute_pos = vector.add(pos1, relative_pos)
-			minetest.get_meta(absolute_pos):from_table(metadata)
+			local hash = minetest.hash_node_position(absolute_pos)
+			local unknown_node_id = placeholder_pos_hashes[hash]
+			if unknown_node_id then
+				-- extract node name
+				local node_name = unknown_nodes_id_to_name_mapping[unknown_node_id]
+				-- populate proper placeholder node
+				blockexchange.placeholder_populate(absolute_pos, node_name, metadata)
+			else
+				-- plain metadata of a known node
+				minetest.get_meta(absolute_pos):from_table(metadata)
+			end
 		end
 	end
 

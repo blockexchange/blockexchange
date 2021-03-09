@@ -32,6 +32,10 @@ dofile(MP.."/api/token.lua")
 -- clear http reference from global scope
 blockexchange.http = nil
 
+-- nodes
+dofile(MP.."/nodes/controller.lua")
+dofile(MP.."/nodes/placeholder.lua")
+
 -- internal stuff
 dofile(MP.."/privs.lua")
 dofile(MP.."/markers.lua")
@@ -71,7 +75,3 @@ dofile(MP.."/worker/protectioncheck_worker.lua")
 
 -- hud
 dofile(MP.."/hud.lua")
-
--- nodes
-dofile(MP.."/nodes/controller.lua")
-dofile(MP.."/nodes/placeholder.lua")
