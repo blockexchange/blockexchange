@@ -21,3 +21,25 @@ function blockexchange.placeholder_populate(pos, node_name, metadata)
 	meta:set_string("original_nodename", node_name)
 	meta:set_string("original_metadata", serialized_meta)
 end
+
+
+minetest.register_lbm({
+	label = "restore unknown nodes",
+	name = "blockexchange:restore_unknown_nodes",
+	nodenames = {"blockexchange:blockexchange"},
+	run_at_every_load = true,
+	action = function(pos)
+		local meta = minetest.get_meta(pos)
+		local nodename = meta:get_string("original_nodename")
+		if minetest.registered_nodes[nodename] then
+			-- node exists now, restore it
+			minetest.swap_node(pos, { name=nodename })
+			local serialized_meta = meta:get_string("original_metadata")
+			if serialized_meta ~= "" then
+				-- restore metadata and inventory
+				local metadata = minetest.deserialize(serialized_meta)
+				meta:from_table(metadata)
+			end
+		end
+	end
+})
