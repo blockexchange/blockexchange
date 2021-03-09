@@ -37,6 +37,7 @@ dofile(MP.."/privs.lua")
 dofile(MP.."/markers.lua")
 dofile(MP.."/token.lua")
 dofile(MP.."/serialize.lua")
+dofile(MP.."/deserialize.lua")
 dofile(MP.."/license.lua")
 
 -- utils

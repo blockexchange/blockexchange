@@ -1,5 +1,4 @@
 -- placeholder node for foreign unknown nodes
-
 minetest.register_node("blockexchange:placeholder", {
 	description = "Blockexchange paceholder node",
 	groups = {
@@ -16,30 +15,43 @@ minetest.register_node("blockexchange:placeholder", {
 -- store the original metadata for later extraction if the node is available then
 function blockexchange.placeholder_populate(pos, node_name, metadata)
 	local meta = minetest.get_meta(pos)
-	local serialized_meta = minetest.serialize(metadata)
 	meta:set_string("infotext", "Unknown node: '" .. node_name .. "'")
 	meta:set_string("original_nodename", node_name)
-	meta:set_string("original_metadata", serialized_meta)
+
+	if metadata then
+		local serialized_meta = minetest.serialize(metadata)
+		meta:set_string("original_metadata", serialized_meta)
+	end
+end
+
+-- try to restore the placeholder at the position
+function blockexchange.placeholder_replace(pos)
+	local meta = minetest.get_meta(pos)
+	local nodename = meta:get_string("original_nodename")
+	if minetest.registered_nodes[nodename] then
+		-- node exists now, restore it
+		local node = minetest.get_node(pos)
+		node.name = nodename
+		minetest.swap_node(pos, node)
+
+		local serialized_meta = meta:get_string("original_metadata")
+		-- clear stored recover data
+		meta:set_string("infotext", "")
+		meta:set_string("original_metadata", "")
+		meta:set_string("original_nodename", "")
+		if serialized_meta ~= "" then
+			-- restore metadata and inventory
+			local metadata = minetest.deserialize(serialized_meta)
+			meta:from_table(metadata)
+		end
+	end
 end
 
 
 minetest.register_lbm({
 	label = "restore unknown nodes",
 	name = "blockexchange:restore_unknown_nodes",
-	nodenames = {"blockexchange:blockexchange"},
+	nodenames = {"blockexchange:placeholder"},
 	run_at_every_load = true,
-	action = function(pos)
-		local meta = minetest.get_meta(pos)
-		local nodename = meta:get_string("original_nodename")
-		if minetest.registered_nodes[nodename] then
-			-- node exists now, restore it
-			minetest.swap_node(pos, { name=nodename })
-			local serialized_meta = meta:get_string("original_metadata")
-			if serialized_meta ~= "" then
-				-- restore metadata and inventory
-				local metadata = minetest.deserialize(serialized_meta)
-				meta:from_table(metadata)
-			end
-		end
-	end
+	action = blockexchange.placeholder_replace
 })
