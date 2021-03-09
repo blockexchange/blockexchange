@@ -3,8 +3,8 @@
 local http = blockexchange.http
 local url = blockexchange.url
 
-function blockexchange.api.create_schemamods(token, schema_id, mod_count, callback, err_callback)
-  local json = minetest.write_json(mod_count);
+function blockexchange.api.create_schemamods(token, schema_id, mod_names, callback, err_callback)
+  local json = minetest.write_json(mod_names);
 
   http.fetch({
     url = url .. "/api/schema/" .. schema_id .. "/mods",
@@ -29,8 +29,8 @@ function blockexchange.api.get_schemamods(schema_id, callback, err_callback)
     timeout = 5
   }, function(res)
     if res.succeeded and res.code == 200 then
-      local schemapart = minetest.parse_json(res.data)
-      callback(schemapart)
+      local mod_names = minetest.parse_json(res.data)
+      callback(mod_names)
 		elseif type(err_callback) == "function" then
       err_callback(res.code or 0)
     end

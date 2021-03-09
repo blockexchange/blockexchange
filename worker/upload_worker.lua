@@ -22,7 +22,14 @@ function blockexchange.upload_worker(ctx)
 
 	if not ctx.current_pos then
 		-- upload of individual parts finished, finalize schema and update stats
-		blockexchange.api.create_schemamods(ctx.token, ctx.schema.id, ctx.mod_count, function()
+
+		-- create an array with mod names
+		local mod_names = {}
+		for k in pairs(ctx.mod_names) do
+			table.insert(mod_names, k)
+		end
+
+		blockexchange.api.create_schemamods(ctx.token, ctx.schema.id, mod_names, function()
 			blockexchange.api.finalize_schema(ctx.token, ctx.schema.id, function()
 				local msg = "[blockexchange] Upload complete with " .. ctx.total_parts .. " parts"
 				minetest.log("action", msg)
@@ -58,15 +65,11 @@ function blockexchange.upload_worker(ctx)
 	local data, node_count, air_only = blockexchange.serialize_part(ctx.current_pos, pos2)
 
 	-- collect mod count info
-	for k, v in pairs(node_count) do
+	for k, _ in pairs(node_count) do
 		local i = 1
 		for str in string.gmatch(k, "([^:]+)") do
 			if i == 1 then
-				local count = ctx.mod_count[str]
-				if not count then
-					count = 0
-				end
-				ctx.mod_count[str] = count + v
+				ctx.mod_names[str] = true
 			end
 			i = i + 1
 		end

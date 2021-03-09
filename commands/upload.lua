@@ -21,7 +21,7 @@ function blockexchange.upload(playername, pos1, pos2, name)
 		current_part = 0,
 		total_parts = total_parts,
 		progress_percent = 0,
-		mod_count = {}
+		mod_names = {}
 	}
 
   blockexchange.api.create_schema(token, pos1, pos2, name, "", license, function(schema)

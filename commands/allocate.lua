@@ -13,7 +13,7 @@ function blockexchange.allocate(playername, pos1, username, schemaname)
     blockexchange.api.get_schemamods(schema.id, function(mods)
       -- collect missing mods in a list
       local missing_mods = ""
-      for modname in pairs(mods) do
+      for _, modname in ipairs(mods) do
         if not builtin_mods[modname] and not minetest.get_modpath(modname) then
           if #missing_mods > 0 then
             -- add comma separator
