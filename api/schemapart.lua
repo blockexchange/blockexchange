@@ -16,7 +16,26 @@ function blockexchange.api.create_schemapart(token, schema_id, pos, data, callba
       "Authorization: " .. token
     },
     timeout = 5,
+		method = "POST",
     post_data = json
+  }, function(res)
+    if res.succeeded and res.code == 200 then
+      callback(true)
+		elseif type(err_callback) == "function" then
+      err_callback(res.code or 0)
+    end
+  end)
+end
+
+function blockexchange.api.remove_schemapart(token, schema_id, pos, callback, err_callback)
+  http.fetch({
+    url = url .. "/api/schemapart/" .. schema_id .. "/" .. pos.x .. "/" .. pos.y .. "/" .. pos.z,
+    extra_headers = {
+      "Content-Type: application/json",
+      "Authorization: " .. token
+    },
+    timeout = 5,
+		method = "DELETE"
   }, function(res)
     if res.succeeded and res.code == 200 then
       callback(true)
