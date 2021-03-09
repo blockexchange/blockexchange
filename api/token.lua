@@ -1,6 +1,4 @@
--- localize variables to prevent tampering after mod load
-local http = blockexchange.http
-local url = blockexchange.url
+local http, url = ...
 
 function blockexchange.api.get_token(name, access_token, callback, err_callback)
   local json = minetest.write_json({

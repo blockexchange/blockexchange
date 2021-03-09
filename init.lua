@@ -10,7 +10,6 @@ end
 blockexchange = {
 	api = {},
 	api_version_major = 1,
-	http = http,
 	url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.land",
 	part_length = 16,
 	-- maximum usage of microseconds per second for blockexchange processes
@@ -22,15 +21,12 @@ blockexchange = {
 local MP = minetest.get_modpath("blockexchange")
 
 -- http api
-dofile(MP.."/api/info.lua")
-dofile(MP.."/api/schema.lua")
-dofile(MP.."/api/schemapart.lua")
-dofile(MP.."/api/schemamods.lua")
-dofile(MP.."/api/searchschema.lua")
-dofile(MP.."/api/token.lua")
-
--- clear http reference from global scope
-blockexchange.http = nil
+loadfile(MP.."/api/info.lua")(http, blockexchange.url)
+loadfile(MP.."/api/schema.lua")(http, blockexchange.url)
+loadfile(MP.."/api/schemapart.lua")(http, blockexchange.url)
+loadfile(MP.."/api/schemamods.lua")(http, blockexchange.url)
+loadfile(MP.."/api/searchschema.lua")(http, blockexchange.url)
+loadfile(MP.."/api/token.lua")(http, blockexchange.url)
 
 -- nodes
 dofile(MP.."/nodes/controller.lua")

@@ -1,6 +1,4 @@
--- localize variables to prevent tampering after mod load
-local http = blockexchange.http
-local url = blockexchange.url
+local http, url = ...
 
 function blockexchange.api.find_schema_by_keywords(keywords, callback, err_callback)
   local json = minetest.write_json({

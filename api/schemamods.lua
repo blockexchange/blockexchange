@@ -1,7 +1,4 @@
-
--- localize variables to prevent tampering after mod load
-local http = blockexchange.http
-local url = blockexchange.url
+local http, url = ...
 
 function blockexchange.api.create_schemamods(token, schema_id, mod_names, callback, err_callback)
   local json = minetest.write_json(mod_names);
