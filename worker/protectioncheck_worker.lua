@@ -8,8 +8,11 @@ function blockexchange.protectioncheck_worker(ctx)
     minetest.log("action", msg)
 		minetest.chat_send_player(ctx.playername, msg)
 
+		-- mark as successful (for test)
+		ctx.success = true
+
     -- kick off upload
-    blockexchange.upload(ctx.playername, ctx.pos1, ctx.pos2, ctx.schemaname)
+    ctx.upload_ctx = blockexchange.upload(ctx.playername, ctx.pos1, ctx.pos2, ctx.schemaname)
 		blockexchange.hud_remove(ctx.playername, hud_taskname)
     return
   end

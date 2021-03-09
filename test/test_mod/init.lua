@@ -2,8 +2,8 @@
 minetest.log("warning", "[TEST] integration-test enabled!")
 
 local playername = "max"
-local username = "max_muster"
-local password = "n00b"
+local username = "test"
+local token_value = "xyz"
 
 local function doEmerge(pos1, pos2, callback)
 	local ctx = blockexchange.emerge(playername, pos1, pos2)
@@ -71,32 +71,25 @@ minetest.register_on_mods_loaded(function()
 	minetest.after(0, function()
 		minetest.log("warning", "[TEST] emerging area")
 		doEmerge(pos1, pos2, function()
-			blockexchange.api.register(username, password, nil, function(result)
-				if not result.success then
-					minetest.log("error", "register: " .. dump(result))
-				end
+			blockexchange.api.get_token("test", token_value, function(token)
+				assert(token)
+				blockexchange.tokens[playername] = token
+				doUpload(pos1, pos2, function(schema)
+					print("Uploaded schema: " .. dump(schema))
+					-- execute allocation
+					blockexchange.allocate(playername, pos1, username, schema.name)
 
-				blockexchange.api.get_token(username, password, function(token)
-					assert(token)
-					blockexchange.tokens[playername] = token
-					doUpload(pos1, pos2, function(schema)
-						print("Uploaded schema: " .. dump(schema))
-						-- execute allocation
-						blockexchange.allocate(playername, pos1, username, schema.name)
+					doDownload(dl_pos1, function()
+						minetest.log("warning", "[TEST] integration tests done!")
+						minetest.request_shutdown("success")
 
-						doDownload(dl_pos1, function()
-							minetest.log("warning", "[TEST] integration tests done!")
-							minetest.request_shutdown("success")
-
-							local data = minetest.write_json({ success = true }, true);
-							local file = io.open(minetest.get_worldpath().."/integration_test.json", "w" );
-							if file then
-								file:write(data)
-								file:close()
-							end
-						end)
+						local data = minetest.write_json({ success = true }, true);
+						local file = io.open(minetest.get_worldpath().."/integration_test.json", "w" );
+						if file then
+							file:write(data)
+							file:close()
+						end
 					end)
-
 				end)
 			end, function(http_code)
 				error(http_code)
