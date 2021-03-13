@@ -1,8 +1,6 @@
 #!/bin/bash
 # integration test
 
-CWD=$(dirname $0)
-cd ${CWD}/../
 
 # setup
 docker network create bx_net
@@ -44,7 +42,7 @@ WORLDDIR=${MTDIR}/worlds/world
 
 cat <<EOF > ${CFG}
  blockexchange.url = http://blockexchange_server:8080
- enable_blockexchange_integration_test = true
+ blockexchange.enable_integration_test = true
  secure.http_mods = blockexchange
 EOF
 
@@ -54,7 +52,6 @@ docker run --rm -i \
 	-v ${CFG}:/etc/minetest/minetest.conf:ro \
 	-v ${MTDIR}:/var/lib/minetest/.minetest \
   -v $(pwd)/:/var/lib/minetest/.minetest/worlds/world/worldmods/blockexchange \
-  -v $(pwd)/test/test_mod/:/var/lib/minetest/.minetest/worlds/world/worldmods/blockexchange_test \
   --network bx_net \
 	registry.gitlab.com/minetest/minetest/server:5.4.0
 
