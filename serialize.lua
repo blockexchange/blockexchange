@@ -26,6 +26,14 @@ local function is_empty(tbl)
 	return true
 end
 
+local function int_to_bytes(i)
+	local x =i + 32768
+	local h = math.floor(x/256) % 256;
+	local l = math.floor(x % 256);
+	return(string.char(h, l));
+end
+
+
 function blockexchange.serialize_part(pos1, pos2, node_count)
 	local manip = minetest.get_voxel_manip()
 	local e1, e2 = manip:read_from_map(pos1, pos2)
@@ -125,7 +133,21 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 
 	end
 
+	-- write node-data in serialized form
+	local serialized_data = ""
+	local size = #data.node_ids
 
+	for i=1,size do
+		serialized_data = serialized_data .. int_to_bytes(data.node_ids[i])
+	end
+	for i=1,size do
+		serialized_data = serialized_data .. string.char(data.param1[i])
+	end
+	for i=1,size do
+		serialized_data = serialized_data .. string.char(data.param2[i])
+	end
+
+	data.serialized_data = serialized_data
 
 	return data, node_count, air_only
 end
