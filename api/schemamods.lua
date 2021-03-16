@@ -12,7 +12,7 @@ function blockexchange.api.create_schemamods(token, schema_id, mod_names, callba
     timeout = 5,
     post_data = json
   }, function(res)
-    if res.succeeded and res.code == 200 then
+    if res.succeeded and (res.code >= 200 or res.code < 300) then
       callback(true)
 		elseif type(err_callback) == "function" then
       err_callback(res.code or 0)
