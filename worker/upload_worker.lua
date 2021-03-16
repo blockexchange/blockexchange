@@ -100,8 +100,27 @@ function blockexchange.upload_worker(ctx)
 		shift(ctx)
 		minetest.after(0.5, blockexchange.upload_worker, ctx)
 	else
+		-- package data properly over the wire
+		local metadata = minetest.write_json({
+			node_mapping = data.node_mapping,
+			size = data.size,
+			metadata = data.metadata
+		})
+
+		local compressed_metadata = minetest.compress(metadata, "deflate")
+		local compressed_data = minetest.compress(data.serialized_data, "deflate")
+
+		local schemapart = {
+			schema_id = ctx.schema.id,
+			offset_x = relative_pos.x,
+			offset_y = relative_pos.y,
+			offset_z = relative_pos.z,
+			data = minetest.encode_base64(compressed_data),
+			metadata = minetest.encode_base64(compressed_metadata)
+		}
+
 		-- upload part
-		blockexchange.api.create_schemapart(ctx.token, ctx.schema.id, relative_pos, data, function()
+		blockexchange.api.create_schemapart(ctx.token, schemapart, function()
 			minetest.log("action", "[blockexchange] Upload of part " .. minetest.pos_to_string(ctx.current_pos) ..
 			" completed (processing took " .. diff .. " micros)")
 

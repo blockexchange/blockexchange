@@ -1,25 +1,6 @@
 local http, url = ...
 
-function blockexchange.api.create_schemapart(token, schema_id, pos, data, callback, err_callback)
-
-	local metadata = minetest.write_json({
-		node_mapping = data.node_mapping,
-		size = data.size,
-		metadata = data.metadata
-	})
-
-	local compressed_metadata = minetest.compress(metadata, "deflate")
-	local compressed_data = minetest.compress(data.serialized_data, "deflate")
-
-  local json = minetest.write_json({
-    schema_id = schema_id,
-    offset_x = pos.x,
-    offset_y = pos.y,
-    offset_z = pos.z,
-    data = minetest.encode_base64(compressed_data),
-		metadata = minetest.encode_base64(compressed_metadata)
-  });
-
+function blockexchange.api.create_schemapart(token, data, callback, err_callback)
   http.fetch({
     url = url .. "/api/schemapart",
     extra_headers = {
@@ -28,7 +9,7 @@ function blockexchange.api.create_schemapart(token, schema_id, pos, data, callba
     },
     timeout = 5,
 		method = "POST",
-    post_data = json
+    post_data = minetest.write_json(data),
   }, function(res)
     if res.succeeded and res.code == 200 then
       callback(true)

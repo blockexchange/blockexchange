@@ -33,9 +33,16 @@ function blockexchange.download_worker(ctx)
 
 	blockexchange.api.get_schemapart(ctx.schema.id, relative_pos, function(schemapart)
 		if schemapart then
+			-- unpack the data
+			local compressed_metadata = minetest.decode_base64(schemapart.metadata)
+			local compressed_data = minetest.decode_base64(schemapart.data)
+
+			local metadata = minetest.parse_json(minetest.decompress(compressed_metadata, "deflate"))
+			local data = minetest.decompress(compressed_data, "deflate")
+
 			-- only deserialize if the part was found (non-empty)
-			local pos2 = vector.add(ctx.current_pos, vector.subtract(schemapart.data.size, 1))
-			local node_names = blockexchange.deserialize_part(ctx.current_pos, pos2, schemapart.data);
+			local pos2 = vector.add(ctx.current_pos, vector.subtract(metadata.size, 1))
+			local node_names = blockexchange.deserialize_part(ctx.current_pos, pos2, data, metadata);
 
 			minetest.log("action", "[blockexchange] Download of part " .. minetest.pos_to_string(ctx.current_pos) ..
 	    " completed")

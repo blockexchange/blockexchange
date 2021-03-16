@@ -5,9 +5,30 @@ local local_nodename_to_id_mapping = {} -- name -> id
 local next_unknown_nodeid = -1
 local unknown_nodes_id_to_name_mapping = {}
 
-function blockexchange.deserialize_part(pos1, pos2, data)
+function blockexchange.deserialize_part(pos1, pos2, data, metadata)
+
+	local mapblock = {
+		node_ids = {},
+		param1 = {},
+		param2 = {}
+	}
+	local data_length = math.floor(#data / 4)
+	for i=1,data_length do
+		-- 1, 3, 5 ... 8191
+		local node_id_offset = (i * 2) - 1
+		local node_id = (string.byte(data, node_id_offset) * 256) +
+		string.byte(data, node_id_offset+1) - 32768
+
+		local param1 = string.byte(data, (4096 * 2) + i)
+		local param2 = string.byte(data, (4096 * 3) + i)
+
+		table.insert(mapblock.node_ids, node_id)
+		table.insert(mapblock.param1, param1)
+		table.insert(mapblock.param2, param2)
+	end
+
 	local foreign_nodeid_to_name_mapping = {} -- id -> name
-	for k, v in pairs(data.node_mapping) do
+	for k, v in pairs(metadata.node_mapping) do
 		foreign_nodeid_to_name_mapping[v] = k
 	end
 
@@ -17,7 +38,7 @@ function blockexchange.deserialize_part(pos1, pos2, data)
 	local e1, e2 = manip:read_from_map(pos1, pos2)
 	local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
 
-	for i, node_id in ipairs(data.node_ids) do
+	for i, node_id in ipairs(mapblock.node_ids) do
 		local node_name = foreign_nodeid_to_name_mapping[node_id]
 		node_names[node_name] = true
 
@@ -36,7 +57,7 @@ function blockexchange.deserialize_part(pos1, pos2, data)
 
 		end
 
-		data.node_ids[i] = local_node_id
+		mapblock.node_ids[i] = local_node_id
 	end
 
 	local node_data = manip:get_data()
@@ -50,19 +71,19 @@ function blockexchange.deserialize_part(pos1, pos2, data)
 		for y=pos1.y,pos2.y do
 			for z=pos1.z,pos2.z do
 				local i = area:index(x,y,z)
-				if data.node_ids[j] < 0 then
+				if mapblock.node_ids[j] < 0 then
 					-- unknown node, set placeholder
 					node_data[i] = placeholder_id
 					-- mark node for later
 					local hash = minetest.hash_node_position({x=x, y=y, z=z})
-					placeholder_pos_hashes[hash] = data.node_ids[j]
+					placeholder_pos_hashes[hash] = mapblock.node_ids[j]
 				else
-					node_data[i] = data.node_ids[j]
+					node_data[i] = mapblock.node_ids[j]
 				end
 
 				-- place param1 and param2 regardless of known/unknown node
-				param1[i] = data.param1[j]
-				param2[i] = data.param2[j]
+				param1[i] = mapblock.param1[j]
+				param2[i] = mapblock.param2[j]
 				j = j + 1
 			end
 		end
@@ -74,8 +95,8 @@ function blockexchange.deserialize_part(pos1, pos2, data)
 	manip:write_to_map()
 
 	-- deserialize metadata
-	if data.metadata and data.metadata.meta then
-		for pos_str, metadata in pairs(data.metadata.meta) do
+	if metadata.metadata and metadata.metadata.meta then
+		for pos_str, md in pairs(metadata.metadata.meta) do
 			local relative_pos = minetest.string_to_pos(pos_str)
 			local absolute_pos = vector.add(pos1, relative_pos)
 			local hash = minetest.hash_node_position(absolute_pos)
@@ -84,12 +105,12 @@ function blockexchange.deserialize_part(pos1, pos2, data)
 				-- extract node name
 				local node_name = unknown_nodes_id_to_name_mapping[unknown_node_id]
 				-- populate proper placeholder node with metadata
-				blockexchange.placeholder_populate(absolute_pos, node_name, metadata)
+				blockexchange.placeholder_populate(absolute_pos, node_name, md)
 				-- remove from placeholder hashes
 				placeholder_pos_hashes[hash] = nil
 			else
 				-- plain metadata of a known node
-				minetest.get_meta(absolute_pos):from_table(metadata)
+				minetest.get_meta(absolute_pos):from_table(md)
 			end
 		end
 	end
@@ -102,8 +123,8 @@ function blockexchange.deserialize_part(pos1, pos2, data)
 	end
 
 	-- deserialize node timers
-	if data.metadata and data.metadata.timers then
-		for pos_str, timer_data in pairs(data.metadata.timers) do
+	if metadata.metadata and metadata.metadata.timers then
+		for pos_str, timer_data in pairs(metadata.metadata.timers) do
 			local relative_pos = minetest.string_to_pos(pos_str)
 			local absolute_pos = vector.add(pos1, relative_pos)
 			minetest.get_node_timer(absolute_pos):set(timer_data.timeout, timer_data.elapsed)
