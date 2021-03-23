@@ -98,7 +98,7 @@ function blockexchange.upload_worker(ctx)
 		minetest.log("action", "[blockexchange] NOT Uploading part " .. minetest.pos_to_string(ctx.current_pos) ..
 		" because it is air-only (processing took " .. diff .. " micros)")
 		shift(ctx)
-		minetest.after(0.5, blockexchange.upload_worker, ctx)
+		minetest.after(blockexchange.min_delay, blockexchange.upload_worker, ctx)
 	else
 		-- package data properly over the wire
 		local metadata = minetest.write_json({
@@ -129,7 +129,7 @@ function blockexchange.upload_worker(ctx)
 			end
 
 			shift(ctx)
-			minetest.after(0.5, blockexchange.upload_worker, ctx)
+			minetest.after(blockexchange.min_delay, blockexchange.upload_worker, ctx)
 		end,
 		function(http_code)
 			local msg = "[blockexchange] create schemapart failed with http code: " .. (http_code or "unkown") ..

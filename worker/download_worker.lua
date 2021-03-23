@@ -75,7 +75,7 @@ function blockexchange.download_worker(ctx)
 		end
 
 		shift(ctx)
-		minetest.after(0.5, blockexchange.download_worker, ctx)
+		minetest.after(blockexchange.min_delay, blockexchange.download_worker, ctx)
 	end,
 	function(http_code)
 		local msg = "[blockexchange] download schemapart failed with http code: " .. (http_code or "unkown") ..

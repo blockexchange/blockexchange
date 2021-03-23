@@ -11,6 +11,7 @@ blockexchange = {
 	api = {},
 	api_version_major = 1,
 	url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.land",
+	min_delay = tonumber(minetest.settings:get("blockexchange.min_delay") or "0.2"),
 	part_length = 16,
 	-- maximum usage of microseconds per second for blockexchange processes
 	max_cpu_micros_per_second = 50000,

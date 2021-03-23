@@ -33,7 +33,7 @@ function blockexchange.protectioncheck_worker(ctx)
     -- increment stats
     ctx.current_part = ctx.current_part + 1
     ctx.progress_percent = math.floor(ctx.current_part / ctx.total_parts * 100 * 10) / 10
-		minetest.after(0.5, blockexchange.protectioncheck_worker, ctx)
+		minetest.after(blockexchange.min_delay, blockexchange.protectioncheck_worker, ctx)
   else
     -- check failed
     minetest.chat_send_player(ctx.playername,
