@@ -35,7 +35,7 @@ function blockexchange.api.finalize_schema(token, schema_id, callback, err_callb
   })
 
   http.fetch({
-    url = url .. "/api/schema/" .. schema_id .. "/complete",
+    url = url .. "/api/schema/" .. schema_id .. "/update",
     extra_headers = {
       "Content-Type: application/json",
       "Authorization: " .. token
