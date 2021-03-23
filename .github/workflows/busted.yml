@@ -15,6 +15,6 @@ jobs:
     - name: busted install
       run: luarocks install --local busted
     - name: mineunit install
-      run: mkdir src && git clone https://github.com/mt-mods/mineunit ../mineunit
+      run: mkdir src && git clone https://github.com/mt-mods/mineunit src/mineunit
     - name: busted run
       run: $HOME/.luarocks/bin/busted .
