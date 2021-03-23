@@ -13,8 +13,8 @@ local function shift(ctx)
 	ctx.current_pos = blockexchange.iterator_next(ctx.pos1, ctx.pos2, ctx.current_pos)
 
 	-- increment stats
-  ctx.current_part = ctx.current_part + 1
-  ctx.progress_percent = math.floor(ctx.current_part / ctx.total_parts * 100 * 10) / 10
+	ctx.current_part = ctx.current_part + 1
+	ctx.progress_percent = math.floor(ctx.current_part / ctx.total_parts * 100 * 10) / 10
 end
 
 function blockexchange.download_worker(ctx)
