@@ -4,7 +4,7 @@ minetest.register_chatcommand("bx_allocate", {
   params = "<username> <schemaname>",
 	description = "Show where the selected schema would end up",
   privs = { blockexchange = true },
-	func = function(name, param)
+	func = blockexchange.api_check_wrapper(function(name, param)
     local pos1 = blockexchange.get_pos(1, name)
 
     if not pos1 then
@@ -18,5 +18,5 @@ minetest.register_chatcommand("bx_allocate", {
 
 		blockexchange.allocate(name, pos1, username, schemaname)
 		return true
-  end
+  end)
 })

@@ -42,6 +42,7 @@ dofile(MP.."/deserialize.lua")
 dofile(MP.."/license.lua")
 
 -- utils
+dofile(MP.."/util/check_api_compat.lua")
 dofile(MP.."/util/get_schema_size.lua")
 dofile(MP.."/util/sort_pos.lua")
 dofile(MP.."/util/is_area_protected.lua")
@@ -52,6 +53,7 @@ dofile(MP.."/search/chat.lua")
 dofile(MP.."/search/formspec.lua")
 
 -- commands
+dofile(MP.."/commands/api_check_wrapper.lua")
 dofile(MP.."/commands/info.lua")
 dofile(MP.."/commands/license.lua")
 dofile(MP.."/commands/pos.lua")

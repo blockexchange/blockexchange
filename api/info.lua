@@ -6,8 +6,8 @@ function blockexchange.api.get_info(callback, err_callback)
     timeout = 5
   }, function(res)
     if res.succeeded and res.code == 200 then
-      local schema = minetest.parse_json(res.data)
-      callback(schema)
+      local info = minetest.parse_json(res.data)
+      callback(info)
     elseif type(err_callback) == "function" then
       err_callback(res.code or 0)
     end
