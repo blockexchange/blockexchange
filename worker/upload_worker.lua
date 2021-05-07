@@ -84,12 +84,7 @@ function blockexchange.upload_worker(ctx)
 		-- find controller positions
 		local pos_list = minetest.find_nodes_in_area(ctx.current_pos, pos2, {"blockexchange:controller"})
 		for _, pos in ipairs(pos_list) do
-			local meta = minetest.get_meta(pos)
-			meta:set_string("owner", ctx.playername)
-			meta:set_string("schemaname", ctx.schemaname)
-			meta:set_string("pos1", minetest.pos_to_string(ctx.pos1))
-			meta:set_string("pos2", minetest.pos_to_string(ctx.pos2))
-			meta:set_string("infotext", "Controller for schema '" .. ctx.schemaname .. "' owned by '" .. ctx.playername .. "'")
+			blockexchange.program_controller(pos, ctx.playername, ctx.schema)
 		end
 	end
 

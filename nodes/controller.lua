@@ -26,7 +26,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 
 	local pos = minetest.string_to_pos(parts[2])
-	local meta = minetest.get_meta(pos)
 	local playername = player:get_player_name()
 
 	if minetest.is_protected(pos, playername) then
@@ -34,27 +33,15 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 
 	if fields.download then
-		local schemaname = meta:get_string("schemaname")
-		local username = meta:get_string("username")
-		local pos1 = minetest.string_to_pos(meta:get_string("pos1"))
-
-		blockexchange.download(playername, pos1, username, schemaname)
+		print("TODO: download")
 	end
 
 	if fields.upload then
-		local schemaname = meta:get_string("schemaname")
-		local pos1 = minetest.string_to_pos(meta:get_string("pos1"))
-		local pos2 = minetest.string_to_pos(meta:get_string("pos2"))
-
-		blockexchange.upload(playername, pos1, pos2, schemaname)
+		print("TODO: upload")
 	end
 
 	if fields.mark then
-		local pos1 = minetest.string_to_pos(meta:get_string("pos1"))
-		local pos2 = minetest.string_to_pos(meta:get_string("pos2"))
-
-		blockexchange.set_pos(1, playername, pos1)
-		blockexchange.set_pos(2, playername, pos2)
+		print("TODO: mark")
 	end
 end)
 
@@ -71,10 +58,20 @@ minetest.register_node("blockexchange:controller", {
 	on_rightclick = function(pos, _, player)
 		local meta = minetest.get_meta(pos)
 		local playername = player:get_player_name()
-		if meta:get_string("schemaname") ~= "" then
+		if meta:get_string("schema") ~= "" then
 			show_formspec(pos, playername)
 		else
 			minetest.chat_send_player(playername, "Initialize this controller by uploading the surrounding area")
 		end
 	end,
 })
+
+function blockexchange.program_controller(pos, playername, schema)
+	local meta = minetest.get_meta(pos)
+	meta:set_string("owner", playername)
+	meta:set_string("schema", minetest.serialize(schema))
+	meta:set_string("infotext",
+		"Controller for schema '".. schema.name .. "' " ..
+		"owned by '" .. playername .. "'"
+	)
+end
