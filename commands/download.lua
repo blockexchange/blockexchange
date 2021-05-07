@@ -19,6 +19,11 @@ function blockexchange.download(playername, pos1, username, schemaname)
 			y = ctx.schema.size_y_minus,
 			z = ctx.schema.size_z_minus,
 		})
+		blockexchange.register_area(ctx.pos1, ctx.pos2, {
+			schemaname = schemaname,
+			username = username,
+			owner = playername
+		})
 		blockexchange.download_worker(ctx)
 	end,
 	function()

@@ -40,6 +40,7 @@ dofile(MP.."/token.lua")
 dofile(MP.."/serialize.lua")
 dofile(MP.."/deserialize.lua")
 dofile(MP.."/license.lua")
+dofile(MP.."/areas.lua")
 
 -- utils
 dofile(MP.."/util/check_api_compat.lua")
