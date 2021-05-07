@@ -25,12 +25,11 @@ function blockexchange.placeholder_populate(pos, node_name, metadata)
 end
 
 -- try to restore the placeholder at the position
-function blockexchange.placeholder_replace(pos)
+function blockexchange.placeholder_replace(pos, node)
 	local meta = minetest.get_meta(pos)
 	local nodename = meta:get_string("original_nodename")
 	if minetest.registered_nodes[nodename] then
 		-- node exists now, restore it
-		local node = minetest.get_node(pos)
 		node.name = nodename
 		minetest.swap_node(pos, node)
 
