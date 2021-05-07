@@ -42,6 +42,7 @@ dofile(MP.."/deserialize.lua")
 dofile(MP.."/license.lua")
 
 -- utils
+dofile(MP.."/util/get_schema_size.lua")
 dofile(MP.."/util/sort_pos.lua")
 dofile(MP.."/util/is_area_protected.lua")
 dofile(MP.."/util/iterator_next.lua")

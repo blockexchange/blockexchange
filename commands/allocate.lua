@@ -6,7 +6,7 @@ local builtin_mods = {
 
 function blockexchange.allocate(playername, pos1, username, schemaname)
   blockexchange.api.get_schema_by_name(username, schemaname, false, function(schema)
-    local pos2 = vector.add(pos1, {x=schema.size_x, y=schema.size_y, z=schema.size_z})
+    local pos2 = vector.add(pos1, blockexchange.get_schema_size(schema))
     pos2 = vector.subtract(pos2, 1)
 
     blockexchange.set_pos(2, playername, pos2)
