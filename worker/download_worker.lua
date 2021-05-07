@@ -18,7 +18,7 @@ local function finalize(ctx)
 	blockexchange.hud_remove(ctx.playername, get_hud_taskname(ctx))
 end
 
-local function place_schemapart(origin, schemapart, ctx)
+local function place_schemapart(schemapart, ctx)
 	if not schemapart then
 		finalize(ctx)
 		return
@@ -36,7 +36,7 @@ local function place_schemapart(origin, schemapart, ctx)
 	local metadata = minetest.parse_json(minetest.decompress(compressed_metadata, "deflate"))
 	local data = minetest.decompress(compressed_data, "deflate")
 
-	local pos1 = vector.add(origin, {
+	local pos1 = vector.add(ctx.origin, {
 		x = schemapart.offset_x,
 		y = schemapart.offset_y,
 		z = schemapart.offset_z
@@ -79,11 +79,10 @@ end
 
 
 function blockexchange.download_worker(ctx)
-
 	if not ctx.last_schemapart then
 		-- get first schemapart
 		blockexchange.api.get_first_schemapart(ctx.schema.id, function(schemapart)
-			place_schemapart(ctx.pos1, schemapart, ctx)
+			place_schemapart(schemapart, ctx)
 		end, function(http_code)
 			schedule_retry(ctx, http_code)
 		end)
@@ -95,7 +94,7 @@ function blockexchange.download_worker(ctx)
 			z = ctx.last_schemapart.offset_z
 		}
 		blockexchange.api.get_next_schemapart(ctx.schema.id, pos, function(schemapart)
-			place_schemapart(ctx.pos1, schemapart, ctx)
+			place_schemapart(schemapart, ctx)
 		end, function(http_code)
 			schedule_retry(ctx, http_code)
 		end)
