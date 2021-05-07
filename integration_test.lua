@@ -73,7 +73,7 @@ minetest.register_on_mods_loaded(function()
 		doEmerge(pos1, pos2, function()
 			blockexchange.api.get_token("test", token_value, function(token)
 				assert(token)
-				blockexchange.tokens[playername] = token
+				blockexchange.set_token(playername, token)
 				doUpload(pos1, pos2, function(schema)
 					print("Uploaded schema: " .. dump(schema))
 					-- execute allocation

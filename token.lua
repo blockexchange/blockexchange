@@ -1,26 +1,5 @@
 
--- name -> token
-blockexchange.tokens = {}
-
-function blockexchange.persist_tokens()
-	local file = io.open(minetest.get_worldpath() .. "/blockexchange_tokens","w")
-	local json = minetest.write_json(blockexchange.tokens)
-	if file and file:write(json) and file:close() then
-		return
-	else
-		minetest.log("error","[blockexchange] token persist failed!")
-		return
-	end
-end
-
-function blockexchange.load_tokens()
-	local file = io.open(minetest.get_worldpath() .. "/blockexchange_tokens","r")
-
-	if file then
-		local json = file:read("*a")
-		blockexchange.tokens = minetest.parse_json(json or "") or {}
-	end
-end
+local META_KEY = "blockexchange_token"
 
 -- http://lua-users.org/wiki/BaseSixtyFour
 local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
@@ -49,4 +28,33 @@ function blockexchange.parse_token(token)
 	return payload
 end
 
-blockexchange.load_tokens()
+-- returns the token in base64 format or nil if not present
+function blockexchange.get_token(playername)
+	local player = minetest.get_player_by_name(playername)
+	if not player then
+		-- player not online
+		return
+	end
+
+	local meta = player:get_meta()
+	local token = meta:get_string(META_KEY)
+
+	if not token or token == "" then
+		-- no token stored
+		return
+	end
+
+	return token
+end
+
+-- sets the token for the player or clears it if nil
+function blockexchange.set_token(playername, token)
+	local player = minetest.get_player_by_name(playername)
+	if not player then
+		-- player not online
+		return
+	end
+
+	local meta = player:get_meta()
+	meta:set_string(META_KEY, token or "")
+end
