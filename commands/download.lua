@@ -6,7 +6,6 @@ function blockexchange.download(playername, pos1, username, schemaname)
 		username = username,
 		schemaname = schemaname,
 		pos1 = pos1,
-		current_pos = table.copy(pos1),
 		current_part = 0,
 		progress_percent = 0
 	}
