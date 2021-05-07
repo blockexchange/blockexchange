@@ -76,7 +76,3 @@ dofile(MP.."/worker/protectioncheck_worker.lua")
 
 -- hud
 dofile(MP.."/hud.lua")
-
-if minetest.settings:get_bool("blockexchange.enable_integration_test") then
-	dofile(MP.."/integration_test.lua")
-end
