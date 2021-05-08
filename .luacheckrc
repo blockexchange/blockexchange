@@ -3,7 +3,8 @@ globals = {
 	"worldedit",
 	["minetest"] = {
 		["request_http_api"] = true
-	}
+	},
+	"AreaStore",
 }
 
 read_globals = {
@@ -15,7 +16,7 @@ read_globals = {
 	"minetest",
 	"vector", "ItemStack",
 	"dump", "dump2",
-	"VoxelArea", "AreaStore",
+	"VoxelArea",
 
 	-- opt deps
 	"areas", "monitoring",
