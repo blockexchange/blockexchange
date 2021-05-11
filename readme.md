@@ -44,16 +44,24 @@ Schemas can be browsed and administered on the central server: https://blockexch
 
 # Chat commands
 
-## Local
+## Offline
 
-* **/bx_save_local [schemaname]** 
+Local commands, they don't need the http-api and make no calls "home"
 
-## Read-only
-
-* **/bx_info** shows infos about the connected blockexchange server
 * **/bx_pos1** mark position 1
 * **/bx_pos2** mark position 2
 * **/bx_emerge** emerge the selected area
+* **/bx_save_local [schemaname]** saves a local schema to `<worldmods>/bxschems`
+* **/bx_load_local [schemaname]** loads a local schema from `<worldmods>/bxschems`
+* **/bx_allocate_local [schemaname]** allocates a local schema
+
+## Online
+
+Online commands, they call the remote-server with the http api
+
+### Read-only
+
+* **/bx_info** shows infos about the connected blockexchange server
 * **/bx_license** sets or displays the license of your uploaded schematics (defaults to CC0)
 * **/bx_search [keywords]** search a schema by keywords
 * **/bx_load [username] [schemaname]**
@@ -61,7 +69,7 @@ Schemas can be browsed and administered on the central server: https://blockexch
 * **/bx_allocate [username] [schemaname]**
 * **/bx_login [username] [access_token]**
 
-## Write (needs a login)
+### Write (needs a login)
 
 * **/bx_save [schemaname]**
 * **/bx_logout** logs out
