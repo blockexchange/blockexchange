@@ -50,17 +50,11 @@ end
 
 function blockexchange.get_area_at_pos(pos)
     local list = store:get_areas_for_pos(pos, true, false)
-    for id, entry in pairs(list) do
-        print(id, dump(entry))
+    if not list then
+        return
+    else
+        -- return first result
+        local id = next(list)
+        return cache[id]
     end
 end
-
---[[
-minetest.register_chatcommand("bx_test", {
-    func = function(name)
-        local player = minetest.get_player_by_name(name)
-        local pos = player:get_pos()
-        blockexchange.get_area_at_pos(pos)
-    end
-})
---]]

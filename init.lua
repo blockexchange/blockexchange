@@ -87,3 +87,4 @@ dofile(MP.."/worker/protectioncheck_worker.lua")
 
 -- hud
 dofile(MP.."/hud/progress.lua")
+dofile(MP.."/hud/areas.lua")
