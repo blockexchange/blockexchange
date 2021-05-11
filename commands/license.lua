@@ -5,10 +5,9 @@ minetest.register_chatcommand("bx_license", {
 	func = function(name, license)
 
 		if license and license ~= "" then
-			blockexchange.licenses[name] = license
-			blockexchange.persist_licenses()
+			blockexchange.set_license(name, license)
 		end
 
-		return true, "Your default license: " .. (blockexchange.licenses[name] or "CC0")
+		return true, "Your default license: " .. (license or "CC0")
   end
 })

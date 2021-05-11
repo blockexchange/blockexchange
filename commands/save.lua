@@ -8,7 +8,7 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 		math.ceil(math.abs(pos1.z - pos2.z) / blockexchange.part_length)
 
 	local token = blockexchange.get_token(playername)
-	local license = blockexchange.licenses[playername] or "CC0"
+	local license = blockexchange.get_license(playername)
 
 	local ctx = {
 		local_save = local_save,

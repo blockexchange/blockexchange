@@ -1,26 +1,21 @@
+local FIELD_KEY = "blockexchange_license"
 
--- name -> license
-blockexchange.licenses = {}
-
-function blockexchange.persist_licenses()
-	local file = io.open(minetest.get_worldpath() .. "/blockexchange_licenses","w")
-	local json = minetest.write_json(blockexchange.licenses)
-	if file and file:write(json) and file:close() then
-		return
-	else
-		minetest.log("error","[blockexchange] license persist failed!")
-		return
+function blockexchange.set_license(playername, license)
+	local player = minetest.get_player_by_name(playername)
+	if player then
+		player:get_meta():set_string(FIELD_KEY, license)
 	end
 end
 
-function blockexchange.load_tokens()
-	local file = io.open(minetest.get_worldpath() .. "/blockexchange_licenses","r")
-
-	if file then
-		local json = file:read("*a")
-		blockexchange.licenses = minetest.parse_json(json or "") or {}
+function blockexchange.get_license(playername)
+	local player = minetest.get_player_by_name(playername)
+	if player then
+		local license = player:get_meta():get_string(FIELD_KEY)
+		if license and license ~= "" then
+			return license
+		end
 	end
+
+	-- default to CC0
+	return "CC0"
 end
-
-
-blockexchange.load_tokens()
