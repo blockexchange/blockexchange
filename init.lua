@@ -76,4 +76,4 @@ dofile(MP.."/worker/emerge_worker.lua")
 dofile(MP.."/worker/protectioncheck_worker.lua")
 
 -- hud
-dofile(MP.."/hud.lua")
+dofile(MP.."/hud/progress.lua")
