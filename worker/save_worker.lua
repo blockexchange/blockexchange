@@ -84,16 +84,6 @@ function blockexchange.save_worker(ctx)
 	local diff = minetest.get_us_time() - start
 	local relative_pos = vector.subtract(ctx.current_pos, ctx.pos1)
 
-	if node_count["blockexchange:controller"] then
-		-- controller found, save upload data to node metadata
-
-		-- find controller positions
-		local pos_list = minetest.find_nodes_in_area(ctx.current_pos, pos2, {"blockexchange:controller"})
-		for _, pos in ipairs(pos_list) do
-			blockexchange.program_controller(pos, ctx.playername, ctx.schema)
-		end
-	end
-
 	if air_only then
 		-- don't upload air-only
 		minetest.log("action", "[blockexchange] NOT Uploading part " .. minetest.pos_to_string(ctx.current_pos) ..

@@ -42,21 +42,11 @@ local function place_schemapart(schemapart, ctx)
 		z = schemapart.offset_z
 	})
 	local pos2 = vector.add(pos1, vector.subtract(metadata.size, 1))
-	local node_names = blockexchange.deserialize_part(pos1, pos2, data, metadata);
+	blockexchange.deserialize_part(pos1, pos2, data, metadata);
 
 	minetest.log("action", "[blockexchange] Download of part " ..
 					 minetest.pos_to_string(pos1) ..
 					 " completed")
-
-	if node_names["blockexchange:controller"] then
-		-- controller found, save schema data to node metadata
-
-		-- find controller positions
-		local pos_list = minetest.find_nodes_in_area(pos1, pos2, {"blockexchange:controller"})
-		for _, pos in ipairs(pos_list) do
-			blockexchange.program_controller(pos, ctx.playername, ctx.schema)
-		end
-	end
 
 	if has_monitoring then
 		downloaded_blocks.inc(1)
