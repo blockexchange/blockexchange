@@ -45,6 +45,7 @@ dofile(MP.."/license.lua")
 dofile(MP.."/areas.lua")
 
 -- utils
+dofile(MP.."/util/local_files.lua")
 dofile(MP.."/util/check_api_compat.lua")
 dofile(MP.."/util/get_schema_size.lua")
 dofile(MP.."/util/sort_pos.lua")
@@ -66,20 +67,19 @@ if blockexchange.is_online then
 	dofile(MP.."/commands/allocate.lua")
 	dofile(MP.."/commands/allocate_chat.lua")
 	dofile(MP.."/commands/pos.lua")
-	dofile(MP.."/commands/upload.lua")
-	dofile(MP.."/commands/upload_chat.lua")
+	dofile(MP.."/commands/save_chat.lua")
 	dofile(MP.."/commands/download.lua")
 	dofile(MP.."/commands/download_chat.lua")
 end
+dofile(MP.."/commands/save.lua")
+dofile(MP.."/commands/save_local_chat.lua")
 dofile(MP.."/commands/emerge.lua")
 dofile(MP.."/commands/emerge_chat.lua")
 dofile(MP.."/commands/protectioncheck.lua")
 
 -- worker functions
-if blockexchange.is_online then
-	dofile(MP.."/worker/download_worker.lua")
-	dofile(MP.."/worker/upload_worker.lua")
-end
+dofile(MP.."/worker/download_worker.lua")
+dofile(MP.."/worker/save_worker.lua")
 dofile(MP.."/worker/emerge_worker.lua")
 dofile(MP.."/worker/protectioncheck_worker.lua")
 

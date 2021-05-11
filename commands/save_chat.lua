@@ -33,7 +33,7 @@ minetest.register_chatcommand("bx_save", {
       blockexchange.protectioncheck(name, pos1, pos2, schemaname)
     else
       -- kick off upload without protect check
-      blockexchange.upload(name, pos1, pos2, schemaname)
+      blockexchange.save(name, pos1, pos2, schemaname)
     end
 
 		return true

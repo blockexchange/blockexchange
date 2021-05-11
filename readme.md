@@ -44,6 +44,10 @@ Schemas can be browsed and administered on the central server: https://blockexch
 
 # Chat commands
 
+## Local
+
+* **/bx_save_local [schemaname]** 
+
 ## Read-only
 
 * **/bx_info** shows infos about the connected blockexchange server

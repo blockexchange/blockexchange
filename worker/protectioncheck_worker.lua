@@ -12,7 +12,7 @@ function blockexchange.protectioncheck_worker(ctx)
 		ctx.success = true
 
     -- kick off upload
-    ctx.upload_ctx = blockexchange.upload(ctx.playername, ctx.pos1, ctx.pos2, ctx.schemaname)
+    ctx.upload_ctx = blockexchange.save(ctx.playername, ctx.pos1, ctx.pos2, ctx.schemaname)
 		blockexchange.hud_remove(ctx.playername, hud_taskname)
     return
   end
