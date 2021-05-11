@@ -9,7 +9,7 @@ if has_monitoring then
 end
 
 local function get_hud_taskname(ctx)
-	return "[Download] '" .. ctx.playername .. "/" .. ctx.schemaname .. "'"
+	return "[Download" .. (ctx.local_load and "-local" or "") .. "] '" .. ctx.playername .. "/" .. ctx.schemaname .. "'"
 end
 
 local function finalize(ctx)
@@ -53,7 +53,7 @@ local function place_schemapart(schemapart, ctx)
 	end
 
 	ctx.last_schemapart = schemapart
-	minetest.after(blockexchange.min_delay, blockexchange.download_worker, ctx)
+	minetest.after(blockexchange.min_delay, blockexchange.load_worker, ctx)
 
 	-- TODO: overwrite inworld parts if downloaded part is air-only
 end
@@ -64,12 +64,33 @@ local function schedule_retry(ctx, http_code)
 	minetest.log("error", msg)
 	minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
 	-- wait a couple seconds
-	minetest.after(5, blockexchange.download_worker, ctx)
+	minetest.after(5, blockexchange.load_worker, ctx)
 end
 
 
-function blockexchange.download_worker(ctx)
-	if not ctx.last_schemapart then
+function blockexchange.load_worker(ctx)
+	if ctx.local_load then
+		-- local operation
+		ctx.current_pos = blockexchange.iterator_next(ctx.pos1, ctx.pos2, ctx.current_pos)
+		if not ctx.current_pos then
+			finalize(ctx)
+			return
+		end
+
+		local relative_pos = vector.subtract(ctx.current_pos, ctx.pos1)
+		minetest.log("action", "[blockexchange] loading local schemapart " .. minetest.pos_to_string(relative_pos))
+		local schemapart = blockexchange.get_local_schemapart(
+			ctx.schemaname,
+			relative_pos.x, relative_pos.y, relative_pos.z
+		)
+		if schemapart then
+			place_schemapart(schemapart, ctx)
+		else
+			minetest.after(blockexchange.min_delay, blockexchange.load_worker, ctx)
+		end
+
+	elseif not ctx.last_schemapart then
+		-- online
 		-- get first schemapart
 		blockexchange.api.get_first_schemapart(ctx.schema.id, function(schemapart)
 			place_schemapart(schemapart, ctx)

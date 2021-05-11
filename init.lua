@@ -67,11 +67,12 @@ if blockexchange.is_online then
 	dofile(MP.."/commands/pos.lua")
 	dofile(MP.."/commands/allocate_chat.lua")
 	dofile(MP.."/commands/save_chat.lua")
-	dofile(MP.."/commands/download.lua")
-	dofile(MP.."/commands/download_chat.lua")
+	dofile(MP.."/commands/load_chat.lua")
 end
 dofile(MP.."/commands/allocate.lua")
 dofile(MP.."/commands/allocate_local_chat.lua")
+dofile(MP.."/commands/load.lua")
+dofile(MP.."/commands/load_local_chat.lua")
 dofile(MP.."/commands/save.lua")
 dofile(MP.."/commands/save_local_chat.lua")
 dofile(MP.."/commands/emerge.lua")
@@ -79,7 +80,7 @@ dofile(MP.."/commands/emerge_chat.lua")
 dofile(MP.."/commands/protectioncheck.lua")
 
 -- worker functions
-dofile(MP.."/worker/download_worker.lua")
+dofile(MP.."/worker/load_worker.lua")
 dofile(MP.."/worker/save_worker.lua")
 dofile(MP.."/worker/emerge_worker.lua")
 dofile(MP.."/worker/protectioncheck_worker.lua")

@@ -79,7 +79,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
   end
 
 	if fields.load then
-    blockexchange.download(
+    blockexchange.load(
       playername,
       blockexchange.get_pos(1, playername),
       schema.user.name,
