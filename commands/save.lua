@@ -25,15 +25,28 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 		mod_names = {}
 	}
 
+	local create_schema = {
+		size_x_plus = pos2.x - pos1.x + 1,
+		size_y_plus = pos2.y - pos1.y + 1,
+		size_z_plus = pos2.z - pos1.z + 1,
+		size_x_minus = 0,
+		size_y_minus = 0,
+		size_z_minus = 0,
+		part_length = blockexchange.part_length,
+		description = "",
+		license = license,
+		name = name
+	  }
+
 	if local_save then
 		-- offline, local saving
-		blockexchange.create_local_schema(pos1, pos2, license, name)
+		blockexchange.create_local_schema(create_schema)
 
 		-- start save worker with context
 		blockexchange.save_worker(ctx)
 	else
 		-- online
-		blockexchange.api.create_schema(token, pos1, pos2, name, "", license, function(schema)
+		blockexchange.api.create_schema(token, create_schema, function(schema)
 			ctx.schema = schema
 			minetest.log("action", "[blockexchange] schema created with id: " .. schema.id)
 			minetest.chat_send_player(playername,

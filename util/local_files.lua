@@ -1,9 +1,11 @@
 local SCHEMS_DIR = minetest.get_worldpath() .. "/bxschems"
 minetest.mkdir(SCHEMS_DIR)
 
-local function get_schema_dir(name)
+local function get_schema_dir(name, mkdir)
     local dir = SCHEMS_DIR .. "/" .. name
-    minetest.mkdir(dir)
+    if mkdir then
+        minetest.mkdir(dir)
+    end
     return dir
 end
 
@@ -28,27 +30,18 @@ local function load_json(filename)
     end
 end
 
-function blockexchange.create_local_schema(pos1, pos2, license, name)
-    local data = {
-        size_x = pos2.x - pos1.x + 1,
-        size_y = pos2.y - pos1.y + 1,
-        size_z = pos2.z - pos1.z + 1,
-        part_length = blockexchange.part_length,
-        license = license,
-        name = name
-    };
-
-    save_json(get_schema_dir(name) .. "/schema.json", data)
+function blockexchange.create_local_schema(create_schema)
+    save_json(get_schema_dir(create_schema.name, true) .. "/schema.json", create_schema)
 end
 
 function blockexchange.create_local_schemapart(name, schemapart)
-    save_json(get_schema_dir(name) .. "/schemapart_" .. schemapart.offset_x ..
+    save_json(get_schema_dir(name, true) .. "/schemapart_" .. schemapart.offset_x ..
                   "_" .. schemapart.offset_y .. "_" .. schemapart.offset_z ..
                   ".json", schemapart)
 end
 
 function blockexchange.create_local_schemamods(name, mod_names)
-    save_json(get_schema_dir(name) .. "/mods.json", mod_names)
+    save_json(get_schema_dir(name, true) .. "/mods.json", mod_names)
 end
 
 function blockexchange.get_local_schema(name)

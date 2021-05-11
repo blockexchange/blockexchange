@@ -33,12 +33,9 @@ function blockexchange.allocate(playername, pos1, username, schemaname, local_lo
       minetest.chat_send_player(playername, "Schema not found: '" .. schemaname .. "'")
       return
     end
-    local pos2 = vector.add(pos1, {
-      x = schema.size_x,
-      y = schema.size_y,
-      z = schema.size_z
-    })
+		local pos2 = vector.add(pos1, blockexchange.get_schema_size(schema))
     pos2 = vector.subtract(pos2, 1)
+
     blockexchange.set_pos(2, playername, pos2)
 
     local mods = blockexchange.get_local_schemamods(schemaname)

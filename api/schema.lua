@@ -1,15 +1,7 @@
 local http, url = ...
 
-function blockexchange.api.create_schema(token, pos1, pos2, name, description, license, callback, err_callback)
-  local json = minetest.write_json({
-    size_x_plus = pos2.x - pos1.x + 1,
-    size_y_plus = pos2.y - pos1.y + 1,
-    size_z_plus = pos2.z - pos1.z + 1,
-    part_length = blockexchange.part_length,
-		description = description,
-    license = license,
-		name = name
-  });
+function blockexchange.api.create_schema(token, create_schema, callback, err_callback)
+  local json = minetest.write_json(create_schema);
 
   http.fetch({
     url = url .. "/api/schema",

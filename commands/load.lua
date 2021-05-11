@@ -17,11 +17,7 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 		  minetest.chat_send_player(playername, "Schema not found: '" .. schemaname .. "'")
 		  return
 		end
-		local pos2 = vector.add(pos1, {
-		  x = schema.size_x,
-		  y = schema.size_y,
-		  z = schema.size_z
-		})
+		local pos2 = vector.add(pos1, blockexchange.get_schema_size(schema))
 		pos2 = vector.subtract(pos2, 1)
 
 		local total_parts =
@@ -30,7 +26,12 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 			math.ceil(math.abs(pos1.z - pos2.z) / blockexchange.part_length)
 
 		ctx.pos2 = pos2
-		ctx.origin = vector.add(pos1, 0)
+		ctx.origin = vector.subtract(ctx.pos1, {
+			x = schema.size_x_minus,
+			y = schema.size_y_minus,
+			z = schema.size_z_minus,
+		})
+
 		ctx.schema = {
 			total_parts = total_parts
 		}
