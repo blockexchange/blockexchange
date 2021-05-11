@@ -8,6 +8,7 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 		math.ceil(math.abs(pos1.z - pos2.z) / blockexchange.part_length)
 
 	local token = blockexchange.get_token(playername)
+	local claims = blockexchange.parse_token(token)
 	local license = blockexchange.get_license(playername)
 
 	local ctx = {
@@ -53,6 +54,14 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 				"[blockexchange] schema created with id: " ..
 				minetest.colorize("#00ff00", schema.id)
 			)
+
+			blockexchange.register_area(ctx.pos1, ctx.pos2, {
+				type = "upload",
+				schemaname = name,
+				username = claims.username,
+				owner = playername,
+				origin = ctx.pos1
+			})
 
 			-- start save worker with context
 			blockexchange.save_worker(ctx)

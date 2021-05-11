@@ -1,5 +1,5 @@
-local HUD_POSITION = { x = 0.05, y = 0.05 }
-local HUD_ALIGNMENT = { x = 0, y = 0 }
+local HUD_POSITION = { x = 0.05, y = 0.95 }
+local HUD_ALIGNMENT = { x = 1, y = 0 }
 
 local hud = {} -- playername -> data
 
@@ -10,9 +10,9 @@ local function hud_update(player)
 	local pos = player:get_pos()
 
 	local txt = ""
-	local area = blockexchange.get_area_at_pos(pos)
+	local area = blockexchange.get_area(pos, pos)
 	if area then
-		txt = dump(area.data)
+		txt = "Blockexchange: [" .. area.data.type .. "] " .. area.data.username .. "/" .. area.data.schemaname
 	end
 
 	player:hud_change(hud_data, "text", txt)

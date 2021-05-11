@@ -49,9 +49,11 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 				z = ctx.schema.size_z_minus,
 			})
 			blockexchange.register_area(ctx.pos1, ctx.pos2, {
+				type = "download",
 				schemaname = schemaname,
 				username = username,
 				owner = playername
+				-- TODO: mtime to track changes
 			})
 			blockexchange.load_worker(ctx)
 		end,

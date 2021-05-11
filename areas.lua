@@ -48,8 +48,8 @@ function blockexchange.register_area(pos1, pos2, data)
     save_areas()
 end
 
-function blockexchange.get_area_at_pos(pos)
-    local list = store:get_areas_for_pos(pos, true, false)
+function blockexchange.get_area(pos1, pos2)
+    local list = store:get_areas_in_area(pos1, pos2, true, false)
     if not list then
         return
     else

@@ -65,7 +65,9 @@ if blockexchange.is_online then
 	dofile(MP.."/commands/license.lua")
 	dofile(MP.."/commands/user.lua")
 	dofile(MP.."/commands/allocate_chat.lua")
+	dofile(MP.."/commands/mark_chat.lua")
 	dofile(MP.."/commands/save_chat.lua")
+	dofile(MP.."/commands/save_update_chat.lua")
 	dofile(MP.."/commands/load_chat.lua")
 end
 dofile(MP.."/commands/pos.lua")
