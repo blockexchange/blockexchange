@@ -5,10 +5,7 @@ function blockexchange.emerge_worker(ctx)
 		" - " .. minetest.pos_to_string(ctx.pos2) .. "'"
 
   if not ctx.current_pos then
-		local msg = "[blockexchange] Emerge complete with " .. ctx.total_parts .. " parts"
-    minetest.log("action", msg)
-		minetest.chat_send_player(ctx.playername, msg)
-    ctx.success = true
+    ctx.promise:resolve(ctx.total_parts)
 		blockexchange.hud_remove(ctx.playername, hud_taskname)
     return
   end

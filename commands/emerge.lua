@@ -13,11 +13,12 @@ function blockexchange.emerge(playername, pos1, pos2)
     current_pos = table.copy(pos1),
     current_part = 0,
     progress_percent = 0,
-    total_parts = total_parts
+    total_parts = total_parts,
+    promise = Promise.new()
   }
 
   -- start emerge worker with context
   blockexchange.emerge_worker(ctx)
 
-  return ctx
+  return ctx.promise
 end

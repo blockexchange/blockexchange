@@ -9,7 +9,11 @@ minetest.register_chatcommand("bx_emerge", {
       return false, "you need to set /bx_pos1 and /bx_pos2 first!"
     end
 
-    blockexchange.emerge(name, pos1, pos2)
+    blockexchange.emerge(name, pos1, pos2):next(function(total_parts)
+      local msg = "[blockexchange] Emerge complete with " .. total_parts .. " parts"
+      minetest.log("action", msg)
+      minetest.chat_send_player(name, msg)
+    end)
 		return true
   end
 })
