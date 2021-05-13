@@ -8,21 +8,18 @@ describe("promise test", function()
 			resolve(1)
 		end)
 
+		local result
+
 		p:next(function(v)
-			assert.equal(3, v)
 			return Promise.new(function(resolve)
 				resolve(v + 1)
 			end)
-		end):catch(function(e)
-			error(e)
 		end):next(function(v)
-			print(v)
-			assert.equal(3, v)
-		end):catch(function(e)
-			error(e)
+			result = v
 		end)
 
 		Promise.update()
 
+		assert.equal(2, result)
 	end)
 end)
