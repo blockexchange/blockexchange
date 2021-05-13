@@ -18,12 +18,11 @@ function blockexchange.check_api_compat(success_callback, error_callback)
         return
     end
 
-    blockexchange.api.get_info(function(info)
+    blockexchange.api.get_info():next(function(info)
         cache = info
         cache_time = os.time()
         check_versions(cache, success_callback, error_callback)
-    end,
-    function(err_code)
+    end):catch(function(err_code)
         error_callback("could not get api version, code: " .. err_code)
     end)
 end

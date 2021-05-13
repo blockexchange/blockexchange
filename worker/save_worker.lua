@@ -34,25 +34,20 @@ function blockexchange.save_worker(ctx)
 			blockexchange.create_local_schemamods(ctx.schemaname, mod_names)
 		else
 			-- online save
-			blockexchange.api.create_schemamods(ctx.token, ctx.schema.id, mod_names, function()
-				blockexchange.api.finalize_schema(ctx.token, ctx.schema.id, function()
-					local msg = "[blockexchange] Upload complete with " .. ctx.total_parts .. " parts"
-					minetest.log("action", msg)
-					minetest.chat_send_player(ctx.playername, msg)
-					ctx.success = true
-				end,
-				function(http_code)
-					local msg = "[blockexchange] finalize schema failed with http code: " .. (http_code or "unkown") ..
-					" retrying..."
-					minetest.log("error", msg)
-					minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
-				end)
-			end,
-			function(http_code)
-				local msg = "[blockexchange] create schemamod failed with http code: " .. (http_code or "unkown") ..
+			blockexchange.api.create_schemamods(ctx.token, ctx.schema.id, mod_names):next(function()
+				return blockexchange.api.finalize_schema(ctx.token, ctx.schema.id)
+			end):next(function()
+				local msg = "[blockexchange] Upload complete with " .. ctx.total_parts .. " parts"
+				minetest.log("action", msg)
+				minetest.chat_send_player(ctx.playername, msg)
+				ctx.success = true
+			end):catch(function(http_code)
+				local msg = "[blockexchange] finalize schema failed with http code: " .. (http_code or "unkown") ..
 				" retrying..."
 				minetest.log("error", msg)
 				minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
+				-- wait a couple seconds
+				minetest.after(5, blockexchange.save_worker, ctx)
 			end)
 		end
 
@@ -117,7 +112,7 @@ function blockexchange.save_worker(ctx)
 			minetest.after(blockexchange.min_delay, blockexchange.save_worker, ctx)
 		else
 			-- upload part online
-			blockexchange.api.create_schemapart(ctx.token, schemapart, function()
+			blockexchange.api.create_schemapart(ctx.token, schemapart):next(function()
 				minetest.log("action", "[blockexchange] Upload of part " .. minetest.pos_to_string(ctx.current_pos) ..
 				" completed (processing took " .. diff .. " micros)")
 
@@ -127,8 +122,7 @@ function blockexchange.save_worker(ctx)
 
 				shift(ctx)
 				minetest.after(blockexchange.min_delay, blockexchange.save_worker, ctx)
-			end,
-			function(http_code)
+			end):catch(function(http_code)
 				local msg = "[blockexchange] create schemapart failed with http code: " .. (http_code or "unkown") ..
 				" retrying..."
 				minetest.log("error", msg)

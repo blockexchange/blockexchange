@@ -42,7 +42,7 @@ function blockexchange.allocate(playername, pos1, username, schemaname, local_lo
     report_missing_mods(playername, mods)
   else
     -- online
-    blockexchange.api.get_schema_by_name(username, schemaname, false, function(schema)
+    blockexchange.api.get_schema_by_name(username, schemaname, false):next(function(schema)
       local pos2 = vector.add(pos1, blockexchange.get_schema_size(schema))
       pos2 = vector.subtract(pos2, 1)
 
@@ -55,16 +55,14 @@ function blockexchange.allocate(playername, pos1, username, schemaname, local_lo
       minetest.log("action", msg)
       minetest.chat_send_player(playername, msg)
 
-      blockexchange.api.get_schemamods(schema.id, function(mods)
+      blockexchange.api.get_schemamods(schema.id):next(function(mods)
         report_missing_mods(playername, mods)
-      end,
-      function(http_code)
+      end):catch(function(http_code)
         local err_msg = "[blockexchange] get schemamods failed with http code: " .. (http_code or "unkown")
         minetest.log("error", err_msg)
         minetest.chat_send_player(playername, minetest.colorize("#ff0000", err_msg))
       end)
-    end,
-    function()
+    end):catch(function()
       minetest.chat_send_player(playername, "Schema not found: '" ..
         username .. "/" .. schemaname .. "'")
     end)

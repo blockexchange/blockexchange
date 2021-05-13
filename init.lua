@@ -1,6 +1,15 @@
+local MP = minetest.get_modpath("blockexchange")
+
 -- optional http instance
 local http = minetest.request_http_api()
 
+-- load Promise lib
+Promise = dofile(MP.."/util/promise.lua")
+Promise.async = function(callback)
+	minetest.after(0, callback)
+end
+
+-- global namespace
 blockexchange = {
 	-- online flag
 	is_online = http ~= nil,
@@ -9,8 +18,6 @@ blockexchange = {
 	url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.land",
 	min_delay = tonumber(minetest.settings:get("blockexchange.min_delay") or "0.2"),
 	part_length = 16,
-	-- maximum usage of microseconds per second for blockexchange processes
-	max_cpu_micros_per_second = 50000,
 	pos1 = {}, -- name -> pos
 	pos2 = {} -- name -> pos
 }
@@ -18,8 +25,6 @@ blockexchange = {
 if not blockexchange.is_online then
 	minetest.log("warning", "[blockexchange] the http api is not enabled, functionality is limited to local operations")
 end
-
-local MP = minetest.get_modpath("blockexchange")
 
 -- http api
 if blockexchange.is_online then

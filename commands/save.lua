@@ -47,7 +47,7 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 		blockexchange.save_worker(ctx)
 	else
 		-- online
-		blockexchange.api.create_schema(token, create_schema, function(schema)
+		blockexchange.api.create_schema(token, create_schema):next(function(schema)
 			ctx.schema = schema
 			minetest.log("action", "[blockexchange] schema created with id: " .. schema.id)
 			minetest.chat_send_player(playername,
@@ -65,8 +65,7 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 
 			-- start save worker with context
 			blockexchange.save_worker(ctx)
-		end,
-		function(http_code)
+		end):catch(function(http_code)
 			local msg = "[blockexchange] create schema failed with http code: " .. (http_code or "unknown")
 			minetest.log("error", msg)
 			minetest.chat_send_player(playername, minetest.colorize("#ff0000", msg))

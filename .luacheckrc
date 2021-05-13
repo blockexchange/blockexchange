@@ -5,6 +5,7 @@ globals = {
 		["request_http_api"] = true
 	},
 	"AreaStore",
+	"Promise"
 }
 
 read_globals = {

@@ -92,9 +92,9 @@ function blockexchange.load_worker(ctx)
 	elseif not ctx.last_schemapart then
 		-- online
 		-- get first schemapart
-		blockexchange.api.get_first_schemapart(ctx.schema.id, function(schemapart)
+		blockexchange.api.get_first_schemapart(ctx.schema.id):next(function(schemapart)
 			place_schemapart(schemapart, ctx)
-		end, function(http_code)
+		end):catch(function(http_code)
 			schedule_retry(ctx, http_code)
 		end)
 	else
@@ -104,9 +104,9 @@ function blockexchange.load_worker(ctx)
 			y = ctx.last_schemapart.offset_y,
 			z = ctx.last_schemapart.offset_z
 		}
-		blockexchange.api.get_next_schemapart(ctx.schema.id, pos, function(schemapart)
+		blockexchange.api.get_next_schemapart(ctx.schema.id, pos):next(function(schemapart)
 			place_schemapart(schemapart, ctx)
-		end, function(http_code)
+		end):catch(function(http_code)
 			schedule_retry(ctx, http_code)
 		end)
 	end

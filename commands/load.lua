@@ -39,7 +39,7 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 		blockexchange.set_pos(2, playername, pos2)
 		blockexchange.load_worker(ctx)
 	else
-		blockexchange.api.get_schema_by_name(username, schemaname, true, function(schema)
+		blockexchange.api.get_schema_by_name(username, schemaname, true):next(function(schema)
 			ctx.pos2 = vector.add(pos1, blockexchange.get_schema_size(schema))
 			ctx.schema = schema
 			-- calculate origin point
@@ -56,8 +56,7 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 				-- TODO: mtime to track changes
 			})
 			blockexchange.load_worker(ctx)
-		end,
-		function()
+		end):catch(function()
 			minetest.chat_send_player(ctx.playername, "Schema not found: '" ..
 				username .. "/" .. schemaname .. "'")
 		end)
