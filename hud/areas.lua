@@ -24,7 +24,7 @@ local function check_interval()
 	end
 	minetest.after(1, check_interval)
 end
-check_interval()
+minetest.after(0, check_interval)
 
 minetest.register_on_leaveplayer(function(player)
 	-- remove stale hud data

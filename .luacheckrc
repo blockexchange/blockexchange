@@ -22,5 +22,5 @@ read_globals = {
 	"areas", "monitoring",
 
 	-- testing
-	"mineunit", "sourcefile", "assert"
+	"mineunit", "sourcefile", "assert", "describe", "it"
 }

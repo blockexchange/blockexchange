@@ -36,7 +36,7 @@ local function load_areas()
     end
 end
 
-load_areas()
+minetest.after(0, load_areas)
 
 function blockexchange.register_area(pos1, pos2, data)
     local id = store:insert_area(pos1, pos2, "")
