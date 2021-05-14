@@ -25,7 +25,7 @@ function blockexchange.emerge_worker(ctx)
       -- increment stats
       ctx.current_part = ctx.current_part + 1
       ctx.progress_percent = math.floor(ctx.current_part / ctx.total_parts * 100 * 10) / 10
-			minetest.after(1, blockexchange.emerge_worker, ctx)
+			minetest.after(0.1, blockexchange.emerge_worker, ctx)
     end
   end)
 

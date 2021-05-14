@@ -8,14 +8,16 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 		schemaname = schemaname,
 		pos1 = pos1,
 		current_part = 0,
-		progress_percent = 0
+		progress_percent = 0,
+		promise = Promise.new()
 	}
 
 	if local_load then
 		local schema = blockexchange.get_local_schema(schemaname)
 		if not schema then
 		  minetest.chat_send_player(playername, "Schema not found: '" .. schemaname .. "'")
-		  return
+		  ctx.promise:reject("schema not found")
+		  return ctx.promise
 		end
 		local pos2 = vector.add(pos1, blockexchange.get_schema_size(schema))
 		pos2 = vector.subtract(pos2, 1)
@@ -59,8 +61,9 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 		end):catch(function()
 			minetest.chat_send_player(ctx.playername, "Schema not found: '" ..
 				username .. "/" .. schemaname .. "'")
+			ctx.promise:reject("schema not found")
 		end)
 	end
 
-	return ctx
+	return ctx.promise
 end

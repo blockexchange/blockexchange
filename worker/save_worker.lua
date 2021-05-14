@@ -40,7 +40,7 @@ function blockexchange.save_worker(ctx)
 				local msg = "[blockexchange] Upload complete with " .. ctx.total_parts .. " parts"
 				minetest.log("action", msg)
 				minetest.chat_send_player(ctx.playername, msg)
-				ctx.success = true
+				ctx.promise:resolve(ctx.total_parts)
 			end):catch(function(http_code)
 				local msg = "[blockexchange] finalize schema failed with http code: " .. (http_code or "unkown") ..
 				" retrying..."

@@ -23,7 +23,8 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 		current_part = 0,
 		total_parts = total_parts,
 		progress_percent = 0,
-		mod_names = {}
+		mod_names = {},
+		promise = Promise.new()
 	}
 
 	local create_schema = {
@@ -69,9 +70,9 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 			local msg = "[blockexchange] create schema failed with http code: " .. (http_code or "unknown")
 			minetest.log("error", msg)
 			minetest.chat_send_player(playername, minetest.colorize("#ff0000", msg))
-			ctx.failed = true
+			ctx.promise:reject(msg)
 		end)
 	end
 
-	return ctx
+	return ctx.promise
 end

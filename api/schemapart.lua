@@ -73,7 +73,7 @@ function blockexchange.api.get_first_schemapart(schema_id)
         resolve(schemapart)
       elseif (res.succeeded and res.code == 204) or (res.code == 404) then
         -- air only part
-        resolve(nil)
+        resolve(false)
       else
         reject(res.code or 0)
       end
@@ -93,7 +93,7 @@ function blockexchange.api.get_next_schemapart(schema_id, pos)
         resolve(schemapart)
       elseif (res.succeeded and res.code == 204) or (res.code == 404) then
         -- air only part
-        resolve(nil)
+        resolve(false)
       else
         reject(res.code or 0)
       end

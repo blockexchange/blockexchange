@@ -13,8 +13,10 @@ local function get_hud_taskname(ctx)
 end
 
 local function finalize(ctx)
-	minetest.chat_send_player(ctx.playername, "Download complete with " .. ctx.schema.total_parts .. " parts")
-	ctx.success = true
+	local msg = "Download complete with " .. ctx.schema.total_parts .. " parts"
+	minetest.chat_send_player(ctx.playername, msg)
+	minetest.log("action", "[blockexchange] " .. msg)
+	ctx.promise:resolve(ctx.schema.total_parts)
 	blockexchange.hud_remove(ctx.playername, get_hud_taskname(ctx))
 end
 
