@@ -80,7 +80,6 @@ function blockexchange.load_worker(ctx)
 		end
 
 		local relative_pos = vector.subtract(ctx.current_pos, ctx.pos1)
-		minetest.log("action", "[blockexchange] loading local schemapart " .. minetest.pos_to_string(relative_pos))
 		local schemapart = blockexchange.get_local_schemapart(
 			ctx.schemaname,
 			relative_pos.x, relative_pos.y, relative_pos.z

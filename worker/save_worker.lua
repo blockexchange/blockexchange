@@ -21,7 +21,7 @@ function blockexchange.save_worker(ctx)
 	local hud_taskname = "[Save] '" .. ctx.playername .. "/".. ctx.schemaname .. "'"
 
 	if not ctx.current_pos then
-		-- upload of individual parts finished, finalize schema and update stats
+		-- save of individual parts finished, finalize schema and update stats
 
 		-- create an array with mod names
 		local mod_names = {}
@@ -32,12 +32,16 @@ function blockexchange.save_worker(ctx)
 		if ctx.local_save then
 			-- local save
 			blockexchange.create_local_schemamods(ctx.schemaname, mod_names)
-		else
+			local msg = "[blockexchange] Local save complete with " .. ctx.total_parts .. " parts"
+			minetest.log("action", msg)
+			minetest.chat_send_player(ctx.playername, msg)
+			ctx.promise:resolve(ctx.total_parts)
+	else
 			-- online save
 			blockexchange.api.create_schemamods(ctx.token, ctx.schema.id, mod_names):next(function()
 				return blockexchange.api.finalize_schema(ctx.token, ctx.schema.id)
 			end):next(function()
-				local msg = "[blockexchange] Upload complete with " .. ctx.total_parts .. " parts"
+				local msg = "[blockexchange] Save complete with " .. ctx.total_parts .. " parts"
 				minetest.log("action", msg)
 				minetest.chat_send_player(ctx.playername, msg)
 				ctx.promise:resolve(ctx.total_parts)
@@ -80,8 +84,8 @@ function blockexchange.save_worker(ctx)
 	local relative_pos = vector.subtract(ctx.current_pos, ctx.pos1)
 
 	if air_only then
-		-- don't upload air-only
-		minetest.log("action", "[blockexchange] NOT Uploading part " .. minetest.pos_to_string(ctx.current_pos) ..
+		-- don't save air-only
+		minetest.log("action", "[blockexchange] NOT Saving part " .. minetest.pos_to_string(ctx.current_pos) ..
 		" because it is air-only (processing took " .. diff .. " micros)")
 		shift(ctx)
 		minetest.after(blockexchange.min_delay, blockexchange.save_worker, ctx)
@@ -107,13 +111,14 @@ function blockexchange.save_worker(ctx)
 
 		if ctx.local_save then
 			-- save locally
+			minetest.log("action", "[blockexchange] Saving local schemapart " .. minetest.pos_to_string(relative_pos))
 			blockexchange.create_local_schemapart(ctx.schemaname, schemapart)
 			shift(ctx)
 			minetest.after(blockexchange.min_delay, blockexchange.save_worker, ctx)
 		else
 			-- upload part online
 			blockexchange.api.create_schemapart(ctx.token, schemapart):next(function()
-				minetest.log("action", "[blockexchange] Upload of part " .. minetest.pos_to_string(ctx.current_pos) ..
+				minetest.log("action", "[blockexchange] Save of part " .. minetest.pos_to_string(ctx.current_pos) ..
 				" completed (processing took " .. diff .. " micros)")
 
 				if has_monitoring then
