@@ -21,24 +21,15 @@ minetest.register_chatcommand("bx_save_update", {
     pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
 
     local area = blockexchange.get_area(pos1, pos2)
-    if area then
-      -- clip to area
-      pos1 = {
-        x = math.max(pos1.x, area.pos1.x),
-        y = math.max(pos1.y, area.pos1.y),
-        z = math.max(pos1.z, area.pos1.z)
-      }
-      pos2 = {
-        x = math.min(pos2.x, area.pos2.x),
-        y = math.min(pos2.y, area.pos2.y),
-        z = math.min(pos2.z, area.pos2.z)
-      }
-
-      local relative_start_pos = vector.subtract(pos1, area.pos1)
-
-      return true, dump(relative_start_pos) .. dump(pos2)
+    if not area then
+      return true, "no blockexchange area found in the selected region"
     end
 
-    return true, "no blockexchange area found in the selected region"
+    local clipped_area = blockexchange.clip_area(area, { pos1=pos1, pos2=pos2 })
+    local offset_pos1 = blockexchange.get_schemapart_offset(area.origin, clipped_area.pos1)
+    local offset_pos2 = blockexchange.get_schemapart_offset(area.origin, clipped_area.pos2)
+
+    -- TODO: upload all schemaparts in offset region
+    return true, dump(offset_pos1) .. "/" .. dump(offset_pos2)
   end)
 })
