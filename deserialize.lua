@@ -19,8 +19,8 @@ function blockexchange.deserialize_part(pos1, pos2, data, metadata)
 		local node_id = (string.byte(data, node_id_offset) * 256) +
 		string.byte(data, node_id_offset+1) - 32768
 
-		local param1 = string.byte(data, (4096 * 2) + i)
-		local param2 = string.byte(data, (4096 * 3) + i)
+		local param1 = string.byte(data, (data_length * 2) + i)
+		local param2 = string.byte(data, (data_length * 3) + i)
 
 		table.insert(mapblock.node_ids, node_id)
 		table.insert(mapblock.param1, param1)
