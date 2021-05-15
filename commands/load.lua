@@ -1,7 +1,6 @@
 
 function blockexchange.load(playername, pos1, username, schemaname, local_load)
 	local ctx = {
-		type = "download",
 		local_load = local_load,
 		playername = playername,
 		username = username,
@@ -34,6 +33,7 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 			z = schema.size_z_minus,
 		})
 
+		ctx.iterator = blockexchange.iterator(ctx.origin, ctx.pos1, ctx.pos2)
 		ctx.schema = {
 			total_parts = total_parts
 		}

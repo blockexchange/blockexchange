@@ -10,16 +10,18 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 	local token = blockexchange.get_token(playername)
 	local claims = blockexchange.parse_token(token)
 	local license = blockexchange.get_license(playername)
+	local iterator = blockexchange.iterator(pos1, pos1, pos2)
 
 	local ctx = {
 		local_save = local_save,
-		type = "upload",
 		playername = playername,
 		schemaname = name,
 		token = token,
+		origin = pos1,
 		pos1 = pos1,
 		pos2 = pos2,
-		current_pos = table.copy(pos1),
+		iterator = iterator,
+		current_pos = iterator(),
 		current_part = 0,
 		total_parts = total_parts,
 		progress_percent = 0,

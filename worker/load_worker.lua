@@ -73,13 +73,14 @@ end
 function blockexchange.load_worker(ctx)
 	if ctx.local_load then
 		-- local operation
-		ctx.current_pos = blockexchange.iterator_next(ctx.pos1, ctx.pos2, ctx.current_pos)
-		if not ctx.current_pos then
+		local current_pos = ctx.iterator()
+
+		if not current_pos then
 			finalize(ctx)
 			return
 		end
 
-		local relative_pos = vector.subtract(ctx.current_pos, ctx.pos1)
+		local relative_pos = vector.subtract(current_pos, ctx.pos1)
 		local schemapart = blockexchange.get_local_schemapart(
 			ctx.schemaname,
 			relative_pos.x, relative_pos.y, relative_pos.z

@@ -20,7 +20,7 @@ function blockexchange.emerge_worker(ctx)
   minetest.emerge_area(ctx.current_pos, pos2, function(_, _, calls_remaining)
     if calls_remaining == 0 then
       -- shift coordinates
-      ctx.current_pos = blockexchange.iterator_next(ctx.pos1, ctx.pos2, ctx.current_pos)
+      ctx.current_pos = ctx.iterator()
 
       -- increment stats
       ctx.current_part = ctx.current_part + 1

@@ -10,7 +10,7 @@ if has_monitoring then
 end
 
 local function shift(ctx)
-	ctx.current_pos = blockexchange.iterator_next(ctx.pos1, ctx.pos2, ctx.current_pos)
+	ctx.current_pos = ctx.iterator()
 
 	-- increment stats
 	ctx.current_part = ctx.current_part + 1
@@ -63,6 +63,7 @@ function blockexchange.save_worker(ctx)
 	local start = minetest.get_us_time()
 
 	local pos2 = vector.add(ctx.current_pos, blockexchange.part_length - 1)
+	-- TODO: use blockexchange.clip_area
 	pos2.x = math.min(pos2.x, ctx.pos2.x)
 	pos2.y = math.min(pos2.y, ctx.pos2.y)
 	pos2.z = math.min(pos2.z, ctx.pos2.z)

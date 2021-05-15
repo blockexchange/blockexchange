@@ -8,9 +8,9 @@ function blockexchange.save_update(playername, origin, pos1, pos2, username, sch
 		math.ceil(math.abs(pos1.z - pos2.z) / blockexchange.part_length)
 
 	local token = blockexchange.get_token(playername)
+	local iterator = blockexchange.iterator(pos1, pos1, pos2)
 
 	local ctx = {
-		type = "upload_save",
 		playername = playername,
 		token = token,
 		origin = origin,
@@ -18,7 +18,8 @@ function blockexchange.save_update(playername, origin, pos1, pos2, username, sch
 		pos2 = pos2,
 		username = username,
 		schemaname = schemaname,
-		current_pos = table.copy(pos1),
+		iterator = iterator,
+		current_pos = iterator(),
 		current_part = 0,
 		total_parts = total_parts,
 		progress_percent = 0,

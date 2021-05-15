@@ -1,6 +1,6 @@
 
 local function shift(ctx)
-	ctx.current_pos = blockexchange.iterator_next(ctx.pos1, ctx.pos2, ctx.current_pos)
+	ctx.current_pos = ctx.iterator()
 
 	-- increment stats
 	ctx.current_part = ctx.current_part + 1
