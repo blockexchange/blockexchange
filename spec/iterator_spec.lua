@@ -7,18 +7,70 @@ mineunit("default/functions")
 sourcefile("spec/common")
 sourcefile("init")
 
-describe("blockexchange.iterator_next", function()
-	it("returns proper coordinates", function()
+describe("blockexchange.iterator", function()
+	it("returns proper positive coordinates", function()
+		local origin = { x=0, y=0, z=0 }
 		local pos1 = { x=0, y=0, z=0 }
-		local pos2 = { x=129, y=0, z=0 }
-		local current_pos
-		local expected_x_pos_list = {0, 16, 32, 48, 64, 80, 96, 112, 128}
+		local pos2 = { x=17, y=0, z=0 }
 
-		for _, expected_x in ipairs(expected_x_pos_list) do
-			current_pos = blockexchange.iterator_next(pos1, pos2, current_pos)
-			assert.not_nil(current_pos)
-			assert.equals(expected_x, current_pos.x)
-		end
+		local it = blockexchange.iterator(origin, pos1, pos2)
+		local pos = it()
+		assert.not_nil(pos)
+		assert.equals(0, pos.x)
+		assert.equals(0, pos.y)
+		assert.equals(0, pos.z)
 
+		pos = it()
+		assert.not_nil(pos)
+		assert.equals(16, pos.x)
+		assert.equals(0, pos.y)
+		assert.equals(0, pos.z)
+
+		pos = it()
+		assert.is_nil(pos)
+	end)
+
+	it("returns proper positive coordinates with modified origin", function()
+		local origin = { x=10, y=0, z=0 }
+		local pos1 = { x=11, y=0, z=0 }
+		local pos2 = { x=27, y=0, z=0 }
+
+		local it = blockexchange.iterator(origin, pos1, pos2)
+		local pos = it()
+		assert.not_nil(pos)
+		assert.equals(0, pos.x)
+		assert.equals(0, pos.y)
+		assert.equals(0, pos.z)
+
+		pos = it()
+		assert.not_nil(pos)
+		assert.equals(16, pos.x)
+		assert.equals(0, pos.y)
+		assert.equals(0, pos.z)
+
+		pos = it()
+		assert.is_nil(pos)
+	end)
+
+	it("returns proper negative coordinates", function()
+		local origin = { x=0, y=0, z=0 }
+		local pos1 = { x=-5, y=0, z=0 }
+		local pos2 = { x=5, y=0, z=0 }
+
+		local it = blockexchange.iterator(origin, pos1, pos2)
+		local pos = it()
+		assert.not_nil(pos)
+		assert.equals(-16, pos.x)
+		assert.equals(0, pos.y)
+		assert.equals(0, pos.z)
+
+		pos = it()
+		assert.not_nil(pos)
+		assert.equals(0, pos.x)
+		assert.equals(0, pos.y)
+		assert.equals(0, pos.z)
+
+		pos = it()
+		assert.is_nil(pos)
 	end)
 end)
