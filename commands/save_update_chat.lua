@@ -26,8 +26,8 @@ minetest.register_chatcommand("bx_save_update", {
     end
 
     local clipped_area = blockexchange.clip_area(area, { pos1=pos1, pos2=pos2 })
-    local offset_pos1 = blockexchange.get_schemapart_offset(area.origin, clipped_area.pos1)
-    local offset_pos2 = blockexchange.get_schemapart_offset(area.origin, clipped_area.pos2)
+    local offset_pos1 = blockexchange.get_schemapart_offset(area.data.origin, clipped_area.pos1)
+    local offset_pos2 = blockexchange.get_schemapart_offset(area.data.origin, clipped_area.pos2)
 
     -- TODO: upload all schemaparts in offset region
     return true, dump(offset_pos1) .. "/" .. dump(offset_pos2)
