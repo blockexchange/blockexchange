@@ -38,7 +38,7 @@ minetest.register_on_joinplayer(function(player)
 		hud_elem_type = "text",
 		position = HUD_POSITION,
 		offset = {x=0, y=0},
-		text = "bx txt here",
+		text = "",
 		alignment = HUD_ALIGNMENT,
 		scale = { x = 100, y = 100 },
 		number = 0x0000FF
