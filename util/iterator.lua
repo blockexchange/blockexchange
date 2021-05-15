@@ -24,6 +24,11 @@ function blockexchange.iterator(origin, pos1, pos2)
                 end
             end
         end
-        return pos
+        local abs_pos
+        if pos then
+            -- calculate absolute position with relation to the origin point
+            abs_pos = vector.add(origin, pos)
+        end
+        return pos, abs_pos
     end
 end
