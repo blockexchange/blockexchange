@@ -4,7 +4,7 @@ function blockexchange.save_update(playername, origin, pos1, pos2, username, sch
 
 	local total_parts = blockexchange.count_schemaparts(pos1, pos2)
 	local token = blockexchange.get_token(playername)
-	local iterator = blockexchange.iterator(pos1, pos1, pos2)
+	local iterator = blockexchange.iterator(origin, pos1, pos2)
 
 	local ctx = {
 		playername = playername,
@@ -23,7 +23,14 @@ function blockexchange.save_update(playername, origin, pos1, pos2, username, sch
 		promise = Promise.new()
 	}
 
-	-- TODO
+	blockexchange.api.get_schema_by_name(username, schemaname):next(function(schema)
+		ctx.schema = schema
+		-- Start async worker
+		blockexchange.save_update_worker(ctx)
+
+	end):catch(function(err)
+		ctx.promise:reject(err)
+	end)
 
 	return ctx.promise
 end

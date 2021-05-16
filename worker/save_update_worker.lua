@@ -34,7 +34,7 @@ function blockexchange.save_update_worker(ctx)
 		minetest.log("action", "[blockexchange] NOT Saving part " .. minetest.pos_to_string(ctx.current_pos) ..
 		" because it is air-only (processing took " .. diff .. " micros)")
 		shift(ctx)
-		minetest.after(blockexchange.min_delay, blockexchange.save_worker, ctx)
+		minetest.after(blockexchange.min_delay, blockexchange.save_update_worker, ctx)
 	else
 		-- package data properly over the wire
 		local metadata = minetest.write_json({
@@ -57,18 +57,18 @@ function blockexchange.save_update_worker(ctx)
 
 		-- upload part online
 		blockexchange.api.create_schemapart(ctx.token, schemapart):next(function()
-			minetest.log("action", "[blockexchange] Save of part " .. minetest.pos_to_string(ctx.current_pos) ..
+			minetest.log("action", "[blockexchange] Save-update of part " .. minetest.pos_to_string(ctx.current_pos) ..
 			" completed (processing took " .. diff .. " micros)")
 
 			shift(ctx)
-			minetest.after(blockexchange.min_delay, blockexchange.save_worker, ctx)
+			minetest.after(blockexchange.min_delay, blockexchange.save_update_worker, ctx)
 		end):catch(function(http_code)
 			local msg = "[blockexchange] create schemapart failed with http code: " .. (http_code or "unkown") ..
 			" retrying..."
 			minetest.log("error", msg)
 			minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
 			-- wait a couple seconds
-			minetest.after(5, blockexchange.save_worker, ctx)
+			minetest.after(5, blockexchange.save_update_worker, ctx)
 		end)
 	end
 

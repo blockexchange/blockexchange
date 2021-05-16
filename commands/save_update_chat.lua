@@ -25,11 +25,18 @@ minetest.register_chatcommand("bx_save_update", {
       return true, "no blockexchange area found in the selected region"
     end
 
-    local clipped_pos1, clipped_pos2 = blockexchange.clip_area(area, { pos1=pos1, pos2=pos2 })
+    local clipped_pos1, clipped_pos2 = blockexchange.clip_area(area.pos1, area.pos2, pos1, pos2)
+    print(dump(area.data), dump(clipped_pos2))
     local offset_pos1 = blockexchange.get_schemapart_offset(area.data.origin, clipped_pos1)
     local offset_pos2 = blockexchange.get_schemapart_offset(area.data.origin, clipped_pos2)
 
-    -- TODO: upload all schemaparts in offset region
-    return true, dump(offset_pos1) .. "/" .. dump(offset_pos2)
+    -- upload all schemaparts in offset region
+    blockexchange.save_update(
+      name, area.data.origin,
+      vector.add(area.data.origin, offset_pos1), vector.add(area.data.origin, offset_pos2),
+      area.data.username, area.data.schemaname
+    )
+
+    return true
   end)
 })
