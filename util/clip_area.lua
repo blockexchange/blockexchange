@@ -1,15 +1,16 @@
 
-function blockexchange.clip_area(bounds, area)
-    return {
-        pos1 = {
-            x = math.max(bounds.pos1.x, area.pos1.x),
-            y = math.max(bounds.pos1.y, area.pos1.y),
-            z = math.max(bounds.pos1.z, area.pos1.z)
-        },
-        pos2 = {
-            x = math.min(bounds.pos2.x, area.pos2.x),
-            y = math.min(bounds.pos2.y, area.pos2.y),
-            z = math.min(bounds.pos2.z, area.pos2.z)
-        }
+function blockexchange.clip_area(clip_pos1, clip_pos2, pos1, pos2)
+    local clipped_pos1 = {
+        x = math.max(clip_pos1.x, pos1.x),
+        y = math.max(clip_pos1.y, pos1.y),
+        z = math.max(clip_pos1.z, pos1.z)
     }
+
+    local clipped_pos2 = {
+        x = math.min(clip_pos2.x, pos2.x),
+        y = math.min(clip_pos2.y, pos2.y),
+        z = math.min(clip_pos2.z, pos2.z)
+    }
+
+    return clipped_pos1, clipped_pos2
 end

@@ -63,7 +63,7 @@ function blockexchange.save_worker(ctx)
 	local start = minetest.get_us_time()
 
 	local pos2 = vector.add(ctx.current_pos, 15)
-	-- TODO: use blockexchange.clip_area
+	-- clip pos2 to area bounds
 	pos2.x = math.min(pos2.x, ctx.pos2.x)
 	pos2.y = math.min(pos2.y, ctx.pos2.y)
 	pos2.z = math.min(pos2.z, ctx.pos2.z)
