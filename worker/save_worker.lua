@@ -36,7 +36,7 @@ function blockexchange.save_worker(ctx)
 			minetest.log("action", msg)
 			minetest.chat_send_player(ctx.playername, msg)
 			ctx.promise:resolve(ctx.total_parts)
-	else
+		else
 			-- online save
 			blockexchange.api.create_schemamods(ctx.token, ctx.schema.id, mod_names):next(function()
 				return blockexchange.api.finalize_schema(ctx.token, ctx.schema.id)
