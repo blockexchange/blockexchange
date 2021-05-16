@@ -21,10 +21,7 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 		local pos2 = vector.add(pos1, blockexchange.get_schema_size(schema))
 		pos2 = vector.subtract(pos2, 1)
 
-		local total_parts =
-			math.ceil(math.abs(pos1.x - pos2.x) / blockexchange.part_length) *
-			math.ceil(math.abs(pos1.y - pos2.y) / blockexchange.part_length) *
-			math.ceil(math.abs(pos1.z - pos2.z) / blockexchange.part_length)
+		local total_parts = blockexchange.count_schemaparts(pos1, pos2)
 
 		ctx.pos2 = pos2
 		ctx.origin = vector.subtract(ctx.pos1, {

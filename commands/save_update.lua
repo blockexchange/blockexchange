@@ -2,11 +2,7 @@
 function blockexchange.save_update(playername, origin, pos1, pos2, username, schemaname)
 	pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
 
-	local total_parts =
-		math.ceil(math.abs(pos1.x - pos2.x) / blockexchange.part_length) *
-		math.ceil(math.abs(pos1.y - pos2.y) / blockexchange.part_length) *
-		math.ceil(math.abs(pos1.z - pos2.z) / blockexchange.part_length)
-
+	local total_parts = blockexchange.count_schemaparts(pos1, pos2)
 	local token = blockexchange.get_token(playername)
 	local iterator = blockexchange.iterator(pos1, pos1, pos2)
 

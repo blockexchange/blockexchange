@@ -1,10 +1,6 @@
 
 function blockexchange.protectioncheck(playername, pos1, pos2, schemaname)
-  local total_parts =
-    math.ceil(math.abs(pos1.x - pos2.x) / blockexchange.part_length) *
-    math.ceil(math.abs(pos1.y - pos2.y) / blockexchange.part_length) *
-    math.ceil(math.abs(pos1.z - pos2.z) / blockexchange.part_length)
-
+  local total_parts = blockexchange.count_schemaparts(pos1, pos2)
   local iterator = blockexchange.iterator(pos1, pos1, pos2)
 
   local ctx = {

@@ -62,7 +62,7 @@ function blockexchange.save_worker(ctx)
 	blockexchange.hud_update_progress(ctx.playername, hud_taskname, ctx.progress_percent, 0x00FF00)
 	local start = minetest.get_us_time()
 
-	local pos2 = vector.add(ctx.current_pos, blockexchange.part_length - 1)
+	local pos2 = vector.add(ctx.current_pos, 15)
 	-- TODO: use blockexchange.clip_area
 	pos2.x = math.min(pos2.x, ctx.pos2.x)
 	pos2.y = math.min(pos2.y, ctx.pos2.y)

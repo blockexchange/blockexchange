@@ -17,7 +17,6 @@ blockexchange = {
 	api_version_major = 1,
 	url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.land",
 	min_delay = tonumber(minetest.settings:get("blockexchange.min_delay") or "0.2"),
-	part_length = 16,
 	pos1 = {}, -- name -> pos
 	pos2 = {} -- name -> pos
 }
@@ -60,6 +59,7 @@ dofile(MP.."/util/is_area_protected.lua")
 dofile(MP.."/util/get_base_pos.lua")
 dofile(MP.."/util/iterator.lua")
 dofile(MP.."/util/collect_node_count.lua")
+dofile(MP.."/util/count_schemaparts.lua")
 
 -- search
 if blockexchange.is_online then

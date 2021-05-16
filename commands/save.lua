@@ -2,11 +2,7 @@
 function blockexchange.save(playername, pos1, pos2, name, local_save)
 	pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
 
-	local total_parts =
-		math.ceil(math.abs(pos1.x - pos2.x) / blockexchange.part_length) *
-		math.ceil(math.abs(pos1.y - pos2.y) / blockexchange.part_length) *
-		math.ceil(math.abs(pos1.z - pos2.z) / blockexchange.part_length)
-
+	local total_parts = blockexchange.count_schemaparts(pos1, pos2)
 	local token = blockexchange.get_token(playername)
 	local claims = blockexchange.parse_token(token)
 	local license = blockexchange.get_license(playername)
@@ -36,7 +32,6 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 		size_x_minus = 0,
 		size_y_minus = 0,
 		size_z_minus = 0,
-		part_length = blockexchange.part_length,
 		description = "",
 		license = license,
 		name = name
