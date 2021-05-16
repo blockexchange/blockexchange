@@ -22,14 +22,20 @@ function blockexchange.api.create_schema(token, create_schema)
   end)
 end
 
-function blockexchange.api.finalize_schema(token, schema_id)
+function blockexchange.api.update_schema(token, schema_id, is_initial)
   return Promise.new(function(resolve, reject)
     local json = minetest.write_json({
       done = true
     })
 
+    local update_url = url .. "/api/schema/" .. schema_id .. "/update"
+
+    if is_initial then
+      update_url = update_url .. "?initial=true"
+    end
+
     http.fetch({
-      url = url .. "/api/schema/" .. schema_id .. "/update",
+      url = update_url,
       extra_headers = {
         "Content-Type: application/json",
         "Authorization: " .. token
