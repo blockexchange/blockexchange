@@ -59,6 +59,7 @@ dofile(MP.."/util/clip_area.lua")
 dofile(MP.."/util/is_area_protected.lua")
 dofile(MP.."/util/get_base_pos.lua")
 dofile(MP.."/util/iterator.lua")
+dofile(MP.."/util/collect_node_count.lua")
 
 -- search
 if blockexchange.is_online then

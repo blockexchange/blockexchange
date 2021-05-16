@@ -71,15 +71,7 @@ function blockexchange.save_worker(ctx)
 	local data, node_count, air_only = blockexchange.serialize_part(ctx.current_pos, pos2)
 
 	-- collect mod count info
-	for k, _ in pairs(node_count) do
-		local i = 1
-		for str in string.gmatch(k, "([^:]+)") do
-			if i == 1 then
-				ctx.mod_names[str] = true
-			end
-			i = i + 1
-		end
-	end
+	blockexchange.collect_node_count(node_count, ctx.mod_names)
 
 	local diff = minetest.get_us_time() - start
 	local relative_pos = vector.subtract(ctx.current_pos, ctx.pos1)
