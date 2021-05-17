@@ -29,6 +29,8 @@ function blockexchange.save_update_worker(ctx)
 	local diff = minetest.get_us_time() - start
 	local relative_pos = vector.subtract(ctx.current_pos, ctx.pos1)
 
+	print(dump(relative_pos), dump(ctx.current_pos), dump(pos2))
+
 	if air_only then
 		-- don't save air-only
 		minetest.log("action", "[blockexchange] NOT Saving part " .. minetest.pos_to_string(ctx.current_pos) ..
