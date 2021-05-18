@@ -25,15 +25,20 @@ minetest.register_chatcommand("bx_save_update", {
       return true, "no blockexchange area found in the selected region"
     end
 
-    local clipped_pos1, clipped_pos2 = blockexchange.clip_area(area.pos1, area.pos2, pos1, pos2)
-    print(dump(area.data), dump(clipped_pos2))
-    local offset_pos1 = blockexchange.get_schemapart_offset(area.data.origin, clipped_pos1)
-    local _, offset_pos2 = blockexchange.get_schemapart_offset(area.data.origin, clipped_pos2)
+    -- get mapblock granular offsets
+    local offset_pos1 = blockexchange.get_schemapart_offset(area.data.origin, pos1)
+    local _, offset_pos2 = blockexchange.get_schemapart_offset(area.data.origin, pos2)
+
+    -- calculate absoulte positions
+    local abs_pos1 = vector.add(area.data.origin, offset_pos1)
+    local abs_pos2 = vector.add(area.data.origin, offset_pos2)
+
+    -- clip to area bounds
+    abs_pos1, abs_pos2 = blockexchange.clip_area(area.pos1, area.pos2, abs_pos1, abs_pos2)
 
     -- upload all schemaparts in offset region
     blockexchange.save_update(
-      name, area.data.origin,
-      vector.add(area.data.origin, offset_pos1), vector.add(area.data.origin, offset_pos2),
+      name, area.data.origin, abs_pos1, abs_pos2,
       area.data.username, area.data.schemaname
     )
 

@@ -11,7 +11,6 @@ function blockexchange.save_update_worker(ctx)
 	local hud_taskname = "[Save-Update] '" .. ctx.playername .. "/".. ctx.schemaname .. "'"
 
 	if not ctx.current_pos then
-		-- TODO
 		blockexchange.hud_remove(ctx.playername, hud_taskname)
 		return
 	end
@@ -27,9 +26,7 @@ function blockexchange.save_update_worker(ctx)
 	local data, _, air_only = blockexchange.serialize_part(ctx.current_pos, pos2)
 
 	local diff = minetest.get_us_time() - start
-	local relative_pos = vector.subtract(ctx.current_pos, ctx.pos1)
-
-	print(dump(relative_pos), dump(ctx.current_pos), dump(pos2))
+	local relative_pos = vector.subtract(ctx.pos1, ctx.origin)
 
 	if air_only then
 		-- don't save air-only
