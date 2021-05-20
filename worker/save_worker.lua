@@ -10,11 +10,11 @@ if has_monitoring then
 end
 
 local function shift(ctx)
-	ctx.current_pos = ctx.iterator()
+	ctx.current_pos, ctx.rel_pos, ctx.progress = ctx.iterator()
 
 	-- increment stats
 	ctx.current_part = ctx.current_part + 1
-	ctx.progress_percent = math.floor(ctx.current_part / ctx.total_parts * 100 * 10) / 10
+	ctx.progress_percent = math.floor(ctx.progress * 100 * 10) / 10
 end
 
 function blockexchange.save_worker(ctx)

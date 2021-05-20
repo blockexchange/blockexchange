@@ -14,22 +14,24 @@ describe("blockexchange.iterator", function()
 		local pos2 = { x=17, y=0, z=0 }
 
 		local it = blockexchange.iterator(origin, pos1, pos2)
-		local abs_pos, pos = it()
+		local abs_pos, pos, progress = it()
 		assert.not_nil(pos)
 		assert.equals(0, pos.x)
 		assert.equals(0, pos.y)
 		assert.equals(0, pos.z)
+		assert.equals(0.5, progress)
 
 		assert.not_nil(abs_pos)
 		assert.equals(0, abs_pos.x)
 		assert.equals(0, abs_pos.y)
 		assert.equals(0, abs_pos.z)
 
-		abs_pos, pos = it()
+		abs_pos, pos, progress = it()
 		assert.not_nil(pos)
 		assert.equals(16, pos.x)
 		assert.equals(0, pos.y)
 		assert.equals(0, pos.z)
+		assert.equals(1, progress)
 
 		assert.not_nil(pos)
 		assert.equals(16, abs_pos.x)
