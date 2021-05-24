@@ -68,10 +68,12 @@ Online commands, they call the remote-server with the http api
 * **/bx_load_here [username] [schemaname]**
 * **/bx_allocate [username] [schemaname]**
 * **/bx_login [username] [access_token]**
+* **/bx_mark** Marks the area of an already uploaded schema (if the player is inside the area)
 
 ### Write (needs a login)
 
-* **/bx_save [schemaname]**
+* **/bx_save [schemaname]** Saves/uploads the selected area as a new schema
+* **/bx_save_update** saves/updates the selected area from an already uploaded schema
 * **/bx_logout** logs out
 * **/bx_login** shows the login status
 
