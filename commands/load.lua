@@ -51,7 +51,8 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 				type = "download",
 				schemaname = schemaname,
 				username = username,
-				owner = playername
+				owner = playername,
+				origin = ctx.origin,
 				-- TODO: mtime to track changes
 			})
 			blockexchange.load_worker(ctx)
