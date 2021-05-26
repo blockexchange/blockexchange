@@ -53,7 +53,27 @@ function blockexchange.api.get_schemapart(schema_id, pos)
         resolve(schemapart)
       elseif (res.succeeded and res.code == 204) or (res.code == 404) then
         -- air only part
-        resolve(nil)
+        resolve(false)
+      else
+        reject(res.code or 0)
+      end
+    end)
+  end)
+end
+
+function blockexchange.api.get_schemapart_chunk(schema_id, pos)
+  return Promise.new(function(resolve, reject)
+    http.fetch({
+      url = url .. "/api/schemapart_chunk/" .. schema_id .. "/" .. pos.x .. "/" .. pos.y .. "/" .. pos.z,
+      timeout = 5
+    }, function(res)
+      if res.succeeded and res.code == 200 then
+        -- schema part found
+        local schemaparts = minetest.parse_json(res.data)
+        resolve(schemaparts)
+      elseif (res.succeeded and res.code == 204) or (res.code == 404) then
+        -- air only part
+        resolve(false)
       else
         reject(res.code or 0)
       end
