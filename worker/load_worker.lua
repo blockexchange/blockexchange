@@ -32,15 +32,7 @@ local function place_schemapart(schemapart, ctx)
 
 	blockexchange.hud_update_progress(ctx.playername, get_hud_taskname(ctx), ctx.progress_percent, 0x00FF00)
 
-	local data, metadata = blockexchange.unpack_schemapart(schemapart)
-
-	local pos1 = vector.add(ctx.origin, {
-		x = schemapart.offset_x,
-		y = schemapart.offset_y,
-		z = schemapart.offset_z
-	})
-	local pos2 = vector.add(pos1, vector.subtract(metadata.size, 1))
-	blockexchange.deserialize_part(pos1, pos2, data, metadata);
+	local pos1 = blockexchange.place_schemapart(schemapart, ctx.origin)
 
 	minetest.log("action", "[blockexchange] Download of part " ..
 					 minetest.pos_to_string(pos1) ..
