@@ -16,8 +16,9 @@ function blockexchange.api.create_schema(token, create_schema)
         "Content-Type: application/json",
         "Authorization: " .. token
       },
-      timeout = 5,
-      post_data = json
+      timeout = 10,
+      method = "POST",
+      data = json
     }, function(res)
       if res.succeeded and res.code == 200 then
         local schema = minetest.parse_json(res.data)
@@ -34,7 +35,7 @@ end
 -- @param schema_id the schema_id to update
 -- @param is_initial initial/first time
 -- @return a promise with the result
-function blockexchange.api.update_schema(token, schema_id, is_initial)
+function blockexchange.api.update_schema_stats(token, schema_id, is_initial)
   return Promise.new(function(resolve, reject)
     local json = minetest.write_json({
       done = true
@@ -53,10 +54,39 @@ function blockexchange.api.update_schema(token, schema_id, is_initial)
         "Authorization: " .. token
       },
       timeout = 120,
-      post_data = json
+      method = "POST",
+      data = json
     }, function(res)
       if res.succeeded and res.code == 200 then
         resolve(true)
+      else
+        reject(res.code or 0)
+      end
+    end)
+  end)
+end
+
+--- updates an existing schema
+-- @param token the token in string format
+-- @param schema the updated schema
+-- @return a promise with the result
+function blockexchange.api.update_schema(token, schema)
+  return Promise.new(function(resolve, reject)
+    local json = minetest.write_json(schema)
+
+    http.fetch({
+      url = url .. "/api/schema/" .. schema.id,
+      extra_headers = {
+        "Content-Type: application/json",
+        "Authorization: " .. token
+      },
+      timeout = 10,
+      method = "PUT",
+      data = json
+    }, function(res)
+      if res.succeeded and res.code == 200 then
+        local updated_schema = minetest.parse_json(res.data)
+        resolve(updated_schema)
       else
         reject(res.code or 0)
       end
@@ -71,7 +101,7 @@ function blockexchange.api.get_schema_by_id(schema_id)
   return Promise.new(function(resolve, reject)
     http.fetch({
       url = url .. "/api/schema/" .. schema_id,
-      timeout = 5
+      timeout = 10
     }, function(res)
       if res.succeeded and res.code == 200 then
         local schema = minetest.parse_json(res.data)
@@ -99,7 +129,7 @@ function blockexchange.api.get_schema_by_name(username, schemaname, download)
 
     http.fetch({
       url = schema_url,
-      timeout = 5
+      timeout = 10
     }, function(res)
       if res.succeeded and res.code == 200 then
         local schema = minetest.parse_json(res.data)
