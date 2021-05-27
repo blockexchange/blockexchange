@@ -1,3 +1,5 @@
+---------
+-- jwt token utilities
 
 local META_KEY = "blockexchange_token"
 
@@ -20,6 +22,7 @@ local function dec(data)
 	end))
 end
 
+--- parses a jwt token
 function blockexchange.parse_token(token)
 	-- header.payload.signature
 	local _, _, _, payload_json = string.find(token, "^([^.]+).([^.]+).([^.]+)$")

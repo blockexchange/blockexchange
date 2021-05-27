@@ -1,5 +1,9 @@
+---------
+-- info api calls
+
 local http, url = ...
 
+--- returns the blockexchange info data (version, etc)
 function blockexchange.api.get_info()
   return Promise.new(function(resolve, reject)
     http.fetch({
