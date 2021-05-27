@@ -39,8 +39,8 @@
 <h2>Modules</h2>
 <ul class="nowrap">
   <li><a href="../modules/api.info.html">api.info</a></li>
-  <li><a href="../modules/api.schema.html">api.schema</a></li>
-  <li><strong>token</strong></li>
+  <li><strong>api.schema</strong></li>
+  <li><a href="../modules/token.html">token</a></li>
   <li><a href="../modules/util.deserialize.html">util.deserialize</a></li>
 </ul>
 <h2>Minetest</h2>
@@ -52,16 +52,20 @@
 
 <div id="content">
 
-<h1>Module <code>token</code></h1>
-<p>jwt token utilities</p>
+<h1>Module <code>api.schema</code></h1>
+<p>schema api calls</p>
 <p></p>
 
 
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#blockexchange.parse_token">blockexchange.parse_token (token)</a></td>
-	<td class="summary">parses a jwt token</td>
+	<td class="name" nowrap><a href="#blockexchange.api.create_schema">blockexchange.api.create_schema (token, create_schema)</a></td>
+	<td class="summary">creates a new schema</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#blockexchange.api.update_schema">blockexchange.api.update_schema (token, schema_id, is_initial)</a></td>
+	<td class="summary">updates the stats of an existing schema</td>
 	</tr>
 </table>
 
@@ -73,17 +77,46 @@
 
     <dl class="function">
     <dt>
-    <a name = "blockexchange.parse_token"></a>
-    <strong>blockexchange.parse_token (token)</strong>
+    <a name = "blockexchange.api.create_schema"></a>
+    <strong>blockexchange.api.create_schema (token, create_schema)</strong>
     </dt>
     <dd>
-    parses a jwt token
+    creates a new schema
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">token</span>
-        header.payload.signature
+         the token in string format
+        </li>
+        <li><span class="parameter">create_schema</span>
+         the new schema as table
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "blockexchange.api.update_schema"></a>
+    <strong>blockexchange.api.update_schema (token, schema_id, is_initial)</strong>
+    </dt>
+    <dd>
+    updates the stats of an existing schema
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">token</span>
+         the token in string format
+        </li>
+        <li><span class="parameter">schema_id</span>
+         the schema_id to update
+        </li>
+        <li><span class="parameter">is_initial</span>
+         initial/first time
         </li>
     </ul>
 

@@ -40,8 +40,8 @@
 <ul class="nowrap">
   <li><a href="../modules/api.info.html">api.info</a></li>
   <li><a href="../modules/api.schema.html">api.schema</a></li>
-  <li><strong>token</strong></li>
-  <li><a href="../modules/util.deserialize.html">util.deserialize</a></li>
+  <li><a href="../modules/token.html">token</a></li>
+  <li><strong>util.deserialize</strong></li>
 </ul>
 <h2>Minetest</h2>
 <ul class="nowrap">
@@ -52,16 +52,16 @@
 
 <div id="content">
 
-<h1>Module <code>token</code></h1>
-<p>jwt token utilities</p>
+<h1>Module <code>util.deserialize</code></h1>
+<p>deserialization functions</p>
 <p></p>
 
 
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#blockexchange.parse_token">blockexchange.parse_token (token)</a></td>
-	<td class="summary">parses a jwt token</td>
+	<td class="name" nowrap><a href="#blockexchange.deserialize_part">blockexchange.deserialize_part (pos1, pos2, data, metadata)</a></td>
+	<td class="summary">place the meta and metadata to the world at the given positions</td>
 	</tr>
 </table>
 
@@ -73,17 +73,26 @@
 
     <dl class="function">
     <dt>
-    <a name = "blockexchange.parse_token"></a>
-    <strong>blockexchange.parse_token (token)</strong>
+    <a name = "blockexchange.deserialize_part"></a>
+    <strong>blockexchange.deserialize_part (pos1, pos2, data, metadata)</strong>
     </dt>
     <dd>
-    parses a jwt token
+    place the meta and metadata to the world at the given positions
 
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">token</span>
-        header.payload.signature
+        <li><span class="parameter">pos1</span>
+         the start pos
+        </li>
+        <li><span class="parameter">pos2</span>
+         the end pos
+        </li>
+        <li><span class="parameter">data</span>
+         the nodeis/param1/param2 data
+        </li>
+        <li><span class="parameter">metadata</span>
+         the schemapart metdata
         </li>
     </ul>
 
