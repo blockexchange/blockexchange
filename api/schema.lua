@@ -50,7 +50,7 @@ function blockexchange.api.update_schema(token, schema_id, is_initial)
         "Content-Type: application/json",
         "Authorization: " .. token
       },
-      timeout = 5,
+      timeout = 120,
       post_data = json
     }, function(res)
       if res.succeeded and res.code == 200 then
