@@ -45,8 +45,8 @@
   <li><a href="../modules/commands.emerge.html">commands.emerge</a></li>
   <li><a href="../modules/commands.load.html">commands.load</a></li>
   <li><a href="../modules/commands.save.html">commands.save</a></li>
-  <li><strong>token</strong></li>
-  <li><a href="../modules/util.check_api_compat.html">util.check_api_compat</a></li>
+  <li><a href="../modules/token.html">token</a></li>
+  <li><strong>util.check_api_compat</strong></li>
   <li><a href="../modules/util.deserialize.html">util.deserialize</a></li>
   <li><a href="../modules/util.promise.html">util.promise</a></li>
   <li><a href="../modules/util.sort_pos.html">util.sort_pos</a></li>
@@ -57,24 +57,16 @@
 
 <div id="content">
 
-<h1>Module <code>token</code></h1>
-<p>jwt token utilities</p>
+<h1>Module <code>util.check_api_compat</code></h1>
+<p>api check functions</p>
 <p></p>
 
 
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#blockexchange.parse_token">blockexchange.parse_token (the)</a></td>
-	<td class="summary">parses a jwt token</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#blockexchange.get_token">blockexchange.get_token (playername)</a></td>
-	<td class="summary">returns the token for the player in base64 format or nil if not present</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#blockexchange.set_token">blockexchange.set_token (playername, token)</a></td>
-	<td class="summary">sets the token for the player or clears it if nil</td>
+	<td class="name" nowrap><a href="#blockexchange.check_api_compat">blockexchange.check_api_compat (success_callback, error_callback)</a></td>
+	<td class="summary">checks for compatible api version</td>
 	</tr>
 </table>
 
@@ -86,70 +78,20 @@
 
     <dl class="function">
     <dt>
-    <a name = "blockexchange.parse_token"></a>
-    <strong>blockexchange.parse_token (the)</strong>
+    <a name = "blockexchange.check_api_compat"></a>
+    <strong>blockexchange.check_api_compat (success_callback, error_callback)</strong>
     </dt>
     <dd>
-    parses a jwt token
+    checks for compatible api version
 
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">the</span>
-         token in string format
+        <li><span class="parameter">success_callback</span>
+         called if the api version matches
         </li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-        the payload in json format
-    </ol>
-
-
-
-
-</dd>
-    <dt>
-    <a name = "blockexchange.get_token"></a>
-    <strong>blockexchange.get_token (playername)</strong>
-    </dt>
-    <dd>
-    returns the token for the player in base64 format or nil if not present
-
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">playername</span>
-         the name of the player (has to be online in order to work)
-        </li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-        the token in string/base64 format
-    </ol>
-
-
-
-
-</dd>
-    <dt>
-    <a name = "blockexchange.set_token"></a>
-    <strong>blockexchange.set_token (playername, token)</strong>
-    </dt>
-    <dd>
-    sets the token for the player or clears it if nil
-
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">playername</span>
-         the name of the player (has to be online in order to work)
-        </li>
-        <li><span class="parameter">token</span>
-         the token to set (in base64/string format)
+        <li><span class="parameter">error_callback</span>
+         called if the api is not compatible
         </li>
     </ul>
 
