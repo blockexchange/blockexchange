@@ -1,3 +1,13 @@
+---------
+-- async schema save command
+
+--- save a schematic asynchronously
+-- @param playername the playername to use in messages
+-- @param pos1 lower position to save
+-- @param pos2 upper position to save
+-- @param name the name of the schema
+-- @param local_save save to the filesystem
+-- @return a promise that resolves if the operation is complete
 
 function blockexchange.save(playername, pos1, pos2, name, local_save)
 	pos1, pos2 = blockexchange.sort_pos(pos1, pos2)

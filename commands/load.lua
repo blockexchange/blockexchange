@@ -1,4 +1,13 @@
+---------
+-- async schema load command
 
+--- load a schematic asynchronously
+-- @param playername the playername to use in messages
+-- @param pos1 lower position to load
+-- @param username the username/owner of the schema
+-- @param schemaname the name of the schema
+-- @param local_load load from the filesystem
+-- @return a promise that resolves if the operation is complete
 function blockexchange.load(playername, pos1, username, schemaname, local_load)
 	local ctx = {
 		local_load = local_load,

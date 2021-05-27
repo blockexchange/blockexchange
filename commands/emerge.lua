@@ -1,4 +1,12 @@
+---------
+-- async emerge command
 
+
+--- emerge the given area
+-- @param playername the playername to use in messages
+-- @param pos1 lower position to emerge
+-- @param pos2 upper position to emerge
+-- @return a promise that resolves if the operation is complete
 function blockexchange.emerge(playername, pos1, pos2)
   local total_parts = blockexchange.count_schemaparts(pos1, pos2)
   local iterator = blockexchange.iterator(pos1, pos1, pos2)
