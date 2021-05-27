@@ -92,6 +92,10 @@ The mod also needs the http api:
 secure.http_mods = blockexchange
 ```
 
+# Api docs
+
+See: https://blockexchange.github.io/blockexchange/
+
 # License
 
 * Code: MIT
