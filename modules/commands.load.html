@@ -41,10 +41,10 @@
   <li><a href="../modules/api.info.html">api.info</a></li>
   <li><a href="../modules/api.schema.html">api.schema</a></li>
   <li><a href="../modules/commands.emerge.html">commands.emerge</a></li>
-  <li><a href="../modules/commands.load.html">commands.load</a></li>
+  <li><strong>commands.load</strong></li>
   <li><a href="../modules/commands.save.html">commands.save</a></li>
   <li><a href="../modules/token.html">token</a></li>
-  <li><strong>util.deserialize</strong></li>
+  <li><a href="../modules/util.deserialize.html">util.deserialize</a></li>
 </ul>
 <h2>Minetest</h2>
 <ul class="nowrap">
@@ -55,16 +55,16 @@
 
 <div id="content">
 
-<h1>Module <code>util.deserialize</code></h1>
-<p>deserialization functions</p>
+<h1>Module <code>commands.load</code></h1>
+<p>async schema load command</p>
 <p></p>
 
 
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#blockexchange.deserialize_part">blockexchange.deserialize_part (pos1, pos2, data, metadata)</a></td>
-	<td class="summary">place the meta and metadata to the world at the given positions</td>
+	<td class="name" nowrap><a href="#blockexchange.load">blockexchange.load (playername, pos1, username, schemaname, local_load)</a></td>
+	<td class="summary">load a schematic asynchronously</td>
 	</tr>
 </table>
 
@@ -76,29 +76,37 @@
 
     <dl class="function">
     <dt>
-    <a name = "blockexchange.deserialize_part"></a>
-    <strong>blockexchange.deserialize_part (pos1, pos2, data, metadata)</strong>
+    <a name = "blockexchange.load"></a>
+    <strong>blockexchange.load (playername, pos1, username, schemaname, local_load)</strong>
     </dt>
     <dd>
-    place the meta and metadata to the world at the given positions
+    load a schematic asynchronously
 
 
     <h3>Parameters:</h3>
     <ul>
+        <li><span class="parameter">playername</span>
+         the playername to use in messages
+        </li>
         <li><span class="parameter">pos1</span>
-         the start pos
+         lower position to load
         </li>
-        <li><span class="parameter">pos2</span>
-         the end pos
+        <li><span class="parameter">username</span>
+         the username/owner of the schema
         </li>
-        <li><span class="parameter">data</span>
-         the nodeis/param1/param2 data
+        <li><span class="parameter">schemaname</span>
+         the name of the schema
         </li>
-        <li><span class="parameter">metadata</span>
-         the schemapart metdata
+        <li><span class="parameter">local_load</span>
+         load from the filesystem
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+        a promise that resolves if the operation is complete
+    </ol>
 
 
 
