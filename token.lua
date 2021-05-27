@@ -6,7 +6,10 @@ local META_KEY = "blockexchange_token"
 -- http://lua-users.org/wiki/BaseSixtyFour
 local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 
--- decoding
+--- decode a base64 string into a string
+-- @param the data in base64 format
+-- @return the decoded string
+-- TODO: check if minetest.decode_base64 can work here
 local function dec(data)
 	data = string.gsub(data, '[^'..b..'=]', '')
 	return (data:gsub('.', function(x)
@@ -23,6 +26,8 @@ local function dec(data)
 end
 
 --- parses a jwt token
+-- @param the token in string format
+-- @return the payload in json format
 function blockexchange.parse_token(token)
 	-- header.payload.signature
 	local _, _, _, payload_json = string.find(token, "^([^.]+).([^.]+).([^.]+)$")
@@ -31,7 +36,9 @@ function blockexchange.parse_token(token)
 	return payload
 end
 
--- returns the token in base64 format or nil if not present
+--- returns the token for the player in base64 format or nil if not present
+-- @param playername the name of the player (has to be online in order to work)
+-- @return the token in string/base64 format
 function blockexchange.get_token(playername)
 	local player = minetest.get_player_by_name(playername)
 	if not player then
@@ -50,7 +57,9 @@ function blockexchange.get_token(playername)
 	return token
 end
 
--- sets the token for the player or clears it if nil
+--- sets the token for the player or clears it if nil
+-- @param playername the name of the player (has to be online in order to work)
+-- @param token the token to set (in base64/string format)
 function blockexchange.set_token(playername, token)
 	local player = minetest.get_player_by_name(playername)
 	if not player then

@@ -1,5 +1,11 @@
+---------
+-- schema-search api calls
+
 local http, url = ...
 
+--- searches for schemas by keyword
+-- @param keyword the keyword(s) to search for
+-- @return a promise with the result
 function blockexchange.api.find_schema_by_keywords(keywords)
   return Promise.new(function(resolve, reject)
     local json = minetest.write_json({

@@ -1,5 +1,12 @@
+---------
+-- token api calls
+
 local http, url = ...
 
+--- exchanges an acces_token with a jwt token (for authorized http calls)
+-- @param name the username
+-- @param access_token the access code of the token (used in "/bx_login <username> <access_token>")
+-- @return a promise with the result
 function blockexchange.api.get_token(name, access_token)
   return Promise.new(function(resolve, reject)
     local json = minetest.write_json({

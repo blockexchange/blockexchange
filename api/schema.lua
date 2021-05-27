@@ -6,6 +6,7 @@ local http, url = ...
 --- creates a new schema
 -- @param token the token in string format
 -- @param create_schema the new schema as table
+-- @return a promise with the result
 function blockexchange.api.create_schema(token, create_schema)
   return Promise.new(function(resolve, reject)
     local json = minetest.write_json(create_schema);
@@ -32,6 +33,7 @@ end
 -- @param token the token in string format
 -- @param schema_id the schema_id to update
 -- @param is_initial initial/first time
+-- @return a promise with the result
 function blockexchange.api.update_schema(token, schema_id, is_initial)
   return Promise.new(function(resolve, reject)
     local json = minetest.write_json({
@@ -62,6 +64,9 @@ function blockexchange.api.update_schema(token, schema_id, is_initial)
   end)
 end
 
+--- search for a schema by id
+-- @param schema_id the schema_id
+-- @return a promise with the result
 function blockexchange.api.get_schema_by_id(schema_id)
   return Promise.new(function(resolve, reject)
     http.fetch({
@@ -78,6 +83,11 @@ function blockexchange.api.get_schema_by_id(schema_id)
   end)
 end
 
+--- search for a schema by username and schemaname
+-- @param username the username
+-- @param schemaname the name of the schema
+-- @param download true/false to count as additional download in the stats
+-- @return a promise with the result
 function blockexchange.api.get_schema_by_name(username, schemaname, download)
   return Promise.new(function(resolve, reject)
       -- replace spaces with %20

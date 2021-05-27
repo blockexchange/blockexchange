@@ -1,3 +1,5 @@
+---------
+-- api check functions
 
 local cache
 local cache_time = 0
@@ -11,6 +13,9 @@ local function check_versions(info, success_callback, error_callback)
     end
 end
 
+--- checks for compatible api version
+-- @param success_callback called if the api version matches
+-- @param error_callback called if the api is not compatible
 function blockexchange.check_api_compat(success_callback, error_callback)
     if cache and (os.time() - cache_time) < 300 then
         -- cached and fresher than 5 minutes

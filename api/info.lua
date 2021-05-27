@@ -4,7 +4,7 @@
 local http, url = ...
 
 --- returns the blockexchange info data (version, etc)
--- @return a table with the fields: api_version_major, api_version_minor, name, owner
+-- @return a promise with the result (fields: api_version_major, api_version_minor, name, owner)
 function blockexchange.api.get_info()
   return Promise.new(function(resolve, reject)
     http.fetch({

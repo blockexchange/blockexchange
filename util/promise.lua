@@ -1,3 +1,5 @@
+---------
+-- promise library/module
 -- Port of https://github.com/rhysbrettbowen/promise_impl/blob/master/promise.js
 -- and https://github.com/rhysbrettbowen/Aplus
 -- Source: https://github.com/Billiam/promise.lua
