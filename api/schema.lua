@@ -1,5 +1,11 @@
+---------
+-- schema api calls
+
 local http, url = ...
 
+--- creates a new schema
+-- @param token the token in string format
+-- @param create_schema the new schema as table
 function blockexchange.api.create_schema(token, create_schema)
   return Promise.new(function(resolve, reject)
     local json = minetest.write_json(create_schema);
@@ -22,6 +28,10 @@ function blockexchange.api.create_schema(token, create_schema)
   end)
 end
 
+--- updates the stats of an existing schema
+-- @param token the token in string format
+-- @param schema_id the schema_id to update
+-- @param is_initial initial/first time
 function blockexchange.api.update_schema(token, schema_id, is_initial)
   return Promise.new(function(resolve, reject)
     local json = minetest.write_json({

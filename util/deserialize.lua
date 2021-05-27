@@ -1,3 +1,6 @@
+---------
+-- deserialization functions
+
 local placeholder_id = minetest.get_content_id("blockexchange:placeholder")
 
 -- local nodename->id cache
@@ -5,6 +8,11 @@ local local_nodename_to_id_mapping = {} -- name -> id
 local next_unknown_nodeid = -1
 local unknown_nodes_id_to_name_mapping = {}
 
+--- place the meta and metadata to the world at the given positions
+-- @param pos1 the start pos
+-- @param pos2 the end pos
+-- @param data the nodeis/param1/param2 data
+-- @param metadata the schemapart metdata
 function blockexchange.deserialize_part(pos1, pos2, data, metadata)
 
 	local mapblock = {
