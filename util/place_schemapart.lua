@@ -1,8 +1,10 @@
 
+-- places a schemapart in the world with respect to the origin point
+-- returns the placed pos1, pos2 as well as the data and metadata
+-- TODO: alignment
 function blockexchange.place_schemapart(schemapart, origin)
     local data, metadata = blockexchange.unpack_schemapart(schemapart)
 
-    -- TODO: align / negative offsets
 	local pos1 = vector.add(origin, {
 		x = schemapart.offset_x,
 		y = schemapart.offset_y,
