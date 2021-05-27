@@ -32,11 +32,7 @@ local function place_schemapart(schemapart, ctx)
 
 	blockexchange.hud_update_progress(ctx.playername, get_hud_taskname(ctx), ctx.progress_percent, 0x00FF00)
 
-	local compressed_metadata = minetest.decode_base64(schemapart.metadata)
-	local compressed_data = minetest.decode_base64(schemapart.data)
-
-	local metadata = minetest.parse_json(minetest.decompress(compressed_metadata, "deflate"))
-	local data = minetest.decompress(compressed_data, "deflate")
+	local data, metadata = blockexchange.unpack_schemapart(schemapart)
 
 	local pos1 = vector.add(ctx.origin, {
 		x = schemapart.offset_x,

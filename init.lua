@@ -60,6 +60,7 @@ dofile(MP.."/util/get_base_pos.lua")
 dofile(MP.."/util/iterator.lua")
 dofile(MP.."/util/collect_node_count.lua")
 dofile(MP.."/util/count_schemaparts.lua")
+dofile(MP.."/util/unpack_schemapart.lua")
 
 -- search
 if blockexchange.is_online then
