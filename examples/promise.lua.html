@@ -30,12 +30,13 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
-<h2>Contents</h2>
-<ul>
-<li><a href="#Functions">Functions</a></li>
+
+
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/area_storage.lua.html">area_storage.lua</a></li>
+  <li><strong>promise.lua</strong></li>
 </ul>
-
-
 <h2>Modules</h2>
 <ul class="nowrap">
   <li><a href="../modules/api.info.html">api.info</a></li>
@@ -44,7 +45,7 @@
   <li><a href="../modules/api.token.html">api.token</a></li>
   <li><a href="../modules/areas.html">areas</a></li>
   <li><a href="../modules/commands.emerge.html">commands.emerge</a></li>
-  <li><strong>commands.expand</strong></li>
+  <li><a href="../modules/commands.expand.html">commands.expand</a></li>
   <li><a href="../modules/commands.load.html">commands.load</a></li>
   <li><a href="../modules/commands.save.html">commands.save</a></li>
   <li><a href="../modules/token.html">token</a></li>
@@ -58,73 +59,40 @@
 <ul class="">
   <li><a href="../topics/readme.md.html">readme</a></li>
 </ul>
-<h2>Examples</h2>
-<ul class="nowrap">
-  <li><a href="../examples/area_storage.lua.html">area_storage.lua</a></li>
-  <li><a href="../examples/promise.lua.html">promise.lua</a></li>
-</ul>
 
 </div>
 
 <div id="content">
 
-<h1>Module <code>commands.expand</code></h1>
-<p>async expand/update command</p>
-<p>
+    <h2>promise.lua</h2>
+<pre>
+<span class="comment">-- luacheck: no unused
+</span><span class="comment">-- Source: https://github.com/Billiam/promise.lua
+</span>
+<span class="comment">-- create a new promise
+</span><span class="keyword">local</span> promise = Promise.new()
 
-</p>
+<span class="comment">-- register callbacks
+</span>promise:<span class="global">next</span>(<span class="keyword">function</span>(value)
+    <span class="comment">-- value == 2
+</span><span class="keyword">end</span>):catch(<span class="keyword">function</span>(err)
+    <span class="global">print</span>(<span class="string">"something went wrong: "</span> .. err)
+<span class="keyword">end</span>)
 
+<span class="comment">-- resolve promise somewhere in an async code
+</span>promise:resolve(<span class="number">2</span>)
 
-<h2><a href="#Functions">Functions</a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#blockexchange.expand">blockexchange.expand (playername, area, axis, nodecount)</a></td>
-	<td class="summary">expands the given area and uploads the newly created real-estate</td>
-	</tr>
-</table>
-
-<br/>
-<br/>
-
-
-    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
-
-    <dl class="function">
-    <dt>
-    <a name = "blockexchange.expand"></a>
-    <strong>blockexchange.expand (playername, area, axis, nodecount)</strong>
-    </dt>
-    <dd>
-    expands the given area and uploads the newly created real-estate
-
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">playername</span>
-         the playername to use in messages
-        </li>
-        <li><span class="parameter">area</span>
-         the already existing area
-        </li>
-        <li><span class="parameter">axis</span>
-         the axis to expand
-        </li>
-        <li><span class="parameter">nodecount</span>
-         the amount of nodes to add
-        </li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-        a promise that resolves if the operation is complete
-    </ol>
-
-
-
-
-</dd>
-</dl>
+<span class="comment">-- example with the blockexchange info endpoint
+</span>blockexchange.api.get_info():<span class="global">next</span>(<span class="keyword">function</span>(info)
+    info = {
+        api_version_major = <span class="number">1</span>,
+        api_version_minor = <span class="number">1</span>,
+        owner = <span class="string">"someone"</span>,
+        name = <span class="string">"central exchange"</span>
+    }
+<span class="keyword">end</span>):catch(<span class="keyword">function</span>(err)
+    <span class="global">print</span>(<span class="string">"something went wrong: "</span> .. err)
+<span class="keyword">end</span>)</pre>
 
 
 </div> <!-- id="content" -->

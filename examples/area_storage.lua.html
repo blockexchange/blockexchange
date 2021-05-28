@@ -30,12 +30,13 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
-<h2>Contents</h2>
-<ul>
-<li><a href="#Functions">Functions</a></li>
+
+
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><strong>area_storage.lua</strong></li>
+  <li><a href="../examples/promise.lua.html">promise.lua</a></li>
 </ul>
-
-
 <h2>Modules</h2>
 <ul class="nowrap">
   <li><a href="../modules/api.info.html">api.info</a></li>
@@ -44,7 +45,7 @@
   <li><a href="../modules/api.token.html">api.token</a></li>
   <li><a href="../modules/areas.html">areas</a></li>
   <li><a href="../modules/commands.emerge.html">commands.emerge</a></li>
-  <li><strong>commands.expand</strong></li>
+  <li><a href="../modules/commands.expand.html">commands.expand</a></li>
   <li><a href="../modules/commands.load.html">commands.load</a></li>
   <li><a href="../modules/commands.save.html">commands.save</a></li>
   <li><a href="../modules/token.html">token</a></li>
@@ -58,73 +59,45 @@
 <ul class="">
   <li><a href="../topics/readme.md.html">readme</a></li>
 </ul>
-<h2>Examples</h2>
-<ul class="nowrap">
-  <li><a href="../examples/area_storage.lua.html">area_storage.lua</a></li>
-  <li><a href="../examples/promise.lua.html">promise.lua</a></li>
-</ul>
 
 </div>
 
 <div id="content">
 
-<h1>Module <code>commands.expand</code></h1>
-<p>async expand/update command</p>
-<p>
+    <h2>area_storage.lua</h2>
+<pre>
+<span class="comment">-- luacheck: no unused
+</span>
+<span class="keyword">local</span> pos1 = { x=<span class="number">1</span>, y=<span class="number">0</span>, z=<span class="number">0</span> }
+<span class="keyword">local</span> data = blockexchange.get_area(pos1)
 
-</p>
+<span class="comment">-- upload example data
+</span>data = {
+    pos1 = { x=<span class="number">0</span>, y=<span class="number">0</span>, z=<span class="number">0</span> },
+    pos2 = { x=<span class="number">2</span>, y=<span class="number">0</span>, z=<span class="number">0</span> },
+    data = {
+        <span class="global">type</span> = <span class="string">"upload"</span>,
+        schemaid = <span class="number">99</span>,
+        schemaname = <span class="string">"my_schema"</span>,
+        username = <span class="string">"MyAccount"</span>,
+        owner = <span class="string">"singleplayer"</span>,
+        origin = { x=<span class="number">0</span>, y=<span class="number">0</span>, z=<span class="number">0</span> }
+    }
+}
 
-
-<h2><a href="#Functions">Functions</a></h2>
-<table class="function_list">
-	<tr>
-	<td class="name" nowrap><a href="#blockexchange.expand">blockexchange.expand (playername, area, axis, nodecount)</a></td>
-	<td class="summary">expands the given area and uploads the newly created real-estate</td>
-	</tr>
-</table>
-
-<br/>
-<br/>
-
-
-    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
-
-    <dl class="function">
-    <dt>
-    <a name = "blockexchange.expand"></a>
-    <strong>blockexchange.expand (playername, area, axis, nodecount)</strong>
-    </dt>
-    <dd>
-    expands the given area and uploads the newly created real-estate
-
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">playername</span>
-         the playername to use in messages
-        </li>
-        <li><span class="parameter">area</span>
-         the already existing area
-        </li>
-        <li><span class="parameter">axis</span>
-         the axis to expand
-        </li>
-        <li><span class="parameter">nodecount</span>
-         the amount of nodes to add
-        </li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-        a promise that resolves if the operation is complete
-    </ol>
-
-
-
-
-</dd>
-</dl>
+<span class="comment">-- download example data
+</span>data = {
+    pos1 = { x=<span class="number">0</span>, y=<span class="number">0</span>, z=<span class="number">0</span> },
+    pos2 = { x=<span class="number">2</span>, y=<span class="number">0</span>, z=<span class="number">0</span> },
+    data = {
+        <span class="global">type</span> = <span class="string">"download"</span>,
+        schemaid = <span class="number">99</span>,
+        schemaname = <span class="string">"my_schema"</span>,
+        username = <span class="string">"MyAccount"</span>,
+        owner = <span class="string">"singleplayer"</span>,
+        origin = { x=<span class="number">0</span>, y=<span class="number">0</span>, z=<span class="number">0</span> }
+    }
+}</pre>
 
 
 </div> <!-- id="content" -->

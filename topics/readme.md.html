@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Blockexchange minetest mod</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>blockexchange</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Download___Search">Download / Search </a></li>
+<li><a href="#Upload">Upload </a></li>
+<li><a href="#Offline">Offline </a></li>
+<li><a href="#Online">Online </a></li>
+</ul>
+
+
+<h2>Topics</h2>
+<ul class="">
+  <li><strong>readme</strong></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/api.info.html">api.info</a></li>
+  <li><a href="../modules/api.schema.html">api.schema</a></li>
+  <li><a href="../modules/api.searchschema.html">api.searchschema</a></li>
+  <li><a href="../modules/api.token.html">api.token</a></li>
+  <li><a href="../modules/areas.html">areas</a></li>
+  <li><a href="../modules/commands.emerge.html">commands.emerge</a></li>
+  <li><a href="../modules/commands.expand.html">commands.expand</a></li>
+  <li><a href="../modules/commands.load.html">commands.load</a></li>
+  <li><a href="../modules/commands.save.html">commands.save</a></li>
+  <li><a href="../modules/token.html">token</a></li>
+  <li><a href="../modules/util.check_api_compat.html">util.check_api_compat</a></li>
+  <li><a href="../modules/util.deserialize.html">util.deserialize</a></li>
+  <li><a href="../modules/util.promise.html">util.promise</a></li>
+  <li><a href="../modules/util.sort_pos.html">util.sort_pos</a></li>
+  <li><a href="../modules/util.unpack_schemapart.html">util.unpack_schemapart</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="nowrap">
+  <li><a href="../examples/area_storage.lua.html">area_storage.lua</a></li>
+  <li><a href="../examples/promise.lua.html">promise.lua</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+
+<p>minetest blockexchange mod</p>
+
+<p><img src="https://github.com/blockexchange/blockexchange/workflows/luacheck/badge.svg" alt=""/>
+<img src="https://github.com/blockexchange/blockexchange/workflows/busted/badge.svg" alt=""/>
+<img src="https://github.com/blockexchange/blockexchange/workflows/ldoc/badge.svg" alt=""/>
+<a href="license.txt"><img src="https://img.shields.io/badge/License-MIT%20and%20CC%20BY--SA%203.0-green.svg" alt="License"/></a>
+<a href="https://content.minetest.net/packages/BuckarooBanzay/blockexchange"><img src="https://img.shields.io/badge/Download-ContentDB-blue.svg" alt="Download"/></a></p>
+
+<h1>Overview</h1>
+
+<p>The <code>blockexchange</code> mod allows you to share and use your builds across different worlds.
+It uses a central (configurable) server to exchange schemas (builds) of near infinite size.</p>
+
+<p>The server part lives at https://github.com/blockexchange/blockexchange_server and can be self-hosted.</p>
+
+<p>Schemas can be browsed and administered on the central server: https://blockexchange.minetest.land</p>
+
+<p><img src="./blockexchange.png"/></p>
+
+<h1>Basic usage</h1>
+
+<p><a name="Download___Search"></a></p>
+<h2>Download / Search</h2>
+
+<ul>
+    <li>Start your minetest app</li>
+    <li>Download the <code>blockexchange</code> mod in the "Content" tab from the ContentDB.</li>
+    <li>Add the <code>blockexchange</code> mod to the secure HTTP-Mods settings (search for "http" in the "settings" tab)</li>
+    <li>Create a new world and activate the mod</li>
+    <li>Grant yourself the needed privs with <code>/grantme blockexchange</code></li>
+    <li>Search for an empty place and mark it with <code>/bx_pos1</code></li>
+    <li>Browse for a schema with <code>/bx_search &lt;keywords&gt;</code></li>
+    <li>Load the schema with the "Load" button (<strong>WARNING</strong>: this may place the schema over existing builds!)</li>
+    <li>Have fun!</li>
+</ul>
+
+<p><a name="Upload"></a></p>
+<h2>Upload</h2>
+
+<ul>
+    <li>Start your minetest app</li>
+    <li>Download the <code>blockexchange</code> mod in the "Content" tab from the ContentDB.</li>
+    <li>Add the <code>blockexchange</code> mod to the secure HTTP-Mods settings (search for "http" in the "settings" tab)</li>
+    <li>Create a new world and activate the mod</li>
+    <li>Grant yourself the needed privs with <code>/grantme blockexchange</code></li>
+    <li>Build a thing</li>
+    <li>Set positions on the opposite corners with <code>/bx_pos1</code> and <code>/bx_pos2</code></li>
+    <li>Login with an access token generated from https://blockexchange.minetest.land: <code>/bx_login [username] [access_token]</code></li>
+    <li>Save the schematic with <code>/bx_save &lt;name&gt; &lt;description&gt;</code></li>
+</ul>
+
+<h1>Chat commands</h1>
+
+<p><a name="Offline"></a></p>
+<h2>Offline</h2>
+
+<p>Local commands, they don't need the http-api and make no calls "home"</p>
+
+<ul>
+    <li><strong>/bx_pos1</strong> mark position 1</li>
+    <li><strong>/bx_pos2</strong> mark position 2</li>
+    <li><strong>/bx_emerge</strong> emerge the selected area</li>
+    <li><strong>/bx<em>save</em>local [schemaname]</strong> saves a local schema to <code>&lt;worldmods&gt;/bxschems</code></li>
+    <li><strong>/bx<em>load</em>local [schemaname]</strong> loads a local schema from <code>&lt;worldmods&gt;/bxschems</code></li>
+    <li><strong>/bx<em>allocate</em>local [schemaname]</strong> allocates a local schema</li>
+</ul>
+
+<p><a name="Online"></a></p>
+<h2>Online</h2>
+
+<p>Online commands, they call the remote-server with the http api</p>
+
+<h3>Read-only</h3>
+
+<ul>
+    <li><strong>/bx_info</strong> shows infos about the connected blockexchange server</li>
+    <li><strong>/bx_license</strong> sets or displays the license of your uploaded schematics (defaults to CC0)</li>
+    <li><strong>/bx_search [keywords]</strong> search a schema by keywords</li>
+    <li><strong>/bx_load [username] [schemaname]</strong></li>
+    <li><strong>/bx<em>load</em>here [username] [schemaname]</strong></li>
+    <li><strong>/bx_allocate [username] [schemaname]</strong></li>
+    <li><strong>/bx<em>login [username] [access</em>token]</strong></li>
+    <li><strong>/bx_mark</strong> Marks the area of an already uploaded schema (if the player is inside the area)</li>
+</ul>
+
+<h3>Write (needs a login)</h3>
+
+<ul>
+    <li><strong>/bx_save [schemaname]</strong> Saves/uploads the selected area as a new schema</li>
+    <li><strong>/bx<em>save</em>update</strong> saves/updates the selected area from an already uploaded schema</li>
+    <li><strong>/bx_logout</strong> logs out</li>
+    <li><strong>/bx_login</strong> shows the login status</li>
+</ul>
+
+<h1>Privileges</h1>
+
+<ul>
+    <li><strong>blockexchange</strong> can use the blockexchange commands (admin)</li>
+    <li><strong>blockexchange<em>protected</em>upload</strong> can upload self-protected areas (survival-compatible)</li>
+</ul>
+
+<h1>Settings</h1>
+
+<ul>
+    <li><strong>blockexchange.url</strong> URL to the central server</li>
+</ul>
+
+<p>The mod also needs the http api:</p>
+<pre><code> secure.http_mods = blockexchange
+</code></pre>
+
+
+<h1>Api docs</h1>
+
+<p>See: https://blockexchange.github.io/blockexchange/</p>
+
+<h1>License</h1>
+
+<ul>
+    <li>Code: MIT</li>
+    <li>Textures: CC-BY-SA 3.0</li>
+</ul>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-05-28 11:42:47 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
