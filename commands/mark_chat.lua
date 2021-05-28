@@ -11,7 +11,7 @@ minetest.register_chatcommand("bx_mark", {
     local pos = player:get_pos()
     local area = blockexchange.get_area(pos, pos)
     if not area then
-      return false, "No area found"
+      return false, "No area found at the current position"
     end
 
     blockexchange.set_pos(1, name, area.pos1)
