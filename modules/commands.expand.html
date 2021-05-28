@@ -42,8 +42,8 @@
   <li><a href="../modules/api.schema.html">api.schema</a></li>
   <li><a href="../modules/api.searchschema.html">api.searchschema</a></li>
   <li><a href="../modules/api.token.html">api.token</a></li>
-  <li><strong>commands.emerge</strong></li>
-  <li><a href="../modules/commands.expand.html">commands.expand</a></li>
+  <li><a href="../modules/commands.emerge.html">commands.emerge</a></li>
+  <li><strong>commands.expand</strong></li>
   <li><a href="../modules/commands.load.html">commands.load</a></li>
   <li><a href="../modules/commands.save.html">commands.save</a></li>
   <li><a href="../modules/token.html">token</a></li>
@@ -58,16 +58,16 @@
 
 <div id="content">
 
-<h1>Module <code>commands.emerge</code></h1>
-<p>async emerge command</p>
+<h1>Module <code>commands.expand</code></h1>
+<p>async expand/update command</p>
 <p></p>
 
 
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#blockexchange.emerge">blockexchange.emerge (playername, pos1, pos2)</a></td>
-	<td class="summary">emerge the given area</td>
+	<td class="name" nowrap><a href="#blockexchange.expand">blockexchange.expand (playername, area, axis, nodecount)</a></td>
+	<td class="summary">expands the given area and uploads the newly created real-estate</td>
 	</tr>
 </table>
 
@@ -79,11 +79,11 @@
 
     <dl class="function">
     <dt>
-    <a name = "blockexchange.emerge"></a>
-    <strong>blockexchange.emerge (playername, pos1, pos2)</strong>
+    <a name = "blockexchange.expand"></a>
+    <strong>blockexchange.expand (playername, area, axis, nodecount)</strong>
     </dt>
     <dd>
-    emerge the given area
+    expands the given area and uploads the newly created real-estate
 
 
     <h3>Parameters:</h3>
@@ -91,11 +91,14 @@
         <li><span class="parameter">playername</span>
          the playername to use in messages
         </li>
-        <li><span class="parameter">pos1</span>
-         lower position to emerge
+        <li><span class="parameter">area</span>
+         the already existing area
         </li>
-        <li><span class="parameter">pos2</span>
-         upper position to emerge
+        <li><span class="parameter">axis</span>
+         the axis to expand
+        </li>
+        <li><span class="parameter">nodecount</span>
+         the amount of nodes to add
         </li>
     </ul>
 
