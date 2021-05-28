@@ -12,7 +12,7 @@ function blockexchange.expand(playername, area, axis, nodecount)
     print(playername, axis, nodecount) -- XXX
     local promise = Promise.new()
     -- get and validate schema
-    blockexchange.api.get_schema_by_name(area.data.username, area.data.schemaname):next(function(schema)
+    blockexchange.api.get_schema_by_id(area.data.schemaid):next(function(schema)
         print(schema) -- XXX
         -- TODO: compare sizes/origin
     end):catch(function(err)

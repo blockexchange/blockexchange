@@ -65,6 +65,7 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 
 			blockexchange.register_area(ctx.pos1, ctx.pos2, {
 				type = "upload",
+				schemaid = schema.id,
 				schemaname = name,
 				username = claims.username,
 				owner = playername,

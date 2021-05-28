@@ -58,6 +58,7 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 			})
 			blockexchange.register_area(ctx.pos1, ctx.pos2, {
 				type = "download",
+				schemaid = schema.id,
 				schemaname = schemaname,
 				username = username,
 				owner = playername,
