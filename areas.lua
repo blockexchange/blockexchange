@@ -1,3 +1,5 @@
+---------
+-- area management
 
 local FILENAME = minetest.get_worldpath() .. "/bx_areas.json"
 local store = AreaStore()
@@ -38,6 +40,11 @@ end
 
 minetest.after(0, load_areas)
 
+--- registers an area
+-- @param pos1 the lower position
+-- @param pos2 the upper position
+-- @param data the data to save with
+-- @see area_storage.lua
 function blockexchange.register_area(pos1, pos2, data)
     local id = store:insert_area(pos1, pos2, "")
     cache[id] = {
@@ -48,6 +55,11 @@ function blockexchange.register_area(pos1, pos2, data)
     save_areas()
 end
 
+--- returns the first found area in that region
+-- @param pos1 the lower position
+-- @param pos2 the upper position
+-- @return the area data
+-- @see area_storage.lua
 function blockexchange.get_area(pos1, pos2)
     local list = store:get_areas_in_area(pos1, pos2, true, false)
     if not list then
