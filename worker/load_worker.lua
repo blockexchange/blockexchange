@@ -74,7 +74,7 @@ function blockexchange.load_worker(ctx)
 			relative_pos.x, relative_pos.y, relative_pos.z
 		)
 		if schemapart then
-			place_schemapart(schemapart, ctx)
+			place_schemapart(schemapart, ctx, false)
 		else
 			minetest.after(blockexchange.min_delay, blockexchange.load_worker, ctx)
 		end
@@ -83,7 +83,7 @@ function blockexchange.load_worker(ctx)
 		-- online
 		-- get first schemapart
 		blockexchange.api.get_first_schemapart(ctx.schema.id):next(function(schemapart)
-			place_schemapart(schemapart, ctx)
+			place_schemapart(schemapart, ctx, false)
 		end):catch(function(http_code)
 			schedule_retry(ctx, http_code)
 		end)
@@ -95,7 +95,7 @@ function blockexchange.load_worker(ctx)
 			z = ctx.last_schemapart.offset_z
 		}
 		blockexchange.api.get_next_schemapart(ctx.schema.id, pos):next(function(schemapart)
-			place_schemapart(schemapart, ctx)
+			place_schemapart(schemapart, ctx, false)
 		end):catch(function(http_code)
 			schedule_retry(ctx, http_code)
 		end)

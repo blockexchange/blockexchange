@@ -13,7 +13,7 @@ local unknown_nodes_id_to_name_mapping = {}
 -- @param pos2 the end pos
 -- @param data the nodeis/param1/param2 data
 -- @param metadata the schemapart metdata
-function blockexchange.deserialize_part(pos1, pos2, data, metadata)
+function blockexchange.deserialize_part(pos1, pos2, data, metadata, update_light)
 
 	local mapblock = {
 		node_ids = {},
@@ -100,7 +100,7 @@ function blockexchange.deserialize_part(pos1, pos2, data, metadata)
 	manip:set_data(node_data)
 	manip:set_light_data(param1)
 	manip:set_param2_data(param2)
-	manip:write_to_map()
+	manip:write_to_map(update_light)
 
 	-- deserialize metadata
 	if metadata.metadata and metadata.metadata.meta then
