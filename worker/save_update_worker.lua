@@ -11,7 +11,23 @@ function blockexchange.save_update_worker(ctx)
 	local hud_taskname = "[Save-Update] '" .. ctx.playername .. "/".. ctx.schemaname .. "'"
 
 	if not ctx.current_pos then
-		blockexchange.hud_remove(ctx.playername, hud_taskname)
+		-- create an array with mod names
+		local mod_names = {}
+		for k in pairs(ctx.mod_names) do
+			table.insert(mod_names, k)
+		end
+
+		blockexchange.api.create_schemamods(ctx.token, ctx.schema.id, mod_names):next(function()
+			local msg = "[blockexchange] Save-update complete with " .. ctx.total_parts .. " parts"
+			minetest.log("action", msg)
+			minetest.chat_send_player(ctx.playername, msg)
+			blockexchange.hud_remove(ctx.playername, hud_taskname)
+			ctx.promise:resolve(ctx.total_parts)
+		end):catch(function(http_code)
+			local msg = "[blockexchange] mod-update failed with http code: " .. (http_code or "unkown")
+			minetest.log("error", msg)
+			minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
+		end)
 		return
 	end
 
@@ -23,7 +39,10 @@ function blockexchange.save_update_worker(ctx)
 	pos2.y = math.min(pos2.y, ctx.pos2.y)
 	pos2.z = math.min(pos2.z, ctx.pos2.z)
 
-	local data, _, air_only = blockexchange.serialize_part(ctx.current_pos, pos2)
+	local data, node_count, air_only = blockexchange.serialize_part(ctx.current_pos, pos2)
+
+	-- collect mod count info
+	blockexchange.collect_node_count(node_count, ctx.mod_names)
 
 	local diff = minetest.get_us_time() - start
 	local relative_pos = vector.subtract(ctx.current_pos, ctx.origin)
