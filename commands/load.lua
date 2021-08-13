@@ -56,15 +56,17 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 				y = ctx.schema.size_y_minus,
 				z = ctx.schema.size_z_minus,
 			})
-			blockexchange.register_area(ctx.pos1, ctx.pos2, {
-				type = "download",
-				schemaid = schema.id,
-				schemaname = schemaname,
-				username = username,
-				owner = playername,
-				origin = ctx.origin,
-				-- TODO: mtime to track changes
-			})
+			if blockexchange.get_tracking(playername) then
+				blockexchange.register_area(ctx.pos1, ctx.pos2, {
+					type = "download",
+					schemaid = schema.id,
+					schemaname = schemaname,
+					username = username,
+					owner = playername,
+					origin = ctx.origin,
+					-- TODO: mtime to track changes
+				})
+			end
 			blockexchange.load_worker(ctx)
 		end):catch(function()
 			minetest.chat_send_player(ctx.playername, "Schema not found: '" ..

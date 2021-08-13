@@ -64,6 +64,7 @@ Online commands, they call the remote-server with the http api
 
 * **/bx_info** shows infos about the connected blockexchange server
 * **/bx_license** sets or displays the license of your uploaded schematics (defaults to CC0)
+* **/bx_tracking** enables or disables the area-tracking (for future schematic updates)
 * **/bx_search [keywords]** search a schema by keywords
 * **/bx_load [username] [schemaname]**
 * **/bx_load_here [username] [schemaname]**

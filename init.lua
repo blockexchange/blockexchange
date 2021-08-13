@@ -44,6 +44,7 @@ dofile(MP.."/privs.lua")
 dofile(MP.."/markers.lua")
 dofile(MP.."/token.lua")
 dofile(MP.."/license.lua")
+dofile(MP.."/area_tracking.lua")
 dofile(MP.."/areas.lua")
 
 -- utils
@@ -74,6 +75,7 @@ if blockexchange.is_online then
 	dofile(MP.."/commands/api_check_wrapper.lua")
 	dofile(MP.."/commands/info.lua")
 	dofile(MP.."/commands/license.lua")
+	dofile(MP.."/commands/area_tracking.lua")
 	dofile(MP.."/commands/user.lua")
 	dofile(MP.."/commands/allocate_chat.lua")
 	dofile(MP.."/commands/mark_chat.lua")
