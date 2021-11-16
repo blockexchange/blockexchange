@@ -14,7 +14,6 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 
 	local total_parts = blockexchange.count_schemaparts(pos1, pos2)
 	local token = blockexchange.get_token(playername)
-	local claims = blockexchange.parse_token(token)
 	local license = blockexchange.get_license(playername)
 	local iterator = blockexchange.iterator(pos1, pos1, pos2)
 
