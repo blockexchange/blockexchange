@@ -2,13 +2,13 @@
 minetest.register_node("blockexchange:placeholder", {
 	description = "Blockexchange paceholder node",
 	groups = {
-    cracky=3,
-    oddly_breakable_by_hand=3,
+		cracky=3,
+		oddly_breakable_by_hand=3,
 		not_in_creative_inventory=1
-  },
+	},
 	drop = "",
-  tiles = {
-    "unknown_node.png"
+	tiles = {
+		"unknown_node.png"
 	}
 })
 

@@ -12,10 +12,7 @@ local function show_formspec(pos, playername)
 		"button_exit[0,5.5;7,1;abort;Abort]" ..
 		""
 
-	minetest.show_formspec(playername,
-		FORMNAME .. ";" .. minetest.pos_to_string(pos),
-		formspec
-	)
+	minetest.show_formspec(playername, FORMNAME .. ";" .. minetest.pos_to_string(pos), formspec)
 end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
