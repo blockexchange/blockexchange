@@ -82,7 +82,7 @@ function blockexchange.save_worker(ctx)
 		-- find controller positions
 		local pos_list = minetest.find_nodes_in_area(ctx.current_pos, pos2, {"blockexchange:controller"})
 		for _, pos in ipairs(pos_list) do
-			blockexchange.program_controller(pos, ctx.playername, ctx.schema)
+			blockexchange.program_controller(pos, ctx.playername, ctx.schema, ctx.pos1, ctx.pos2)
 		end
 	end
 

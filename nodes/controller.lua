@@ -63,11 +63,12 @@ minetest.register_node("blockexchange:controller", {
 	end,
 })
 
-function blockexchange.program_controller(pos, playername, schema)
+function blockexchange.program_controller(pos, playername, schema, pos1)
 	local meta = minetest.get_meta(pos)
 	meta:set_int("version", 1)
 	meta:set_string("owner", playername)
 	meta:set_string("schema", minetest.serialize(schema))
+	meta.set_string("origin", minetest.serialize(pos1))
 	meta:set_string("infotext",
 		"Controller for schema '".. schema.name .. "' " ..
 		"owned by '" .. playername .. "'"
