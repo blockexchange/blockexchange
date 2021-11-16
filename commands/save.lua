@@ -63,17 +63,6 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 				minetest.colorize("#00ff00", schema.id)
 			)
 
-			if blockexchange.get_tracking(playername) then
-				blockexchange.register_area(ctx.pos1, ctx.pos2, {
-					type = "upload",
-					schemaid = schema.id,
-					schemaname = name,
-					username = claims.username,
-					owner = playername,
-					origin = ctx.pos1
-				})
-			end
-
 			-- start save worker with context
 			blockexchange.save_worker(ctx)
 		end):catch(function(http_code)
