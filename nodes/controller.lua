@@ -68,6 +68,7 @@ minetest.register_node("blockexchange:controller", {
 
 function blockexchange.program_controller(pos, playername, schema)
 	local meta = minetest.get_meta(pos)
+	meta:set_int("version", 1)
 	meta:set_string("owner", playername)
 	meta:set_string("schema", minetest.serialize(schema))
 	meta:set_string("infotext",
