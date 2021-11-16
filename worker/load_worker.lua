@@ -32,11 +32,21 @@ local function place_schemapart(schemapart, ctx)
 
 	blockexchange.hud_update_progress(ctx.playername, get_hud_taskname(ctx), ctx.progress_percent, 0x00FF00)
 
-	local pos1 = blockexchange.place_schemapart(schemapart, ctx.origin)
+	local pos1, pos2, _, metadata = blockexchange.place_schemapart(schemapart, ctx.origin)
 
 	minetest.log("action", "[blockexchange] Download of part " ..
 					 minetest.pos_to_string(pos1) ..
 					 " completed")
+
+	if metadata.node_names["blockexchange:controller"] then
+		-- controller found, save schema data to node metadata
+
+		-- find controller positions
+		local pos_list = minetest.find_nodes_in_area(pos1, pos2, {"blockexchange:controller"})
+		for _, pos in ipairs(pos_list) do
+			blockexchange.program_controller(pos, ctx.playername, ctx.schema)
+		end
+	end
 
 	if has_monitoring then
 		downloaded_blocks.inc(1)
