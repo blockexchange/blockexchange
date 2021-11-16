@@ -64,11 +64,8 @@ dofile(MP.."/util/count_schemaparts.lua")
 dofile(MP.."/util/unpack_schemapart.lua")
 dofile(MP.."/util/place_schemapart.lua")
 
--- search
-if blockexchange.is_online then
-	dofile(MP.."/search/chat.lua")
-	dofile(MP.."/search/formspec.lua")
-end
+-- ui formspecs
+dofile(MP.."/ui/search_result.lua")
 
 -- commands
 if blockexchange.is_online then
@@ -79,6 +76,7 @@ if blockexchange.is_online then
 	dofile(MP.."/commands/allocate_chat.lua")
 	dofile(MP.."/commands/save_chat.lua")
 	dofile(MP.."/commands/load_chat.lua")
+	dofile(MP.."/commands/search.lua")
 end
 dofile(MP.."/commands/pos.lua")
 dofile(MP.."/commands/allocate.lua")
