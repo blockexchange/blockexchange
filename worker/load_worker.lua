@@ -44,7 +44,7 @@ local function place_schemapart(schemapart, ctx)
 		-- find controller positions
 		local pos_list = minetest.find_nodes_in_area(pos1, pos2, {"blockexchange:controller"})
 		for _, pos in ipairs(pos_list) do
-			blockexchange.program_controller(pos, ctx.playername, ctx.schema, ctx.pos1, ctx.pos2)
+			blockexchange.program_controller(pos, ctx.playername, ctx.schema, ctx.origin)
 		end
 	end
 
