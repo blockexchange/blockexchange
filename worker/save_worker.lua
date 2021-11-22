@@ -47,11 +47,10 @@ function blockexchange.save_worker(ctx)
 				ctx.promise:resolve(ctx.total_parts)
 			end):catch(function(http_code)
 				local msg = "[blockexchange] finalize schema failed with http code: " .. (http_code or "unkown") ..
-				" retrying..."
+				" retry manual on the web-ui please"
 				minetest.log("error", msg)
 				minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
-				-- wait a couple seconds
-				minetest.after(5, blockexchange.save_worker, ctx)
+				ctx.promise:resolve(ctx.total_parts)
 			end)
 		end
 
