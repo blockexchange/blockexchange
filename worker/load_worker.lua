@@ -38,7 +38,7 @@ local function place_schemapart(schemapart, ctx)
 					 minetest.pos_to_string(pos1) ..
 					 " completed")
 
-	if metadata.node_names["blockexchange:controller"] then
+	if metadata.node_mapping["blockexchange:controller"] then
 		-- controller found, save schema data to node metadata
 
 		-- find controller positions
