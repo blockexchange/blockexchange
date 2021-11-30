@@ -45,12 +45,12 @@
   <li><a href="../modules/commands.emerge.html">commands.emerge</a></li>
   <li><a href="../modules/commands.expand.html">commands.expand</a></li>
   <li><a href="../modules/commands.load.html">commands.load</a></li>
-  <li><strong>commands.save</strong></li>
+  <li><a href="../modules/commands.save.html">commands.save</a></li>
   <li><a href="../modules/token.html">token</a></li>
   <li><a href="../modules/util.check_api_compat.html">util.check_api_compat</a></li>
   <li><a href="../modules/util.deserialize.html">util.deserialize</a></li>
   <li><a href="../modules/util.get_mapblock.html">util.get_mapblock</a></li>
-  <li><a href="../modules/util.ignored_content_ids.html">util.ignored_content_ids</a></li>
+  <li><strong>util.ignored_content_ids</strong></li>
   <li><a href="../modules/util.promise.html">util.promise</a></li>
   <li><a href="../modules/util.sort_pos.html">util.sort_pos</a></li>
   <li><a href="../modules/util.unpack_schemapart.html">util.unpack_schemapart</a></li>
@@ -68,8 +68,8 @@
 
 <div id="content">
 
-<h1>Module <code>commands.save</code></h1>
-<p>async schema save command</p>
+<h1>Module <code>util.ignored_content_ids</code></h1>
+<p>ignored content ids</p>
 <p>
 
 </p>
@@ -78,8 +78,8 @@
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#blockexchange.save">blockexchange.save (playername, pos1, pos2, name, local_save)</a></td>
-	<td class="summary">save a schematic asynchronously</td>
+	<td class="name" nowrap><a href="#blockexchange.ignore_node">blockexchange.ignore_node (nodename)</a></td>
+	<td class="summary">add a nodename to ignore (set to air on save)</td>
 	</tr>
 </table>
 
@@ -91,37 +91,20 @@
 
     <dl class="function">
     <dt>
-    <a name = "blockexchange.save"></a>
-    <strong>blockexchange.save (playername, pos1, pos2, name, local_save)</strong>
+    <a name = "blockexchange.ignore_node"></a>
+    <strong>blockexchange.ignore_node (nodename)</strong>
     </dt>
     <dd>
-    save a schematic asynchronously
+    add a nodename to ignore (set to air on save)
 
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">playername</span>
-         the playername to use in messages
-        </li>
-        <li><span class="parameter">pos1</span>
-         lower position to save
-        </li>
-        <li><span class="parameter">pos2</span>
-         upper position to save
-        </li>
-        <li><span class="parameter">name</span>
-         the name of the schema
-        </li>
-        <li><span class="parameter">local_save</span>
-         save to the filesystem
+        <li><span class="parameter">nodename</span>
+         the nodename to ignore
         </li>
     </ul>
 
-    <h3>Returns:</h3>
-    <ol>
-
-        a promise that resolves if the operation is complete
-    </ol>
 
 
 
