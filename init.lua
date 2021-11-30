@@ -46,6 +46,7 @@ dofile(MP.."/token.lua")
 dofile(MP.."/license.lua")
 
 -- utils
+dofile(MP.."/util/ignored_content_ids.lua")
 dofile(MP.."/util/serialize.lua")
 dofile(MP.."/util/deserialize.lua")
 dofile(MP.."/util/local_files.lua")

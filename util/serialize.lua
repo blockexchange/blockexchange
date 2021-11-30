@@ -10,7 +10,6 @@ minetest.register_on_mods_loaded(function()
 end)
 
 local air_content_id = minetest.get_content_id("air")
-local ignore_content_id = minetest.get_content_id("ignore")
 
 -- checks if a table is empty
 local function is_empty(tbl)
@@ -64,7 +63,7 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 				local i = area:index(x,y,z)
 
 				local node_id = node_data[i]
-				if node_id == ignore_content_id then
+				if blockexchange.ignored_content_ids[node_id] then
 					-- replace ignore blocks with air
 					node_id = air_content_id
 				end
