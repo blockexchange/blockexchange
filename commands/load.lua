@@ -33,11 +33,7 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 		local total_parts = blockexchange.count_schemaparts(pos1, pos2)
 
 		ctx.pos2 = pos2
-		ctx.origin = vector.subtract(ctx.pos1, {
-			x = schema.size_x_minus,
-			y = schema.size_y_minus,
-			z = schema.size_z_minus,
-		})
+		ctx.origin = ctx.pos1
 
 		ctx.iterator = blockexchange.iterator(ctx.origin, ctx.pos1, ctx.pos2)
 		ctx.schema = {
@@ -51,11 +47,7 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 			ctx.pos2 = vector.add(pos1, blockexchange.get_schema_size(schema))
 			ctx.schema = schema
 			-- calculate origin point
-			ctx.origin = vector.subtract(ctx.pos1, {
-				x = ctx.schema.size_x_minus,
-				y = ctx.schema.size_y_minus,
-				z = ctx.schema.size_z_minus,
-			})
+			ctx.origin = ctx.pos1
 			blockexchange.load_worker(ctx)
 		end):catch(function()
 			minetest.chat_send_player(ctx.playername, "Schema not found: '" ..

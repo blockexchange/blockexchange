@@ -35,12 +35,9 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 	}
 
 	local create_schema = {
-		size_x_plus = pos2.x - pos1.x + 1,
-		size_y_plus = pos2.y - pos1.y + 1,
-		size_z_plus = pos2.z - pos1.z + 1,
-		size_x_minus = 0,
-		size_y_minus = 0,
-		size_z_minus = 0,
+		size_x = pos2.x - pos1.x + 1,
+		size_y = pos2.y - pos1.y + 1,
+		size_z = pos2.z - pos1.z + 1,
 		description = "",
 		license = license,
 		name = name
