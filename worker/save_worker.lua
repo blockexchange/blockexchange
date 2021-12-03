@@ -39,7 +39,7 @@ function blockexchange.save_worker(ctx)
 		else
 			-- online save
 			blockexchange.api.create_schemamods(ctx.token, ctx.schema.id, mod_names):next(function()
-				return blockexchange.api.update_schema_stats(ctx.token, ctx.schema.id, true)
+				return blockexchange.api.update_schema_stats(ctx.token, ctx.schema.id)
 			end):next(function()
 				local msg = "[blockexchange] Save complete with " .. ctx.total_parts .. " parts"
 				minetest.log("action", msg)

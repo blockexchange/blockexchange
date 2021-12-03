@@ -33,19 +33,14 @@ end
 --- updates the stats of an existing schema
 -- @param token the token in string format
 -- @param schema_id the schema_id to update
--- @param is_initial initial/first time
 -- @return a promise with the result
-function blockexchange.api.update_schema_stats(token, schema_id, is_initial)
+function blockexchange.api.update_schema_stats(token, schema_id)
   return Promise.new(function(resolve, reject)
     local json = minetest.write_json({
       done = true
     })
 
     local update_url = url .. "/api/schema/" .. schema_id .. "/update"
-
-    if is_initial then
-      update_url = update_url .. "?initial=true"
-    end
 
     http.fetch({
       url = update_url,
