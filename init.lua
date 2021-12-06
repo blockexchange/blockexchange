@@ -66,7 +66,9 @@ dofile(MP.."/util/unpack_schemapart.lua")
 dofile(MP.."/util/place_schemapart.lua")
 
 -- ui formspecs
+blockexchange.ui = {}
 dofile(MP.."/ui/search_result.lua")
+dofile(MP.."/ui/controller_main.lua")
 
 -- commands
 if blockexchange.is_online then

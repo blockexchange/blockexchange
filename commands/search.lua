@@ -14,7 +14,7 @@ minetest.register_chatcommand("bx_search", {
       return
       end
 
-      blockexchange.show_search_result_formspec(playername, schemas)
+      blockexchange.ui.search_result(playername, schemas)
     end):catch(function(http_code)
       minetest.chat_send_player(playername, "Query failed, http-status: " .. (http_code or "<none>"))
     end)

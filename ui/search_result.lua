@@ -6,7 +6,7 @@ local search_results = {}
 -- playername = <item>
 local selected_item_data = {}
 
-function blockexchange.show_search_result_formspec(playername, schemas)
+function blockexchange.ui.search_result(playername, schemas)
   local list = ""
   local player = minetest.get_player_by_name(playername)
 
