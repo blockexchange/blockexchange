@@ -8,26 +8,12 @@ local http, url = ...
 -- @param create_schema the new schema as table
 -- @return a promise with the result
 function blockexchange.api.create_schema(token, create_schema)
-  return Promise.new(function(resolve, reject)
-    local json = minetest.write_json(create_schema);
-    http.fetch({
-      url = url .. "/api/schema",
-      extra_headers = {
-        "Content-Type: application/json",
-        "Authorization: " .. token
-      },
-      timeout = 10,
-      method = "POST",
-      data = json
-    }, function(res)
-      if res.succeeded and res.code == 200 then
-        local schema = minetest.parse_json(res.data)
-        resolve(schema)
-      else
-        reject(res.code or 0)
-      end
-    end)
-  end)
+  return blockexchange.api.json({
+    endpoint = "schema",
+    data = create_schema,
+    method = "POST",
+    token = token
+  })
 end
 
 --- updates the stats of an existing schema

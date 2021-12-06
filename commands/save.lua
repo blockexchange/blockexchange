@@ -62,7 +62,10 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 			-- start save worker with context
 			blockexchange.save_worker(ctx)
 		end):catch(function(http_code)
-			local msg = "[blockexchange] create schema failed with http code: " .. (http_code or "unknown")
+			local msg = "[blockexchange] create schema failed with http code: " ..
+				(http_code or "unknown") ..
+				", you might have exceeded the upload limits"
+
 			minetest.log("error", msg)
 			minetest.chat_send_player(playername, minetest.colorize("#ff0000", msg))
 			ctx.promise:reject(msg)
