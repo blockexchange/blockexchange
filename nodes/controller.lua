@@ -68,7 +68,7 @@ function blockexchange.program_controller(pos, playername, schema, origin)
 	meta:set_int("version", 1)
 	meta:set_string("owner", playername)
 	meta:set_string("schema", minetest.serialize(schema))
-	meta.set_string("origin", minetest.serialize(origin))
+	meta:set_string("origin", minetest.serialize(origin))
 	meta:set_string("infotext",
 		"Controller for schema '".. schema.name .. "' " ..
 		"owned by '" .. playername .. "'"

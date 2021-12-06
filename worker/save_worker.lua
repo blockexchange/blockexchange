@@ -75,13 +75,15 @@ function blockexchange.save_worker(ctx)
 	local diff = minetest.get_us_time() - start
 	local relative_pos = vector.subtract(ctx.current_pos, ctx.pos1)
 
-	if node_count["blockexchange:controller"] then
+	if node_count["blockexchange:controller"] and not ctx.controller_placed then
 		-- controller found, save upload data to node metadata
 
 		-- find controller positions
 		local pos_list = minetest.find_nodes_in_area(ctx.current_pos, pos2, {"blockexchange:controller"})
-		for _, pos in ipairs(pos_list) do
-			blockexchange.program_controller(pos, ctx.playername, ctx.schema, ctx.origin)
+		if #pos_list >= 1 then
+			blockexchange.program_controller(pos_list[1], ctx.playername, ctx.schema, ctx.origin)
+			-- there can only be one
+			ctx.controller_placed = true
 		end
 	end
 

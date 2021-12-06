@@ -38,13 +38,15 @@ local function place_schemapart(schemapart, ctx)
 					 minetest.pos_to_string(pos1) ..
 					 " completed")
 
-	if metadata.node_mapping["blockexchange:controller"] then
+	if metadata.node_mapping["blockexchange:controller"] and not ctx.controller_placed then
 		-- controller found, save schema data to node metadata
 
 		-- find controller positions
 		local pos_list = minetest.find_nodes_in_area(pos1, pos2, {"blockexchange:controller"})
-		for _, pos in ipairs(pos_list) do
-			blockexchange.program_controller(pos, ctx.playername, ctx.schema, ctx.origin)
+		if #pos_list >= 1 then
+			blockexchange.program_controller(pos_list[1], ctx.playername, ctx.schema, ctx.origin)
+			-- there can only be one
+			ctx.controller_placed = true
 		end
 	end
 
