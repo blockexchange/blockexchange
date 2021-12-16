@@ -65,6 +65,7 @@ dofile(MP.."/util/collect_node_count.lua")
 dofile(MP.."/util/count_schemaparts.lua")
 dofile(MP.."/util/unpack_schemapart.lua")
 dofile(MP.."/util/place_schemapart.lua")
+dofile(MP.."/util/validate_name.lua")
 
 -- ui formspecs
 blockexchange.ui = {}
