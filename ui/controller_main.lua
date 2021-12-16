@@ -34,10 +34,27 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 
 	if fields.upload then
-		print("TODO: upload")
+		-- full upload
+
+		local meta = minetest.get_meta(pos)
+		local origin = minetest.deserialize(meta:get_string("origin"))
+		local schema = minetest.deserialize(meta:get_string("schema"))
+		local pos2 = vector.add(origin, vector.subtract({ x=schema.size_x, y=schema.size_y, z=schema.size_z }, 1))
+
+		-- TODO: verify user
+		local token = blockexchange.get_token(playername)
+		local claims = blockexchange.parse_token(token)
+
+		blockexchange.save_update(playername, origin, origin, pos2, claims.username, schema.name)
 	end
 
 	if fields.mark then
-		print("TODO: mark")
+		local meta = minetest.get_meta(pos)
+		local origin = minetest.deserialize(meta:get_string("origin"))
+		local schema = minetest.deserialize(meta:get_string("schema"))
+
+		local pos2 = vector.add(origin, vector.subtract({ x=schema.size_x, y=schema.size_y, z=schema.size_z }, 1))
+		blockexchange.set_pos(1, playername, origin)
+		blockexchange.set_pos(2, playername, pos2)
 	end
 end)
