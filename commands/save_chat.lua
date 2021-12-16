@@ -15,6 +15,10 @@ minetest.register_chatcommand("bx_save", {
       return true, "Usage: /bx_save <schemaname>"
     end
 
+    if not blockexchange.validate_name(schemaname) then
+      return true, "schema name can only contain letters, numbers and a handful of special chars: - _ ."
+    end
+
     local token = blockexchange.get_token(name)
     if not token then
       -- TODO check validity
