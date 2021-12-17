@@ -72,7 +72,11 @@ end
 
 function blockexchange.load_worker(ctx)
 	-- initialize hud
-	blockexchange.hud_update_progress(ctx.playername, get_hud_taskname(ctx), 0, 0x00FF00)
+	if not ctx.hud_initialized then
+		blockexchange.hud_update_progress(ctx.playername, get_hud_taskname(ctx), 0, 0x00FF00)
+		ctx.hud_initialized = true
+	end
+
 	if ctx.local_load then
 		-- local operation
 		local current_pos = ctx.iterator()
