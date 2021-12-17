@@ -45,7 +45,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		local token = blockexchange.get_token(playername)
 		local claims = blockexchange.parse_token(token)
 
-		blockexchange.save_update(playername, origin, origin, pos2, claims.username, schema.name)
+		--blockexchange.save_update(playername, origin, origin, pos2, claims.username, schema.name)
+		blockexchange.save_update_pos(playername, origin, pos2, pos, claims.username, schema.name)
 	end
 
 	if fields.mark then
