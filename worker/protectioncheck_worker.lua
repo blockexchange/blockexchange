@@ -1,6 +1,7 @@
 
 
 function blockexchange.protectioncheck_worker(ctx)
+  blockexchange.set_job_context(ctx.playername, ctx)
 	local hud_taskname = "[Protectioncheck] '" .. ctx.playername .. "/".. ctx.schemaname .. "'"
 
   if not ctx.current_pos then
@@ -10,6 +11,7 @@ function blockexchange.protectioncheck_worker(ctx)
 
 		-- mark as successful (for test)
 		ctx.success = true
+    blockexchange.set_job_context(ctx.playername, nil)
 
     -- kick off upload
     ctx.upload_ctx = blockexchange.save(ctx.playername, ctx.pos1, ctx.pos2, ctx.schemaname)

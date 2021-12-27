@@ -1,11 +1,15 @@
 
 
 function blockexchange.emerge_worker(ctx)
-	local hud_taskname = "[Emerge] '" .. minetest.pos_to_string(ctx.pos1) ..
+  blockexchange.set_job_context(ctx.playername, ctx)
+
+  local hud_taskname = "[Emerge] '" .. minetest.pos_to_string(ctx.pos1) ..
 		" - " .. minetest.pos_to_string(ctx.pos2) .. "'"
 
   if not ctx.current_pos then
+    -- done
     ctx.promise:resolve(ctx.total_parts)
+    blockexchange.set_job_context(ctx.playername, nil)
 		blockexchange.hud_remove(ctx.playername, hud_taskname)
     return
   end

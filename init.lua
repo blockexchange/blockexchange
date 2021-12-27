@@ -41,6 +41,7 @@ dofile(MP.."/nodes/controller.lua")
 dofile(MP.."/nodes/placeholder.lua")
 
 -- internal stuff
+dofile(MP.."/jobcontext.lua")
 dofile(MP.."/privs.lua")
 dofile(MP.."/markers.lua")
 dofile(MP.."/token.lua")

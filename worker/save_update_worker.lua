@@ -8,6 +8,7 @@ local function shift(ctx)
 end
 
 function blockexchange.save_update_worker(ctx)
+	blockexchange.set_job_context(ctx.playername, ctx)
 	local hud_taskname = "[Save-Update] '" .. ctx.playername .. "/".. ctx.schemaname .. "'"
 
 	if not ctx.current_pos then
@@ -22,6 +23,7 @@ function blockexchange.save_update_worker(ctx)
 			minetest.log("action", msg)
 			minetest.chat_send_player(ctx.playername, msg)
 			blockexchange.hud_remove(ctx.playername, hud_taskname)
+			blockexchange.set_job_context(ctx.playername, nil)
 			ctx.promise:resolve(ctx.total_parts)
 		end):catch(function(http_code)
 			local msg = "[blockexchange] mod-update failed with http code: " .. (http_code or "unkown")

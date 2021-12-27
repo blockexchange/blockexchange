@@ -17,6 +17,7 @@ local function finalize(ctx)
 	minetest.chat_send_player(ctx.playername, msg)
 	minetest.log("action", "[blockexchange] " .. msg)
 	ctx.promise:resolve(ctx.schema.total_parts)
+	blockexchange.set_job_context(ctx.playername, nil)
 	blockexchange.hud_remove(ctx.playername, get_hud_taskname(ctx))
 end
 
@@ -71,6 +72,8 @@ end
 
 
 function blockexchange.load_worker(ctx)
+	blockexchange.set_job_context(ctx.playername, ctx)
+
 	-- initialize hud
 	if not ctx.hud_initialized then
 		blockexchange.hud_update_progress(ctx.playername, get_hud_taskname(ctx), 0, 0x00FF00)

@@ -18,6 +18,7 @@ local function shift(ctx)
 end
 
 function blockexchange.save_worker(ctx)
+	blockexchange.set_job_context(ctx.playername, ctx)
 	local hud_taskname = "[Save] '" .. ctx.playername .. "/".. ctx.schemaname .. "'"
 
 	if not ctx.current_pos then
@@ -35,6 +36,7 @@ function blockexchange.save_worker(ctx)
 			local msg = "[blockexchange] Local save complete with " .. ctx.total_parts .. " parts"
 			minetest.log("action", msg)
 			minetest.chat_send_player(ctx.playername, msg)
+			blockexchange.set_job_context(ctx.playername, ctx)
 			ctx.promise:resolve(ctx.total_parts)
 		else
 			-- online save
