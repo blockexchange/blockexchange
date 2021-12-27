@@ -14,6 +14,7 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 
 	local total_parts = blockexchange.count_schemaparts(pos1, pos2)
 	local token = blockexchange.get_token(playername)
+	local claims = blockexchange.get_claims(playername)
 	local license = blockexchange.get_license(playername)
 	local iterator = blockexchange.iterator(pos1, pos1, pos2)
 
@@ -21,6 +22,7 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 		type = "upload",
 		local_save = local_save,
 		playername = playername,
+		username = claims.username,
 		schemaname = name,
 		token = token,
 		origin = pos1,

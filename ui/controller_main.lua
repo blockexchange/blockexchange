@@ -42,8 +42,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		local pos2 = vector.add(origin, vector.subtract({ x=schema.size_x, y=schema.size_y, z=schema.size_z }, 1))
 
 		-- TODO: verify user
-		local token = blockexchange.get_token(playername)
-		local claims = blockexchange.parse_token(token)
+		local claims = blockexchange.get_claims(playername)
 
 		--blockexchange.save_update(playername, origin, origin, pos2, claims.username, schema.name)
 		blockexchange.save_update_pos(playername, origin, pos2, pos, claims.username, schema.name)

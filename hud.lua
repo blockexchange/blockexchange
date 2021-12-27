@@ -40,7 +40,7 @@ local function update_player_hud(player)
 
 		elseif ctx.type == "upload" then
 			icon_name = "blockexchange_upload.png"
-			text = "Uploading '" .. ctx.schemaname .. "', progress: " .. ctx.progress_percent .. " %"
+			text = "Uploading '" .. ctx.username .. "/" .. ctx.schemaname .. "', progress: " .. ctx.progress_percent .. " %"
 
 		end
 

@@ -14,6 +14,15 @@ function blockexchange.parse_token(token)
 	return payload
 end
 
+--- returns the claims for the playername as table
+-- @param playername the name of the player
+-- @return the claims for the player or an empty table
+function blockexchange.get_claims(playername)
+	local token = blockexchange.get_token(playername)
+	local claims = blockexchange.parse_token(token)
+	return claims or {}
+end
+
 --- returns the token for the player in base64 format or nil if not present
 -- @param playername the name of the player (has to be online in order to work)
 -- @return the token in string/base64 format
