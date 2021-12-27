@@ -4,6 +4,7 @@ function blockexchange.protectioncheck(playername, pos1, pos2, schemaname)
   local iterator = blockexchange.iterator(pos1, pos1, pos2)
 
   local ctx = {
+    type = "protectioncheck",
     playername = playername,
     pos1 = pos1,
     pos2 = pos2,

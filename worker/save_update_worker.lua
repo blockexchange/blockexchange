@@ -9,7 +9,6 @@ end
 
 function blockexchange.save_update_worker(ctx)
 	blockexchange.set_job_context(ctx.playername, ctx)
-	local hud_taskname = "[Save-Update] '" .. ctx.playername .. "/".. ctx.schemaname .. "'"
 
 	if not ctx.current_pos then
 		-- create an array with mod names
@@ -22,7 +21,6 @@ function blockexchange.save_update_worker(ctx)
 			local msg = "[blockexchange] Save-update complete with " .. ctx.total_parts .. " parts"
 			minetest.log("action", msg)
 			minetest.chat_send_player(ctx.playername, msg)
-			blockexchange.hud_remove(ctx.playername, hud_taskname)
 			blockexchange.set_job_context(ctx.playername, nil)
 			ctx.promise:resolve(ctx.total_parts)
 		end):catch(function(http_code)
@@ -33,7 +31,6 @@ function blockexchange.save_update_worker(ctx)
 		return
 	end
 
-	blockexchange.hud_update_progress(ctx.playername, hud_taskname, ctx.progress_percent, 0x00FF00)
 	local start = minetest.get_us_time()
 
 	local pos2 = vector.add(ctx.current_pos, 15)

@@ -18,6 +18,7 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 	local iterator = blockexchange.iterator(pos1, pos1, pos2)
 
 	local ctx = {
+		type = "upload",
 		local_save = local_save,
 		playername = playername,
 		schemaname = name,

@@ -3,6 +3,10 @@ minetest.register_chatcommand("bx_load_local", {
     description = "loads a local schema to the selected pos1",
     privs = {blockexchange = true},
     func = function(name, schemaname)
+        if blockexchange.get_job_context(name) then
+            return true, "There is a job already running"
+        end
+
         if not schemaname or schemaname == "" then
             return false, "Usage: /bx_load <username> <schemaname>"
         end

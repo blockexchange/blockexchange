@@ -8,17 +8,12 @@ if has_monitoring then
 	)
 end
 
-local function get_hud_taskname(ctx)
-	return "[Download" .. (ctx.local_load and "-local" or "") .. "] '" .. ctx.playername .. "/" .. ctx.schemaname .. "'"
-end
-
 local function finalize(ctx)
 	local msg = "Download complete with " .. ctx.schema.total_parts .. " parts"
 	minetest.chat_send_player(ctx.playername, msg)
 	minetest.log("action", "[blockexchange] " .. msg)
 	ctx.promise:resolve(ctx.schema.total_parts)
 	blockexchange.set_job_context(ctx.playername, nil)
-	blockexchange.hud_remove(ctx.playername, get_hud_taskname(ctx))
 end
 
 local function place_schemapart(schemapart, ctx)
@@ -30,8 +25,6 @@ local function place_schemapart(schemapart, ctx)
 	-- increment stats
 	ctx.current_part = ctx.current_part + 1
 	ctx.progress_percent = math.floor(ctx.current_part / ctx.schema.total_parts * 100 * 10) / 10
-
-	blockexchange.hud_update_progress(ctx.playername, get_hud_taskname(ctx), ctx.progress_percent, 0x00FF00)
 
 	local pos1, pos2, _, metadata = blockexchange.place_schemapart(schemapart, ctx.origin)
 
@@ -73,12 +66,6 @@ end
 
 function blockexchange.load_worker(ctx)
 	blockexchange.set_job_context(ctx.playername, ctx)
-
-	-- initialize hud
-	if not ctx.hud_initialized then
-		blockexchange.hud_update_progress(ctx.playername, get_hud_taskname(ctx), 0, 0x00FF00)
-		ctx.hud_initialized = true
-	end
 
 	if ctx.local_load then
 		-- local operation

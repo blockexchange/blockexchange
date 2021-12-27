@@ -4,6 +4,10 @@ minetest.register_chatcommand("bx_save_local", {
   privs = { blockexchange = true },
   description = "Saves the selected region to the disk",
   func = function(name, schemaname)
+    if blockexchange.get_job_context(name) then
+      return true, "There is a job already running"
+    end
+
     if not schemaname or schemaname == "" then
       return true, "Usage: /bx_save_local <schemaname>"
     end

@@ -2,6 +2,10 @@ minetest.register_chatcommand("bx_emerge", {
 	description = "Emerges the selected region",
   privs = { blockexchange = true },
 	func = function(name)
+    if blockexchange.get_job_context(name) then
+      return true, "There is a job already running"
+    end
+
     local pos1 = blockexchange.get_pos(1, name)
     local pos2 = blockexchange.get_pos(2, name)
 

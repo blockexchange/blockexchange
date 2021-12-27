@@ -3,6 +3,10 @@ minetest.register_chatcommand("bx_save", {
   params = "<name>",
 	description = "Uploads the selected region to the blockexchange server",
 	func = blockexchange.api_check_wrapper(function(name, schemaname)
+    if blockexchange.get_job_context(name) then
+      return true, "There is a job already running"
+    end
+
     local has_protected_upload_priv = minetest.check_player_privs(name, { blockexchange_protected_upload = true })
 		local has_blockexchange_priv = minetest.check_player_privs(name, { blockexchange = true })
 		local has_protection_bypass_priv = minetest.check_player_privs(name, { protection_bypass = true })

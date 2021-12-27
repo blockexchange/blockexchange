@@ -10,6 +10,7 @@
 -- @return a promise that resolves if the operation is complete
 function blockexchange.load(playername, pos1, username, schemaname, local_load)
 	local ctx = {
+		type = "download",
 		local_load = local_load,
 		playername = playername,
 		username = username,

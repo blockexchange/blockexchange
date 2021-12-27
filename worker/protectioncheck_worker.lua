@@ -2,7 +2,6 @@
 
 function blockexchange.protectioncheck_worker(ctx)
   blockexchange.set_job_context(ctx.playername, ctx)
-	local hud_taskname = "[Protectioncheck] '" .. ctx.playername .. "/".. ctx.schemaname .. "'"
 
   if not ctx.current_pos then
 		local msg = "[blockexchange] Protection check complete with " .. ctx.total_parts .. " parts"
@@ -15,11 +14,8 @@ function blockexchange.protectioncheck_worker(ctx)
 
     -- kick off upload
     ctx.upload_ctx = blockexchange.save(ctx.playername, ctx.pos1, ctx.pos2, ctx.schemaname)
-		blockexchange.hud_remove(ctx.playername, hud_taskname)
     return
   end
-
-	blockexchange.hud_update_progress(ctx.playername, hud_taskname, ctx.progress_percent, 0x00FF00)
 
 	local pos2 = vector.add(ctx.current_pos, 15)
 	pos2.x = math.min(pos2.x, ctx.pos2.x)
@@ -43,7 +39,7 @@ function blockexchange.protectioncheck_worker(ctx)
       minetest.pos_to_string(ctx.current_pos) .. " and " ..
       minetest.pos_to_string(pos2)
     )
-		blockexchange.hud_remove(ctx.playername, hud_taskname)
+    blockexchange.set_job_context(ctx.playername, nil)
   end
 
 end

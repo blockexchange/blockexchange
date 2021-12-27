@@ -46,6 +46,7 @@ dofile(MP.."/privs.lua")
 dofile(MP.."/markers.lua")
 dofile(MP.."/token.lua")
 dofile(MP.."/license.lua")
+dofile(MP.."/hud.lua")
 
 -- utils
 dofile(MP.."/util/ignored_content_ids.lua")
@@ -102,6 +103,3 @@ dofile(MP.."/worker/save_worker.lua")
 dofile(MP.."/worker/save_update_worker.lua")
 dofile(MP.."/worker/emerge_worker.lua")
 dofile(MP.."/worker/protectioncheck_worker.lua")
-
--- hud
-dofile(MP.."/hud/progress.lua")

@@ -3,8 +3,11 @@ minetest.register_chatcommand("bx_load", {
     description = "Downloads a schema from the blockexchange to the selected pos1",
     privs = {blockexchange = true},
     func = blockexchange.api_check_wrapper(function(name, param)
-        local _, _, username, schemaname =
-            string.find(param, "^([^%s]+)%s+(.*)$")
+        if blockexchange.get_job_context(name) then
+            return true, "There is a job already running"
+        end
+
+        local _, _, username, schemaname = string.find(param, "^([^%s]+)%s+(.*)$")
 
         if not username or not schemaname then
             return false, "Usage: /bx_load <username> <schemaname>"
@@ -24,6 +27,10 @@ minetest.register_chatcommand("bx_load_here", {
     description = "Downloads a schema from the blockexchange to the current position",
     privs = {blockexchange = true},
     func = blockexchange.api_check_wrapper(function(name, param)
+        if blockexchange.get_job_context(name) then
+            return true, "There is a job already running"
+        end
+
         local player = minetest.get_player_by_name(name)
         if player then
             local pos = vector.floor(player:get_pos())
