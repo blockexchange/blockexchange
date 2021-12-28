@@ -29,7 +29,7 @@ function blockexchange.ui.search(playername)
 
     local preview = ""
     if preview_image[playername] then
-        preview = "image[8.2,7;7.8,5.2;" .. preview_image[playername] .. "]"
+        preview = "image[8.2,6;7.8,5.2;" .. preview_image[playername] .. "]"
     end
 
     local description = "Search and select a schematic"
@@ -45,11 +45,14 @@ function blockexchange.ui.search(playername)
         size[16,12;]
         field[0.2,0.4;14,0.8;keywords;Keywords;]
         field_close_on_enter[keywords;false]
-        button[14.1,0.1;1.8,0.8;search;Search]
+        button[14,0;2,1;search;Search]
         tablecolumns[text;text;text]
-        table[0,1.1;7.8,10.8;items;User,Name,Size]] .. list .. [[
-        textarea[8.2,1.5;7.8,5.2;;;]] .. description .. [[]
+        table[0,1.1;7.8,9.8;items;User,Name,Size]] .. list .. [[
+        textarea[8.2,1.5;7.8,4.2;;;]] .. description .. [[]
         ]] .. preview .. [[
+            button_exit[0,11.5;2,1;allocate;Allocate]
+        button_exit[2,11.5;2,1;load;Load]
+        button_exit[14,11.5;2,1;quit;Quit]
     ]]
 
     minetest.show_formspec(playername, FORMNAME, formspec)
@@ -60,11 +63,32 @@ minetest.rmdir(minetest.get_worldpath() .. "/bx_media", true)
 minetest.mkdir(minetest.get_worldpath() .. "/bx_media")
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
-	if formname ~= FORMNAME then
+	if formname ~= FORMNAME or not minetest.check_player_privs(player, "blockexchange") then
 		return
 	end
 
     local playername = player:get_player_name()
+
+    if (fields.allocate or fields.load) and not blockexchange.get_pos(1, playername) then
+        -- not pos1, set to current players location
+        blockexchange.set_pos(1, playername, vector.round(player:get_pos()))
+    end
+
+    if fields.allocate then
+        local pos1 = blockexchange.get_pos(1, playername)
+        local selected_result_item = selected_result_items[playername] or 0
+        local schema = search_results[playername][selected_result_item]
+
+        blockexchange.allocate(playername, pos1, schema.user.name, schema.name)
+    end
+
+    if fields.load then
+        local pos1 = blockexchange.get_pos(1, playername)
+        local selected_result_item = selected_result_items[playername] or 0
+        local schema = search_results[playername][selected_result_item]
+
+        blockexchange.load(playername, pos1, schema.user.name, schema.name)
+    end
 
     if fields.items then
         local parts = fields.items:split(":")
@@ -78,7 +102,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
                 blockexchange.api.get_schemascreenshots(schema.id):next(function(screenshots)
                     return blockexchange.api.get_schemascreenshot(schema.id, screenshots[1].id)
                 end):next(function(screenshot)
-                    local texture_name = playername .. os.time() .. ".png"
+                    local texture_name = playername .. minetest.get_us_time() .. ".png"
                     local filename = minetest.get_worldpath() .. "/bx_media/" .. texture_name
                     local file = io.open(filename, "w")
                     if file and file:write(screenshot) and file:close() then
