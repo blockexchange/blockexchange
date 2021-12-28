@@ -60,7 +60,7 @@ local function update_hud()
 	end
 	minetest.after(0.5, update_hud)
 end
-update_hud()
+minetest.after(0.5, update_hud)
 
 -- remove
 minetest.register_on_leaveplayer(function(player)
