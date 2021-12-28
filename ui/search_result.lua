@@ -45,31 +45,31 @@ function blockexchange.ui.search_result(playername, schemas)
 end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
-	if formname ~= FORMNAME then
-		return
-	end
+  if formname ~= FORMNAME then
+    return
+  end
 
-	local selected_item = 0
-	local playername = player:get_player_name()
+  local selected_item = 0
+  local playername = player:get_player_name()
 
-	if fields.items then
-		local parts = fields.items:split(":")
-		if parts[1] == "CHG" then
-			selected_item = tonumber(parts[2]) - 1
-		end
-	end
+  if fields.items then
+    local parts = fields.items:split(":")
+    if parts[1] == "CHG" then
+      selected_item = tonumber(parts[2]) - 1
+    end
+  end
 
-	if selected_item > 0 then
-		local data = search_results[playername]
-		local schema = data[selected_item]
+  if selected_item > 0 then
+    local data = search_results[playername]
+    local schema = data[selected_item]
 
-		selected_item_data[playername] = schema
-	end
+    selected_item_data[playername] = schema
+  end
 
-	local schema = selected_item_data[playername]
-	if not schema then
-		return
-	end
+  local schema = selected_item_data[playername]
+  if not schema then
+    return
+  end
 
   if fields.load or fields.allocate then
     if not blockexchange.get_pos(1, playername) then
@@ -78,7 +78,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
     end
   end
 
-	if fields.load then
+  if fields.load then
     blockexchange.load(
       playername,
       blockexchange.get_pos(1, playername),
@@ -92,12 +92,12 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
       schema.user.name,
       schema.name
     )
-	end
+  end
 
 end)
 
 
 minetest.register_on_leaveplayer(function(player)
-	search_results[player:get_player_name()] = nil
-	selected_item_data[player:get_player_name()] = nil
+  search_results[player:get_player_name()] = nil
+  selected_item_data[player:get_player_name()] = nil
 end)

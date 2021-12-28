@@ -32,6 +32,7 @@ if blockexchange.is_online then
 	loadfile(MP.."/api/schema.lua")(http, blockexchange.url)
 	loadfile(MP.."/api/schemapart.lua")(http, blockexchange.url)
 	loadfile(MP.."/api/schemamods.lua")(http, blockexchange.url)
+	loadfile(MP.."/api/schemascreenshots.lua")(http, blockexchange.url)
 	loadfile(MP.."/api/searchschema.lua")(http, blockexchange.url)
 	loadfile(MP.."/api/token.lua")(http, blockexchange.url)
 end
@@ -73,6 +74,7 @@ dofile(MP.."/util/validate_name.lua")
 blockexchange.ui = {}
 dofile(MP.."/ui/search_result.lua")
 dofile(MP.."/ui/controller_main.lua")
+dofile(MP.."/ui/search.lua")
 
 -- commands
 if blockexchange.is_online then
