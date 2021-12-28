@@ -48,6 +48,7 @@ dofile(MP.."/markers.lua")
 dofile(MP.."/token.lua")
 dofile(MP.."/license.lua")
 dofile(MP.."/hud.lua")
+dofile(MP.."/autosave.lua")
 
 -- utils
 dofile(MP.."/util/ignored_content_ids.lua")

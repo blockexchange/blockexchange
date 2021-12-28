@@ -34,6 +34,10 @@ local function update_player_hud(player)
 			icon_name = "blockexchange_protectioncheck.png"
 			text = "Protection-check, progress: " .. ctx.progress_percent .. " %"
 
+		elseif ctx.type == "autosave" then
+			icon_name = "blockexchange_update.png"
+			text = "Autosave active @ " .. minetest.pos_to_string(ctx.controller_pos)
+
 		elseif ctx.type == "download" then
 			icon_name = "blockexchange_download.png"
 			text = "Downloading '" .. ctx.username .. "/" .. ctx.schemaname .. "', progress: " .. ctx.progress_percent .. " %"

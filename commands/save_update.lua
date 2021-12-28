@@ -35,6 +35,23 @@ function blockexchange.save_update(playername, origin, pos1, pos2, username, sch
 	return ctx.promise
 end
 
+-- update a region of a schema
+function blockexchange.save_update_area(playername, pos1, pos2, save_pos1, save_pos2, username, schemaname)
+	-- clip to schema area
+	save_pos1, save_pos2 = blockexchange.clip_area(pos1, pos2, save_pos1, save_pos2)
+
+	-- get offset within schema area
+	local offset_pos1 = blockexchange.get_schemapart_offset(pos1, save_pos1)
+	local _, offset_pos2 = blockexchange.get_schemapart_offset(pos1, save_pos2)
+
+	-- get absolute coords
+	local abs_pos1 = vector.add(pos1, offset_pos1)
+	local abs_pos2 = vector.add(pos1, offset_pos2)
+
+	abs_pos1, abs_pos2 = blockexchange.clip_area(pos1, pos2, abs_pos1, abs_pos2)
+	return blockexchange.save_update(playername, pos1, abs_pos1, abs_pos2, username, schemaname)
+end
+
 -- update a region on a single position
 function blockexchange.save_update_pos(playername, pos1, pos2, pos, username, schemaname)
 	local offset_pos1, offset_pos2 = blockexchange.get_schemapart_offset(pos1, pos)
@@ -42,6 +59,5 @@ function blockexchange.save_update_pos(playername, pos1, pos2, pos, username, sc
 	local abs_pos2 = vector.add(pos1, offset_pos2)
 
 	abs_pos1, abs_pos2 = blockexchange.clip_area(pos1, pos2, abs_pos1, abs_pos2)
-
 	return blockexchange.save_update(playername, pos1, abs_pos1, abs_pos2, username, schemaname)
 end

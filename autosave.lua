@@ -1,3 +1,53 @@
+
+
+-- pos_hash -> {pos1, pos2, schema}
+-- TODO: persist on shutdown / load on startup
+local autosave_controllers = {}
+
+-- area cache
+local autosave_areas = AreaStore()
+
+function blockexchange.enable_autosave(controller_pos)
+    local hash = "" .. minetest.hash_node_position(controller_pos)
+    local meta = minetest.get_meta(controller_pos)
+    local owner = meta:get_string("owner")
+    local claims = blockexchange.get_claims(owner)
+    local schema = minetest.deserialize(meta:get_string("schema"))
+    local origin = minetest.deserialize(meta:get_string("origin"))
+    local pos2 = vector.add(origin, vector.subtract({ x=schema.size_x, y=schema.size_y, z=schema.size_z }, 1))
+
+    -- TODO: validate vars
+
+    local ctx = {
+        type = "autosave",
+        controller_pos = controller_pos,
+        username = claims.username,
+        pos1 = origin,
+        pos2 = pos2,
+        schema = schema,
+        area_id = autosave_areas:insert_area(origin, pos2, hash),
+        owner = owner
+    }
+
+    autosave_controllers[hash] = ctx
+    blockexchange.set_job_context(owner, ctx)
+end
+
+function blockexchange.disable_autosave(controller_pos)
+    local hash = "" .. minetest.hash_node_position(controller_pos)
+    local ctx = autosave_controllers[hash]
+    if ctx then
+        autosave_areas:remove_area(ctx.area_id)
+        blockexchange.set_job_context(ctx.owner, nil)
+        autosave_controllers[hash] = nil
+    end
+end
+
+function blockexchange.get_autosave(controller_pos)
+    local hash = "" .. minetest.hash_node_position(controller_pos)
+    return autosave_controllers[hash]
+end
+
 -- list of changed mapblocks marked for export
 local mapblocks = {}
 
@@ -7,7 +57,14 @@ local function worker()
     for hash in pairs(mapblocks) do
         local mapblock_pos = minetest.get_position_from_hash(hash)
         local pos1, pos2 = blockexchange.get_mapblock_bounds_from_mapblock(mapblock_pos)
-        print("would export: " .. minetest.pos_to_string(pos1) .. " / " .. minetest.pos_to_string(pos2))
+
+        local list = autosave_areas:get_areas_in_area(pos1, pos2, true, true, true)
+        for _, entry in pairs(list) do
+            local autosave_hash = entry.data
+            local ctx = autosave_controllers[autosave_hash]
+            blockexchange.save_update_area(ctx.owner, ctx.pos1, ctx.pos2, pos1, pos2, ctx.username, ctx.schema.name)
+            count = count + 1
+        end
     end
 
     if count > 0 then

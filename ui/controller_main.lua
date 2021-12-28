@@ -1,15 +1,21 @@
 local FORMNAME = "blockexchange_controller"
 
 function blockexchange.ui.show_controller_main(pos, playername)
-	--local meta = minetest.get_meta(pos)
+	local autosave = blockexchange.get_autosave(pos)
+
+	local autosave_form = "button_exit[0,2.5;7,1;"
+	if autosave then
+		autosave_form = autosave_form .. "disable_autosave;Disable autosave"
+	else
+		autosave_form = autosave_form .. "enable_autosave;Enable autosave"
+	end
+	autosave_form = autosave_form .. "]"
 
 	local formspec = "size[8,6;]" ..
 		"label[0,0;Blockexchange controller]" ..
-
-		"button_exit[0,2.5;7,1;download;Download from blockexchange]" ..
-		"button_exit[0,3.5;7,1;upload;Upload to blockexchange]" ..
+		autosave_form ..
 		"button_exit[0,4.5;7,1;mark;Mark area]" ..
-		"button_exit[0,5.5;7,1;abort;Abort]" ..
+		"button_exit[0,5.5;7,1;quit;Exit]" ..
 		""
 
 	minetest.show_formspec(playername, FORMNAME .. ";" .. minetest.pos_to_string(pos), formspec)
@@ -18,19 +24,28 @@ end
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local parts = formname:split(";")
 	local name = parts[1]
-	if name ~= FORMNAME then
+	if name ~= FORMNAME or not minetest.check_player_privs(player, "blockexchange") then
 		return
 	end
 
 	local pos = minetest.string_to_pos(parts[2])
 	local playername = player:get_player_name()
+	local job_active = blockexchange.get_job_context(playername)
 
 	if minetest.is_protected(pos, playername) then
 		return
 	end
 
-	if fields.download then
-		print("TODO: download")
+	if fields.enable_autosave then
+		if job_active then
+			minetest.chat_send_player(playername, "Can't enable autosave, a job is already active")
+		else
+			blockexchange.enable_autosave(pos)
+		end
+	end
+
+	if fields.disable_autosave then
+		blockexchange.disable_autosave(pos)
 	end
 
 	if fields.upload then
