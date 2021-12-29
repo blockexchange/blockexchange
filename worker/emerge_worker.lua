@@ -1,12 +1,9 @@
 
 
 function blockexchange.emerge_worker(ctx)
-  blockexchange.set_job_context(ctx.playername, ctx)
-
   if not ctx.current_pos then
     -- done
     ctx.promise:resolve(ctx.total_parts)
-    blockexchange.set_job_context(ctx.playername, nil)
     return
   end
 
