@@ -21,5 +21,5 @@ function blockexchange.protectioncheck(playername, pos1, pos2, schemaname)
   -- start emerge worker with context
   blockexchange.protectioncheck_worker(ctx)
 
-  return ctx.promise
+  return ctx.promise, ctx
 end

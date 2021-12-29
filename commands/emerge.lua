@@ -7,6 +7,7 @@
 -- @param pos1 lower position to emerge
 -- @param pos2 upper position to emerge
 -- @return a promise that resolves if the operation is complete
+-- @return the job context
 function blockexchange.emerge(playername, pos1, pos2)
   local total_parts = blockexchange.count_schemaparts(pos1, pos2)
   local iterator = blockexchange.iterator(pos1, pos1, pos2)
@@ -27,5 +28,5 @@ function blockexchange.emerge(playername, pos1, pos2)
   -- start emerge worker with context
   blockexchange.emerge_worker(ctx)
 
-  return ctx.promise
+  return ctx.promise, ctx
 end

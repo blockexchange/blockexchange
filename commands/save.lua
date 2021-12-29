@@ -8,7 +8,7 @@
 -- @param name the name of the schema
 -- @param local_save save to the filesystem
 -- @return a promise that resolves if the operation is complete
-
+-- @return the job context
 function blockexchange.save(playername, pos1, pos2, name, local_save)
 	pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
 
@@ -75,5 +75,5 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 		end)
 	end
 
-	return ctx.promise
+	return ctx.promise, ctx
 end

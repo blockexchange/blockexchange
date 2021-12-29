@@ -8,6 +8,7 @@
 -- @param schemaname the name of the schema
 -- @param local_load load from the filesystem
 -- @return a promise that resolves if the operation is complete
+-- @return the job context
 function blockexchange.load(playername, pos1, username, schemaname, local_load)
 	local ctx = {
 		type = "download",
@@ -57,5 +58,5 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 		end)
 	end
 
-	return ctx.promise
+	return ctx.promise, ctx
 end
