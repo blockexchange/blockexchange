@@ -14,11 +14,12 @@ function blockexchange.protectioncheck(playername, pos1, pos2, schemaname)
     progress_percent = 0,
     total_parts = total_parts,
     schemaname = schemaname,
-    description = ""
+    description = "",
+    promise = Promise.new()
   }
 
   -- start emerge worker with context
   blockexchange.protectioncheck_worker(ctx)
 
-  return ctx
+  return ctx.promise
 end

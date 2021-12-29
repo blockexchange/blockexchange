@@ -11,6 +11,10 @@ function blockexchange.protectioncheck_worker(ctx)
 		-- mark as successful (for test)
 		ctx.success = true
     blockexchange.set_job_context(ctx.playername, nil)
+    ctx.promise:resolve({
+      success = true,
+      total_parts = ctx.total_parts
+    })
 
     -- kick off upload
     ctx.upload_ctx = blockexchange.save(ctx.playername, ctx.pos1, ctx.pos2, ctx.schemaname)
@@ -40,6 +44,7 @@ function blockexchange.protectioncheck_worker(ctx)
       minetest.pos_to_string(pos2)
     )
     blockexchange.set_job_context(ctx.playername, nil)
+    ctx.promise:resolve({ success = false })
   end
 
 end
