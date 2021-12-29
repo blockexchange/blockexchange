@@ -20,7 +20,15 @@ minetest.register_chatcommand("bx_save_local", {
     end
 
     -- kick off upload with local-save flag
-    blockexchange.save(name, pos1, pos2, schemaname, true)
+    local promise, ctx = blockexchange.save(name, pos1, pos2, schemaname, true)
+    blockexchange.set_job_context(name, ctx)
+    promise:next(function(result)
+      blockexchange.set_job_context(ctx.playername, nil)
+      minetest.chat_send_player(name, "[blockexchange] Local save complete with " .. result.total_parts .. " parts")
+    end):catch(function(err_msg)
+      minetest.chat_send_player(name, minetest.colorize("#ff0000", err_msg))
+      blockexchange.set_job_context(ctx.playername, nil)
+    end)
 
     return true
   end

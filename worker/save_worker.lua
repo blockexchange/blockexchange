@@ -18,8 +18,6 @@ local function shift(ctx)
 end
 
 function blockexchange.save_worker(ctx)
-	blockexchange.set_job_context(ctx.playername, ctx)
-
 	if not ctx.current_pos then
 		-- save of individual parts finished, finalize schema and update stats
 
@@ -35,8 +33,7 @@ function blockexchange.save_worker(ctx)
 			local msg = "[blockexchange] Local save complete with " .. ctx.total_parts .. " parts"
 			minetest.log("action", msg)
 			minetest.chat_send_player(ctx.playername, msg)
-			blockexchange.set_job_context(ctx.playername, nil)
-			ctx.promise:resolve(ctx.total_parts)
+			ctx.promise:resolve({ total_parts = ctx.total_parts})
 		else
 			-- online save
 			blockexchange.api.create_schemamods(ctx.token, ctx.schema.id, mod_names):next(function()
@@ -45,15 +42,13 @@ function blockexchange.save_worker(ctx)
 				local msg = "[blockexchange] Save complete with " .. ctx.total_parts .. " parts"
 				minetest.log("action", msg)
 				minetest.chat_send_player(ctx.playername, msg)
-				blockexchange.set_job_context(ctx.playername, nil)
-				ctx.promise:resolve(ctx.total_parts)
+				ctx.promise:resolve({ total_parts = ctx.total_parts})
 			end):catch(function(http_code)
 				local msg = "[blockexchange] finalize schema failed with http code: " .. (http_code or "unkown") ..
 				" retry manual on the web-ui please"
 				minetest.log("error", msg)
 				minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
-				blockexchange.set_job_context(ctx.playername, nil)
-				ctx.promise:resolve(ctx.total_parts)
+				ctx.promise:resolve({ total_parts = ctx.total_parts})
 			end)
 		end
 

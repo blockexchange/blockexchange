@@ -57,10 +57,6 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 		blockexchange.api.create_schema(token, create_schema):next(function(schema)
 			ctx.schema = schema
 			minetest.log("action", "[blockexchange] schema created with id: " .. schema.id)
-			minetest.chat_send_player(playername,
-				"[blockexchange] schema created with id: " ..
-				minetest.colorize("#00ff00", schema.id)
-			)
 
 			-- start save worker with context
 			blockexchange.save_worker(ctx)
@@ -70,7 +66,6 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 				", you might have exceeded the upload limits"
 
 			minetest.log("error", msg)
-			minetest.chat_send_player(playername, minetest.colorize("#ff0000", msg))
 			ctx.promise:reject(msg)
 		end)
 	end

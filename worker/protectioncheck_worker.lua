@@ -1,23 +1,16 @@
 
 
 function blockexchange.protectioncheck_worker(ctx)
-  blockexchange.set_job_context(ctx.playername, ctx)
-
   if not ctx.current_pos then
 		local msg = "[blockexchange] Protection check complete with " .. ctx.total_parts .. " parts"
     minetest.log("action", msg)
-		minetest.chat_send_player(ctx.playername, msg)
 
 		-- mark as successful (for test)
 		ctx.success = true
-    blockexchange.set_job_context(ctx.playername, nil)
     ctx.promise:resolve({
       success = true,
       total_parts = ctx.total_parts
     })
-
-    -- kick off upload
-    ctx.upload_ctx = blockexchange.save(ctx.playername, ctx.pos1, ctx.pos2, ctx.schemaname)
     return
   end
 
@@ -38,13 +31,11 @@ function blockexchange.protectioncheck_worker(ctx)
 		minetest.after(blockexchange.min_delay, blockexchange.protectioncheck_worker, ctx)
   else
     -- check failed
-    minetest.chat_send_player(ctx.playername,
-      "[blockexchange] protection check failed between: " ..
-      minetest.pos_to_string(ctx.current_pos) .. " and " ..
-      minetest.pos_to_string(pos2)
-    )
-    blockexchange.set_job_context(ctx.playername, nil)
-    ctx.promise:resolve({ success = false })
+    ctx.promise:resolve({
+      success = false,
+      pos1 = ctx.current_pos,
+      pos2 = pos2
+    })
   end
 
 end
