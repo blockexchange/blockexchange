@@ -8,8 +8,6 @@ local function shift(ctx)
 end
 
 function blockexchange.save_update_worker(ctx)
-	blockexchange.set_job_context(ctx.playername, ctx)
-
 	if not ctx.current_pos then
 		-- create an array with mod names
 		local mod_names = {}
@@ -21,7 +19,6 @@ function blockexchange.save_update_worker(ctx)
 			local msg = "[blockexchange] Save-update complete with " .. ctx.total_parts .. " parts"
 			minetest.log("action", msg)
 			minetest.chat_send_player(ctx.playername, msg)
-			blockexchange.set_job_context(ctx.playername, nil)
 			ctx.promise:resolve(ctx.total_parts)
 		end):catch(function(http_code)
 			local msg = "[blockexchange] mod-update failed with http code: " .. (http_code or "unkown")
