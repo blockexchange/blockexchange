@@ -25,7 +25,6 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 	if local_load then
 		local schema = blockexchange.get_local_schema(schemaname)
 		if not schema then
-		  minetest.chat_send_player(playername, "Schema not found: '" .. schemaname .. "'")
 		  ctx.promise:reject("schema not found")
 		  return ctx.promise
 		end
@@ -52,8 +51,6 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 			ctx.origin = ctx.pos1
 			blockexchange.load_worker(ctx)
 		end):catch(function()
-			minetest.chat_send_player(ctx.playername, "Schema not found: '" ..
-				username .. "/" .. schemaname .. "'")
 			ctx.promise:reject("schema not found")
 		end)
 	end

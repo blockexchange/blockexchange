@@ -10,10 +10,10 @@ end
 
 local function finalize(ctx)
 	local msg = "Download complete with " .. ctx.schema.total_parts .. " parts"
-	minetest.chat_send_player(ctx.playername, msg)
 	minetest.log("action", "[blockexchange] " .. msg)
-	ctx.promise:resolve(ctx.schema.total_parts)
-	blockexchange.set_job_context(ctx.playername, nil)
+	ctx.promise:resolve({
+		schema = ctx.schema
+	})
 end
 
 local function place_schemapart(schemapart, ctx)
@@ -58,15 +58,13 @@ local function schedule_retry(ctx, http_code)
 	local msg = "[blockexchange] download schemapart failed with http code: " ..
 		(http_code or "unkown") .. " retrying..."
 	minetest.log("error", msg)
-	minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
+
 	-- wait a couple seconds
 	minetest.after(5, blockexchange.load_worker, ctx)
 end
 
 
 function blockexchange.load_worker(ctx)
-	blockexchange.set_job_context(ctx.playername, ctx)
-
 	if ctx.local_load then
 		-- local operation
 		local current_pos = ctx.iterator()

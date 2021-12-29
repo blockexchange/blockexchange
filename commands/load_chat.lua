@@ -17,7 +17,16 @@ minetest.register_chatcommand("bx_load", {
 
         if not pos1 then return false, "you need to set /bx_pos1 first!" end
 
-        blockexchange.load(name, pos1, username, schemaname)
+        local promise, ctx = blockexchange.load(name, pos1, username, schemaname)
+        blockexchange.set_job_context(name, ctx)
+
+        promise:next(function(result)
+            minetest.chat_send_player(name, "Download complete with " .. result.schema.total_parts .. " parts")
+            blockexchange.set_job_context(name, nil)
+        end):catch(function(err_msg)
+            minetest.chat_send_player(name, minetest.colorize("#ff0000", err_msg))
+            blockexchange.set_job_context(name, nil)
+        end)
         return true
     end)
 })
