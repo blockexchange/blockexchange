@@ -30,7 +30,8 @@ function blockexchange.api.remove_schemapart(token, schema_id, pos)
         "Authorization: " .. token
       },
       timeout = 5,
-      method = "POST"
+      method = "POST",
+      post_data = "just a stupid placeholder, without it the engine _will_ hang :/"
     }, function(res)
       if res.succeeded and res.code == 200 then
         resolve(true)
