@@ -8,6 +8,10 @@ local META_KEY = "blockexchange_token"
 -- @return the payload in json format
 function blockexchange.parse_token(token)
 	-- header.payload.signature
+	if not token or token == "" then
+		-- return if no token available
+		return
+	end
 	local _, _, _, payload_json = string.find(token, "^([^.]+).([^.]+).([^.]+)$")
 	local json = minetest.decode_base64(payload_json)
 	local payload = minetest.parse_json(json)

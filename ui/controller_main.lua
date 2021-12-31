@@ -2,8 +2,15 @@ local FORMNAME = "blockexchange_controller"
 
 function blockexchange.ui.show_controller_main(pos, playername)
 	local autosave = blockexchange.get_autosave(pos)
+	local meta = minetest.get_meta(pos)
+	local schema = minetest.deserialize(meta:get_string("schema"))
+	local claims = blockexchange.get_claims(playername)
 
+	local is_privileged = schema.user_id == claims.user_id
+
+	-- autosave part
 	local autosave_form = "button_exit[0,2.5;7,1;"
+	-- check if toggled
 	if autosave then
 		autosave_form = autosave_form .. "disable_autosave;Disable autosave"
 	else
@@ -11,9 +18,13 @@ function blockexchange.ui.show_controller_main(pos, playername)
 	end
 	autosave_form = autosave_form .. "]"
 
+	-- assemble privileged (write-operations) part of the formspec
+	local privileged_formspec = autosave_form
+
+	-- assemble whole formspec galore
 	local formspec = "size[8,6;]" ..
 		"label[0,0;Blockexchange controller]" ..
-		autosave_form ..
+		(is_privileged and privileged_formspec or "") ..
 		"button_exit[0,4.5;7,1;mark;Mark area]" ..
 		"button_exit[0,5.5;7,1;quit;Exit]" ..
 		""
