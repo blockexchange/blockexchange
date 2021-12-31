@@ -71,8 +71,13 @@ local function worker()
         for _, entry in pairs(list) do
             local autosave_hash = entry.data
             local ctx = autosave_controllers[autosave_hash]
-            ctx.update_count = ctx.update_count + 1
-            blockexchange.save_update_area(ctx.owner, ctx.pos1, ctx.pos2, pos1, pos2, ctx.username, ctx.schema.name)
+            blockexchange.save_update_area(
+                ctx.owner, ctx.pos1, ctx.pos2, pos1, pos2,
+                ctx.username, ctx.schema.name):next(function(total_parts)
+                ctx.update_count = ctx.update_count + total_parts
+            end):catch(function(err_msg)
+                minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", err_msg))
+            end)
         end
     end
 

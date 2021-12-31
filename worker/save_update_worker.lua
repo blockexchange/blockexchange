@@ -22,12 +22,11 @@ function blockexchange.save_update_worker(ctx)
 		blockexchange.api.create_schemamods(ctx.token, ctx.schema.id, mod_names):next(function()
 			local msg = "[blockexchange] Save-update complete with " .. ctx.total_parts .. " parts"
 			minetest.log("action", msg)
-			minetest.chat_send_player(ctx.playername, msg)
 			ctx.promise:resolve(ctx.total_parts)
 		end):catch(function(http_code)
 			local msg = "[blockexchange] mod-update failed with http code: " .. (http_code or "unkown")
 			minetest.log("error", msg)
-			minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
+			ctx.promise:reject(msg)
 		end)
 		return
 	end
@@ -48,11 +47,15 @@ function blockexchange.save_update_worker(ctx)
 	local relative_pos = vector.subtract(ctx.current_pos, ctx.origin)
 
 	if air_only then
-		-- don't save air-only
-		minetest.log("action", "[blockexchange] NOT Saving part " .. minetest.pos_to_string(ctx.current_pos) ..
+		-- delete air-only parts in the remote repository
+		minetest.log("action", "[blockexchange] Deleting part " .. minetest.pos_to_string(ctx.current_pos) ..
 		" because it is air-only (processing took " .. diff .. " micros)")
-		shift(ctx)
-		minetest.after(blockexchange.min_delay, blockexchange.save_update_worker, ctx)
+		blockexchange.api.remove_schemapart(ctx.token, ctx.schema.id, relative_pos):next(function()
+			shift(ctx)
+			minetest.after(blockexchange.min_delay, blockexchange.save_update_worker, ctx)
+		end):catch(function(err_msg)
+			ctx.promise:reject(err_msg)
+		end)
 	else
 		-- package data properly over the wire
 		local metadata = minetest.write_json({
@@ -84,7 +87,6 @@ function blockexchange.save_update_worker(ctx)
 			local msg = "[blockexchange] create schemapart failed with http code: " .. (http_code or "unkown") ..
 			" retrying..."
 			minetest.log("error", msg)
-			minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
 			-- wait a couple seconds
 			minetest.after(5, blockexchange.save_update_worker, ctx)
 		end)

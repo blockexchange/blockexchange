@@ -32,7 +32,7 @@ function blockexchange.save_update(playername, origin, pos1, pos2, username, sch
 		ctx.promise:reject(err)
 	end)
 
-	return ctx.promise
+	return ctx.promise, ctx
 end
 
 -- update a region of a schema
