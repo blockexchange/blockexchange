@@ -17,3 +17,9 @@ end
 function blockexchange.get_job_context(playername)
     return job_context_map[playername]
 end
+
+--- returns all job contexts
+-- @return the job context map with playername as key
+function blockexchange.get_job_contexts()
+    return job_context_map
+end

@@ -89,6 +89,7 @@ if blockexchange.is_online then
 	dofile(MP.."/commands/search.lua")
 end
 dofile(MP.."/commands/pos.lua")
+dofile(MP.."/commands/cancel_chat.lua")
 dofile(MP.."/commands/allocate.lua")
 dofile(MP.."/commands/allocate_local_chat.lua")
 dofile(MP.."/commands/load.lua")

@@ -21,6 +21,9 @@ minetest.register_chatcommand("bx_emerge", {
       local msg = "[blockexchange] Emerge complete with " .. total_parts .. " parts"
       minetest.log("action", msg)
       minetest.chat_send_player(name, msg)
+    end):catch(function(err_msg)
+      blockexchange.set_job_context(ctx.playername, nil)
+      minetest.chat_send_player(name, minetest.colorize("#ff0000", err_msg))
     end)
 		return true
   end

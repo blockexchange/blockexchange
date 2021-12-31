@@ -26,7 +26,8 @@ function blockexchange.enable_autosave(controller_pos)
         pos2 = pos2,
         schema = schema,
         area_id = autosave_areas:insert_area(origin, pos2, hash),
-        owner = owner
+        owner = owner,
+        update_count = 0
     }
 
     autosave_controllers[hash] = ctx
@@ -53,7 +54,15 @@ local mapblocks = {}
 
 -- autosave worker function
 local function worker()
-    local count = 0
+    -- check cancel flag
+    local contexts = blockexchange.get_job_contexts()
+    for _, ctx in pairs(contexts) do
+        if ctx.type == "autosave" and ctx.cancel then
+            blockexchange.disable_autosave(ctx.controller_pos)
+        end
+    end
+
+    -- go through all changed mapblocks and update the regions where autosave is enabled
     for hash in pairs(mapblocks) do
         local mapblock_pos = minetest.get_position_from_hash(hash)
         local pos1, pos2 = blockexchange.get_mapblock_bounds_from_mapblock(mapblock_pos)
@@ -62,14 +71,11 @@ local function worker()
         for _, entry in pairs(list) do
             local autosave_hash = entry.data
             local ctx = autosave_controllers[autosave_hash]
+            ctx.update_count = ctx.update_count + 1
             blockexchange.save_update_area(ctx.owner, ctx.pos1, ctx.pos2, pos1, pos2, ctx.username, ctx.schema.name)
-            count = count + 1
         end
     end
 
-    if count > 0 then
-        minetest.chat_send_all("Dispatched " .. count .. " mapblocks to export")
-    end
     mapblocks = {}
     minetest.after(5, worker)
 end

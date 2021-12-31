@@ -65,6 +65,10 @@ end
 
 
 function blockexchange.load_worker(ctx)
+	if ctx.cancel then
+		ctx.promise:reject("canceled")
+	end
+
 	if ctx.local_load then
 		-- local operation
 		local current_pos = ctx.iterator()

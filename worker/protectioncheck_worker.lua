@@ -1,6 +1,10 @@
 
 
 function blockexchange.protectioncheck_worker(ctx)
+	if ctx.cancel then
+		ctx.promise:reject("canceled")
+	end
+
   if not ctx.current_pos then
 		local msg = "[blockexchange] Protection check complete with " .. ctx.total_parts .. " parts"
     minetest.log("action", msg)

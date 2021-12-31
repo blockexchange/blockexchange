@@ -36,7 +36,7 @@ local function update_player_hud(player)
 
 		elseif ctx.type == "autosave" then
 			icon_name = "blockexchange_update.png"
-			text = "Autosave active @ " .. minetest.pos_to_string(ctx.controller_pos)
+			text = "Autosave active @ " .. minetest.pos_to_string(ctx.controller_pos) .. " Updates: " .. ctx.update_count
 
 		elseif ctx.type == "download" then
 			icon_name = "blockexchange_download.png"

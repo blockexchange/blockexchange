@@ -18,6 +18,10 @@ local function shift(ctx)
 end
 
 function blockexchange.save_worker(ctx)
+	if ctx.cancel then
+		ctx.promise:reject("canceled")
+	end
+
 	if not ctx.current_pos then
 		-- save of individual parts finished, finalize schema and update stats
 

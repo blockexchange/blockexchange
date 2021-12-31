@@ -8,6 +8,10 @@ local function shift(ctx)
 end
 
 function blockexchange.save_update_worker(ctx)
+	if ctx.cancel then
+		ctx.promise:reject("canceled")
+	end
+
 	if not ctx.current_pos then
 		-- create an array with mod names
 		local mod_names = {}

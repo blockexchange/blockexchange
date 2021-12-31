@@ -65,9 +65,10 @@ Online commands, they call the remote-server with the http api
 * **/bx_info** shows infos about the connected blockexchange server
 * **/bx_license** sets or displays the license of your uploaded schematics (defaults to CC0)
 * **/bx_search [keywords?]** search a schema by keywords
-* **/bx_load [username] [schemaname]**
-* **/bx_allocate [username] [schemaname]**
-* **/bx_login [username] [access_token]**
+* **/bx_load [username] [schemaname]** load a schema by name onto pos1
+* **/bx_allocate [username] [schemaname]** allocates a schema by name
+* **/bx_login [username] [access_token]** logs in with the username and token
+* **/bx_cancel** Cancels an active job
 
 ### Write (needs a login)
 

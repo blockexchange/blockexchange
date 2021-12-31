@@ -7,6 +7,11 @@ function blockexchange.emerge_worker(ctx)
     return
   end
 
+  if ctx.cancel then
+    ctx.promise:reject("canceled")
+    return
+  end
+
 	local pos2 = vector.add(ctx.current_pos, 15)
 	pos2.x = math.min(pos2.x, ctx.pos2.x)
   pos2.y = math.min(pos2.y, ctx.pos2.y)
