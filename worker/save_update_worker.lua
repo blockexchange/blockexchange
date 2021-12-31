@@ -19,7 +19,7 @@ function blockexchange.save_update_worker(ctx)
 			table.insert(mod_names, k)
 		end
 
-		blockexchange.api.create_schemamods(ctx.token, ctx.schema.id, mod_names):next(function()
+		blockexchange.api.create_schemamods(ctx.token, ctx.schema_id, mod_names):next(function()
 			local msg = "[blockexchange] Save-update complete with " .. ctx.total_parts .. " parts"
 			minetest.log("action", msg)
 			ctx.promise:resolve(ctx.total_parts)
@@ -50,7 +50,7 @@ function blockexchange.save_update_worker(ctx)
 		-- delete air-only parts in the remote repository
 		minetest.log("action", "[blockexchange] Deleting part " .. minetest.pos_to_string(ctx.current_pos) ..
 		" because it is air-only (processing took " .. diff .. " micros)")
-		blockexchange.api.remove_schemapart(ctx.token, ctx.schema.id, relative_pos):next(function()
+		blockexchange.api.remove_schemapart(ctx.token, ctx.schema_id, relative_pos):next(function()
 			shift(ctx)
 			minetest.after(blockexchange.min_delay, blockexchange.save_update_worker, ctx)
 		end):catch(function(err_msg)
@@ -68,7 +68,7 @@ function blockexchange.save_update_worker(ctx)
 		local compressed_data = minetest.compress(data.serialized_data, "deflate")
 
 		local schemapart = {
-			schema_id = ctx.schema and ctx.schema.id,
+			schema_id = ctx.schema_id,
 			offset_x = relative_pos.x,
 			offset_y = relative_pos.y,
 			offset_z = relative_pos.z,

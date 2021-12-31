@@ -8,7 +8,7 @@ local autosave_controllers = {}
 local autosave_areas = AreaStore()
 
 function blockexchange.enable_autosave(controller_pos)
-    local hash = "" .. minetest.hash_node_position(controller_pos)
+    local data = minetest.pos_to_string(controller_pos)
     local meta = minetest.get_meta(controller_pos)
     local owner = meta:get_string("owner")
     local claims = blockexchange.get_claims(owner)
@@ -25,28 +25,28 @@ function blockexchange.enable_autosave(controller_pos)
         pos1 = origin,
         pos2 = pos2,
         schema = schema,
-        area_id = autosave_areas:insert_area(origin, pos2, hash),
+        area_id = autosave_areas:insert_area(origin, pos2, data),
         owner = owner,
         update_count = 0
     }
 
-    autosave_controllers[hash] = ctx
+    autosave_controllers[data] = ctx
     blockexchange.set_job_context(owner, ctx)
 end
 
 function blockexchange.disable_autosave(controller_pos)
-    local hash = "" .. minetest.hash_node_position(controller_pos)
-    local ctx = autosave_controllers[hash]
+    local data = minetest.pos_to_string(controller_pos)
+    local ctx = autosave_controllers[data]
     if ctx then
         autosave_areas:remove_area(ctx.area_id)
         blockexchange.set_job_context(ctx.owner, nil)
-        autosave_controllers[hash] = nil
+        autosave_controllers[data] = nil
     end
 end
 
 function blockexchange.get_autosave(controller_pos)
-    local hash = "" .. minetest.hash_node_position(controller_pos)
-    return autosave_controllers[hash]
+    local data = minetest.pos_to_string(controller_pos)
+    return autosave_controllers[data]
 end
 
 -- list of changed mapblocks marked for export
@@ -63,21 +63,26 @@ local function worker()
     end
 
     -- go through all changed mapblocks and update the regions where autosave is enabled
-    for hash in pairs(mapblocks) do
-        local mapblock_pos = minetest.get_position_from_hash(hash)
+    local already_saved = {}
+    for mapblock_pos_str in pairs(mapblocks) do
+        local mapblock_pos = minetest.string_to_pos(mapblock_pos_str)
         local pos1, pos2 = blockexchange.get_mapblock_bounds_from_mapblock(mapblock_pos)
 
         local list = autosave_areas:get_areas_in_area(pos1, pos2, true, true, true)
         for _, entry in pairs(list) do
-            local autosave_hash = entry.data
-            local ctx = autosave_controllers[autosave_hash]
-            blockexchange.save_update_area(
-                ctx.owner, ctx.pos1, ctx.pos2, pos1, pos2,
-                ctx.username, ctx.schema.name):next(function(total_parts)
-                ctx.update_count = ctx.update_count + total_parts
-            end):catch(function(err_msg)
-                minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", err_msg))
-            end)
+            local key = mapblock_pos_str .. "/" .. entry.data
+            if not already_saved[key] then
+                already_saved[key] = true
+                local autosave_key = entry.data
+                local ctx = autosave_controllers[autosave_key]
+                blockexchange.save_update_area(
+                    ctx.owner, ctx.pos1, ctx.pos2, pos1, pos2,
+                    ctx.username, ctx.schema.id):next(function(total_parts)
+                    ctx.update_count = ctx.update_count + total_parts
+                end):catch(function(err_msg)
+                    minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", err_msg))
+                end)
+            end
         end
     end
 
@@ -96,8 +101,8 @@ local function deferred_export(pos1, pos2)
         for y=mapblock_pos1.y,mapblock_pos2.y do
             for z=mapblock_pos1.z,mapblock_pos2.z do
                 local mapblock_pos = {x=x, y=y, z=z}
-                local hash = minetest.hash_node_position(mapblock_pos)
-                mapblocks[hash] = true
+                local mapblock_pos_str = minetest.pos_to_string(mapblock_pos)
+                mapblocks[mapblock_pos_str] = true
             end
         end
     end

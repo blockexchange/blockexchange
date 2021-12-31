@@ -24,13 +24,13 @@ end
 function blockexchange.api.remove_schemapart(token, schema_id, pos)
   return Promise.new(function(resolve, reject)
     http.fetch({
-      url = url .. "/api/schemapart/" .. schema_id .. "/" .. pos.x .. "/" .. pos.y .. "/" .. pos.z,
+      url = url .. "/api/schemapart/" .. schema_id .. "/" .. pos.x .. "/" .. pos.y .. "/" .. pos.z .. "/delete",
       extra_headers = {
         "Content-Type: application/json",
         "Authorization: " .. token
       },
       timeout = 5,
-      method = "DELETE"
+      method = "POST"
     }, function(res)
       if res.succeeded and res.code == 200 then
         resolve(true)
