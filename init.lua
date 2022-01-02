@@ -73,7 +73,6 @@ dofile(MP.."/util/validate_name.lua")
 
 -- ui formspecs
 blockexchange.ui = {}
-dofile(MP.."/ui/search_result.lua")
 dofile(MP.."/ui/controller_main.lua")
 dofile(MP.."/ui/search.lua")
 
