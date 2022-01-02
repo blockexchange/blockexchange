@@ -7,6 +7,7 @@ function blockexchange.save_update(playername, origin, pos1, pos2, username, sch
 	local iterator = blockexchange.iterator(origin, pos1, pos2)
 
 	local ctx = {
+		type = "upload-update",
 		playername = playername,
 		token = token,
 		origin = origin,

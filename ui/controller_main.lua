@@ -17,6 +17,7 @@ function blockexchange.ui.show_controller_main(pos, playername)
 		autosave_form = autosave_form .. "enable_autosave;Enable autosave"
 	end
 	autosave_form = autosave_form .. "]"
+	autosave_form = autosave_form .. "button_exit[0,3.5;7,1;upload;Upload everything]"
 
 	-- assemble privileged (write-operations) part of the formspec
 	local privileged_formspec = autosave_form
@@ -61,6 +62,10 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 	if fields.upload then
 		-- full upload
+		if job_active then
+			minetest.chat_send_player(playername, "Can't upload, a job is already active")
+			return
+		end
 
 		local meta = minetest.get_meta(pos)
 		local origin = minetest.deserialize(meta:get_string("origin"))
@@ -70,8 +75,17 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		-- TODO: verify user
 		local claims = blockexchange.get_claims(playername)
 
-		--blockexchange.save_update(playername, origin, origin, pos2, claims.username, schema.name)
-		blockexchange.save_update_pos(playername, origin, pos2, pos, claims.username, schema.name)
+		local promise, ctx = blockexchange.save_update(playername, origin, origin, pos2, claims.username, schema.id)
+		blockexchange.set_job_context(playername, ctx)
+
+		promise:next(function()
+			blockexchange.set_job_context(playername, nil)
+
+		end):catch(function(err_msg)
+			blockexchange.set_job_context(playername, nil)
+			minetest.chat_send_player(playername, minetest.colorize("#ff0000", err_msg))
+		end)
+
 	end
 
 	if fields.mark then
