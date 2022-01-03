@@ -25,6 +25,7 @@ local function update_player_hud(player)
 	if ctx then
 		local icon_name = ""
 		local text = ""
+		local color = 0x00ff00
 
 		if ctx.type == "emerge" then
 			icon_name = "blockexchange_emerge.png"
@@ -35,8 +36,17 @@ local function update_player_hud(player)
 			text = "Protection-check, progress: " .. ctx.progress_percent .. " %"
 
 		elseif ctx.type == "autosave" then
-			icon_name = "blockexchange_update.png"
 			text = "Autosave active @ " .. minetest.pos_to_string(ctx.controller_pos) .. " Updates: " .. ctx.update_count
+
+			if blockexchange.is_player_in_area(player, ctx.pos1, ctx.pos2) then
+				-- player within autosave area
+				icon_name = "blockexchange_update.png"
+			else
+				-- player not in its autosave area
+				icon_name = "blockexchange_danger.png"
+				text = text .. " WARNING: you are outside the autosave area!"
+				color = 0xff0000
+			end
 
 		elseif ctx.type == "download" then
 			icon_name = "blockexchange_download.png"
@@ -54,6 +64,7 @@ local function update_player_hud(player)
 
 		player:hud_change(hud_data[HUD_ICON_KEY], "text", icon_name)
 		player:hud_change(hud_data[HUD_TEXT_KEY], "text", text)
+		player:hud_change(hud_data[HUD_TEXT_KEY], "number", color)
 	end
 
 end
