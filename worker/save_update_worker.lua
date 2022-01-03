@@ -60,6 +60,7 @@ function blockexchange.save_update_worker(ctx)
 		local cache_key = create_key(ctx.schema_id, relative_pos)
 		if already_deleted_parts[cache_key] then
 			-- this part was already processed a while back, skip it
+			shift(ctx)
 			minetest.after(blockexchange.min_delay, blockexchange.save_update_worker, ctx)
 			return
 		end
