@@ -1,8 +1,28 @@
 
 
 -- pos_hash -> {pos1, pos2, schema}
--- TODO: persist on shutdown / load on startup
 local autosave_controllers = {}
+
+-- saves the autosave-enabled controllers to the mod-storage
+local function save_controllers()
+    local pos_list = {}
+    for pos_str in pairs(autosave_controllers) do
+        table.insert(pos_list, pos_str)
+    end
+    blockexchange.mod_storage:set_string("enabled_controllers", minetest.serialize(pos_list))
+end
+
+-- loads the previously stored controllers
+local function load_controllers()
+    local pos_list = minetest.deserialize(blockexchange.mod_storage:get_string("enabled_controllers"))
+    for _, pos_str in ipairs(pos_list or {}) do
+        local pos = minetest.string_to_pos(pos_str)
+        blockexchange.enable_autosave(pos)
+    end
+end
+
+-- load enabled controllers after a short delay
+minetest.after(1, load_controllers)
 
 -- area cache
 local autosave_areas = AreaStore()
@@ -14,6 +34,12 @@ function blockexchange.enable_autosave(controller_pos)
     local claims = blockexchange.get_claims(owner)
     local schema = minetest.deserialize(meta:get_string("schema"))
     local origin = minetest.deserialize(meta:get_string("origin"))
+
+    if not claims.username or not schema or not origin or owner == "" then
+        minetest.log("warning", "[blockexchange] could not enable autosave on controller at " .. data)
+        return
+    end
+
     local pos2 = vector.add(origin, vector.subtract({ x=schema.size_x, y=schema.size_y, z=schema.size_z }, 1))
 
     -- TODO: validate vars
@@ -32,15 +58,18 @@ function blockexchange.enable_autosave(controller_pos)
 
     autosave_controllers[data] = ctx
     blockexchange.set_job_context(owner, ctx)
+    save_controllers()
 end
 
 function blockexchange.disable_autosave(controller_pos)
     local data = minetest.pos_to_string(controller_pos)
     local ctx = autosave_controllers[data]
+
     if ctx then
         autosave_areas:remove_area(ctx.area_id)
         blockexchange.set_job_context(ctx.owner, nil)
         autosave_controllers[data] = nil
+        save_controllers()
     end
 end
 

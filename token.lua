@@ -1,7 +1,20 @@
 ---------
 -- jwt token utilities
 
-local META_KEY = "blockexchange_token"
+-- map of playername => token
+-- TODO: periodical cleanup of expired tokens
+local tokens = {}
+
+local function save_tokens()
+	blockexchange.mod_storage:set_string("tokens", minetest.serialize(tokens))
+end
+
+local function load_tokens()
+	tokens = minetest.deserialize(blockexchange.mod_storage:get_string("tokens")) or {}
+end
+
+-- load the stored tokens
+load_tokens()
 
 --- parses a jwt token
 -- @param the token in string format
@@ -28,18 +41,10 @@ function blockexchange.get_claims(playername)
 end
 
 --- returns the token for the player in base64 format or nil if not present
--- @param playername the name of the player (has to be online in order to work)
+-- @param playername the name of the player
 -- @return the token in string/base64 format
 function blockexchange.get_token(playername)
-	local player = minetest.get_player_by_name(playername)
-	if not player then
-		-- player not online
-		return
-	end
-
-	local meta = player:get_meta()
-	local token = meta:get_string(META_KEY)
-
+	local token = tokens[playername]
 	if not token or token == "" then
 		-- no token stored
 		return
@@ -49,15 +54,9 @@ function blockexchange.get_token(playername)
 end
 
 --- sets the token for the player or clears it if nil
--- @param playername the name of the player (has to be online in order to work)
+-- @param playername the name of the player
 -- @param token the token to set (in base64/string format)
 function blockexchange.set_token(playername, token)
-	local player = minetest.get_player_by_name(playername)
-	if not player then
-		-- player not online
-		return
-	end
-
-	local meta = player:get_meta()
-	meta:set_string(META_KEY, token or "")
+	tokens[playername] = token
+	save_tokens()
 end

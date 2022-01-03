@@ -13,6 +13,7 @@ end
 blockexchange = {
 	-- online flag
 	is_online = http ~= nil,
+	mod_storage = minetest.get_mod_storage(),
 	api = {},
 	api_version_major = 1,
 	url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.land",
