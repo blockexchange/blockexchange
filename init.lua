@@ -16,7 +16,7 @@ blockexchange = {
 	api = {},
 	api_version_major = 1,
 	url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.land",
-	min_delay = tonumber(minetest.settings:get("blockexchange.min_delay") or "0.2"),
+	min_delay = tonumber(minetest.settings:get("blockexchange.min_delay") or "0.1"),
 	pos1 = {}, -- name -> pos
 	pos2 = {} -- name -> pos
 }

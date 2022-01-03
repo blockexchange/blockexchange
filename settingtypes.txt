@@ -2,4 +2,4 @@
 blockexchange.url (blockexchange server url) string https://blockexchange.minetest.land
 
 # the min-delay for http calls
-blockexchange.min_delay (min delay between http calls) float 0.2
+blockexchange.min_delay (min delay between http calls) float 0.1
