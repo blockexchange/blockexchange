@@ -1,4 +1,4 @@
-local HUD_POSITION = { x = 0.09, y = 0.1 }
+local HUD_POSITION = { x = 0.1, y = 0.8 }
 local HUD_ALIGNMENT = { x = 1, y = 0 }
 
 local HUD_ICON_KEY = "icon"
