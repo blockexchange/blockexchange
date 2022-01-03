@@ -7,6 +7,13 @@ local function shift(ctx)
 	ctx.progress_percent = math.floor(ctx.progress * 100 * 10) / 10
 end
 
+local function create_key(schema_id, relative_pos)
+	return schema_id .. "/" .. minetest.pos_to_string(relative_pos)
+end
+
+-- map of already deleted schemaparts, skip the requests on those
+local already_deleted_parts = {}
+
 function blockexchange.save_update_worker(ctx)
 	if ctx.cancel then
 		ctx.promise:reject("canceled")
@@ -50,7 +57,15 @@ function blockexchange.save_update_worker(ctx)
 		-- delete air-only parts in the remote repository
 		minetest.log("action", "[blockexchange] Deleting part " .. minetest.pos_to_string(ctx.current_pos) ..
 		" because it is air-only (processing took " .. diff .. " micros)")
+		local cache_key = create_key(ctx.schema_id, relative_pos)
+		if already_deleted_parts[cache_key] then
+			-- this part was already processed a while back, skip it
+			minetest.after(blockexchange.min_delay, blockexchange.save_update_worker, ctx)
+			return
+		end
+
 		blockexchange.api.remove_schemapart(ctx.token, ctx.schema_id, relative_pos):next(function()
+			already_deleted_parts[cache_key] = true
 			shift(ctx)
 			minetest.after(blockexchange.min_delay, blockexchange.save_update_worker, ctx)
 		end):catch(function(err_msg)
