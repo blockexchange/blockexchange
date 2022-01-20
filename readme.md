@@ -41,7 +41,7 @@ Schemas can be browsed and administered on the central server: https://blockexch
 * Build a thing
 * Set positions on the opposite corners with `/bx_pos1` and `/bx_pos2`
 * Login with an access token generated from https://blockexchange.minetest.land: `/bx_login [username] [access_token]`
-* Save the schematic with `/bx_save <name> <description>`
+* Save the schematic with `/bx_save <name>`
 
 # Chat commands
 
