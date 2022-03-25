@@ -44,7 +44,7 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 		description = "",
 		license = license,
 		name = name
-	  }
+	}
 
 	if local_save then
 		-- offline, local saving
