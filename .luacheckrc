@@ -1,11 +1,8 @@
 globals = {
 	"blockexchange",
 	"worldedit",
-	["minetest"] = {
-		["request_http_api"] = true
-	},
-	"AreaStore",
-	"Promise"
+	"Promise",
+	"minetest"
 }
 
 read_globals = {
@@ -14,14 +11,11 @@ read_globals = {
 	table = {fields = {"copy", "getn"}},
 
 	-- Minetest
-	"minetest",
 	"vector", "ItemStack",
 	"dump", "dump2",
+	"AreaStore",
 	"VoxelArea",
 
 	-- opt deps
-	"areas", "monitoring",
-
-	-- testing
-	"mineunit", "sourcefile", "assert", "describe", "it"
+	"areas", "monitoring", "mtt"
 }
