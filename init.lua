@@ -33,8 +33,6 @@ if blockexchange.is_online then
 	loadfile(MP.."/api/schema.lua")(http, blockexchange.url)
 	loadfile(MP.."/api/schemapart.lua")(http, blockexchange.url)
 	loadfile(MP.."/api/schemamods.lua")(http, blockexchange.url)
-	loadfile(MP.."/api/schemascreenshots.lua")(http, blockexchange.url)
-	loadfile(MP.."/api/searchschema.lua")(http, blockexchange.url)
 	loadfile(MP.."/api/token.lua")(http, blockexchange.url)
 end
 
@@ -76,7 +74,6 @@ dofile(MP.."/util/is_player_in_area.lua")
 -- ui formspecs
 blockexchange.ui = {}
 dofile(MP.."/ui/controller_main.lua")
-dofile(MP.."/ui/search.lua")
 
 -- commands
 if blockexchange.is_online then
@@ -87,7 +84,6 @@ if blockexchange.is_online then
 	dofile(MP.."/commands/allocate_chat.lua")
 	dofile(MP.."/commands/save_chat.lua")
 	dofile(MP.."/commands/load_chat.lua")
-	dofile(MP.."/commands/search.lua")
 end
 dofile(MP.."/commands/pos.lua")
 dofile(MP.."/commands/cancel_chat.lua")

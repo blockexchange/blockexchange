@@ -19,7 +19,7 @@ Schemas can be browsed and administered on the central server: https://blockexch
 
 # Basic usage
 
-## Download / Search
+## Download
 
 * Start your minetest app
 * Download the `blockexchange` mod in the "Content" tab from the ContentDB.
@@ -27,8 +27,8 @@ Schemas can be browsed and administered on the central server: https://blockexch
 * Create a new world and activate the mod
 * Grant yourself the needed privs with `/grantme blockexchange`
 * Search for an empty place and mark it with `/bx_pos1`
-* Browse for a schema with `/bx_search <keywords>`
-* Load the schema with the "Load" button (**WARNING**: this may place the schema over existing builds!)
+* Browse online for a schema at https://blockexchange.minetest.land
+* Load the schema with the `/bx_load <username> <schemaname>` command (**WARNING**: this may place the schema over existing builds!)
 * Have fun!
 
 ## Upload
@@ -64,7 +64,6 @@ Online commands, they call the remote-server with the http api
 
 * **/bx_info** shows infos about the connected blockexchange server
 * **/bx_license** sets or displays the license of your uploaded schematics (defaults to CC0)
-* **/bx_search** open the search dialog
 * **/bx_load [username] [schemaname]** load a schema by name onto pos1
 * **/bx_allocate [username] [schemaname]** allocates a schema by name
 * **/bx_login [username] [access_token]** logs in with the username and token
