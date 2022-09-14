@@ -1,5 +1,5 @@
 # the url to the central blockexchange server
-blockexchange.url (blockexchange server url) string https://blockexchange.minetest.land
+blockexchange.url (blockexchange server url) string https://blockexchange.minetest.ch
 
 # the min-delay for http calls
 blockexchange.min_delay (min delay between http calls) float 0.1

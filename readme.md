@@ -13,7 +13,7 @@ It uses a central (configurable) server to exchange schemas (builds) of near inf
 
 The server part lives at https://github.com/blockexchange/blockexchange_server and can be self-hosted.
 
-Schemas can be browsed and administered on the central server: https://blockexchange.minetest.land
+Schemas can be browsed and administered on the central server: https://blockexchange.minetest.ch
 
 <img src="./blockexchange.png"/>
 
@@ -27,7 +27,7 @@ Schemas can be browsed and administered on the central server: https://blockexch
 * Create a new world and activate the mod
 * Grant yourself the needed privs with `/grantme blockexchange`
 * Search for an empty place and mark it with `/bx_pos1`
-* Browse online for a schema at https://blockexchange.minetest.land
+* Browse online for a schema at https://blockexchange.minetest.ch
 * Load the schema with the `/bx_load <username> <schemaname>` command (**WARNING**: this may place the schema over existing builds!)
 * Have fun!
 
@@ -40,7 +40,7 @@ Schemas can be browsed and administered on the central server: https://blockexch
 * Grant yourself the needed privs with `/grantme blockexchange`
 * Build a thing
 * Set positions on the opposite corners with `/bx_pos1` and `/bx_pos2`
-* Login with an access token generated from https://blockexchange.minetest.land: `/bx_login [username] [access_token]`
+* Login with an access token generated from https://blockexchange.minetest.ch: `/bx_login [username] [access_token]`
 * Save the schematic with `/bx_save <name>`
 
 # Chat commands
