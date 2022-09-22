@@ -21,6 +21,7 @@ function blockexchange.save_worker(ctx)
 	if ctx.cancel then
 		ctx.promise:reject("canceled")
 		ctx.zip:close()
+		ctx.zipfile:close()
 	end
 
 	if not ctx.current_pos then
@@ -34,8 +35,12 @@ function blockexchange.save_worker(ctx)
 
 		if ctx.local_save then
 			-- local save
+			ctx.create_schema.total_parts = ctx.current_part
+			ctx.create_schema.total_size = ctx.total_size
 			ctx.zip:add("mods.json", minetest.write_json(mod_names))
+			ctx.zip:add("schema.json", minetest.write_json(ctx.create_schema))
 			ctx.zip:close()
+			ctx.zipfile:close()
 
 			local msg = "[blockexchange] Local save complete with " .. ctx.total_parts .. " parts"
 			minetest.log("action", msg)
@@ -115,6 +120,8 @@ function blockexchange.save_worker(ctx)
 			data = minetest.encode_base64(compressed_data),
 			metadata = minetest.encode_base64(compressed_metadata)
 		}
+
+		ctx.total_size = ctx.total_size + #data + #metadata
 
 		if ctx.local_save then
 			-- save locally

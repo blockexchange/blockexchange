@@ -59,10 +59,10 @@ function blockexchange.allocate(playername, pos1, username, schemaname, local_lo
       promise:reject("mods.json error: " .. err_msg)
       return promise
     end
+    f:close()
 
     local mods = minetest.parse_json(mods_str)
-    print(mods)
-    local missing_mods = get_missing_mods(playername, mods)
+    local missing_mods = get_missing_mods(mods)
 
     promise:resolve({
       schema = schema,

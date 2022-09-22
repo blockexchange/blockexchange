@@ -24,12 +24,12 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 
 	if local_load then
 		local filename = blockexchange.get_local_filename(schemaname)
-		local f = io.open(filename)
-		if not f then
+		ctx.zipfile = io.open(filename)
+		if not ctx.zipfile then
 			ctx.promise:reject("file not found: " .. filename)
 			return ctx.promise
 		end
-		local z, err_msg = mtzip.unzip(f)
+		local z, err_msg = mtzip.unzip(ctx.zipfile)
 		if err_msg then
 			ctx.promise:reject("unzip error: " .. err_msg)
 			return ctx.promise
