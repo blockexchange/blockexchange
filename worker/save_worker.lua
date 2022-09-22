@@ -20,6 +20,7 @@ end
 function blockexchange.save_worker(ctx)
 	if ctx.cancel then
 		ctx.promise:reject("canceled")
+		ctx.zip:close()
 	end
 
 	if not ctx.current_pos then

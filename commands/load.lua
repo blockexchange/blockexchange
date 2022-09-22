@@ -23,11 +23,27 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 	}
 
 	if local_load then
-		local schema = blockexchange.get_local_schema(schemaname)
-		if not schema then
-		  ctx.promise:reject("schema not found")
-		  return ctx.promise
+		local filename = blockexchange.get_local_filename(schemaname)
+		local f = io.open(filename)
+		if not f then
+			ctx.promise:reject("file not found: " .. filename)
+			return ctx.promise
 		end
+		local z, err_msg = mtzip.unzip(f)
+		if err_msg then
+			ctx.promise:reject("unzip error: " .. err_msg)
+			return ctx.promise
+		end
+		ctx.zip = z
+
+		local schema_str
+		schema_str, err_msg = ctx.zip:get("schema.json", true)
+		if err_msg then
+			ctx.promise:reject("schema.json error: " .. err_msg)
+			return ctx.promise
+		end
+		local schema = minetest.parse_json(schema_str)
+
 		local pos2 = vector.add(pos1, blockexchange.get_schema_size(schema))
 		pos2 = vector.subtract(pos2, 1)
 

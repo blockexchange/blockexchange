@@ -25,7 +25,25 @@ function blockexchange.allocate(playername, pos1, username, schemaname, local_lo
 
   if local_load then
     -- local operation
-    local schema = blockexchange.get_local_schema(schemaname)
+    local filename = blockexchange.get_local_filename(schemaname)
+    local f = io.open(filename)
+    if not f then
+      promise:reject("file not found: " .. filename)
+      return promise
+    end
+    local z, err_msg = mtzip.unzip(f)
+    if err_msg then
+      promise:reject("unzip error: " .. err_msg)
+      return promise
+    end
+
+    local schema_str
+    schema_str, err_msg = z:get("schema.json", true)
+    if err_msg then
+      promise:reject("schema.json error: " .. err_msg)
+      return promise
+    end
+    local schema = minetest.parse_json(schema_str)
     if not schema then
       promise:reject("Schema not found: '" .. schemaname .. "'")
       return
@@ -35,7 +53,15 @@ function blockexchange.allocate(playername, pos1, username, schemaname, local_lo
 
     blockexchange.set_pos(2, playername, pos2)
 
-    local mods = blockexchange.get_local_schemamods(schemaname)
+    local mods_str
+    mods_str, err_msg = z:get("mods.json")
+    if err_msg then
+      promise:reject("mods.json error: " .. err_msg)
+      return promise
+    end
+
+    local mods = minetest.parse_json(mods_str)
+    print(mods)
     local missing_mods = get_missing_mods(playername, mods)
 
     promise:resolve({
