@@ -33,7 +33,9 @@ function blockexchange.save_worker(ctx)
 
 		if ctx.local_save then
 			-- local save
-			blockexchange.create_local_schemamods(ctx.schemaname, mod_names)
+			ctx.zip:add("mods.json", minetest.write_json(mod_names))
+			ctx.zip:close()
+
 			local msg = "[blockexchange] Local save complete with " .. ctx.total_parts .. " parts"
 			minetest.log("action", msg)
 			minetest.chat_send_player(ctx.playername, msg)
@@ -116,7 +118,11 @@ function blockexchange.save_worker(ctx)
 		if ctx.local_save then
 			-- save locally
 			minetest.log("action", "[blockexchange] Saving local schemapart " .. minetest.pos_to_string(relative_pos))
-			blockexchange.create_local_schemapart(ctx.schemaname, schemapart)
+			local filename = "schemapart_" .. schemapart.offset_x ..
+				"_" .. schemapart.offset_y ..
+				"_" .. schemapart.offset_z ..
+				".json"
+			ctx.zip:add(filename, minetest.write_json(schemapart))
 			shift(ctx)
 			minetest.after(blockexchange.min_delay, blockexchange.save_worker, ctx)
 		else

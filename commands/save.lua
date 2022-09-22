@@ -48,7 +48,8 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 
 	if local_save then
 		-- offline, local saving
-		blockexchange.create_local_schema(create_schema)
+		ctx.zip = blockexchange.create_zip(name)
+		ctx.zip:add("schema.json", minetest.write_json(create_schema))
 
 		-- start save worker with context
 		blockexchange.save_worker(ctx)

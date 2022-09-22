@@ -30,18 +30,9 @@ local function load_json(filename)
     end
 end
 
-function blockexchange.create_local_schema(create_schema)
-    save_json(get_schema_dir(create_schema.name, true) .. "/schema.json", create_schema)
-end
-
-function blockexchange.create_local_schemapart(name, schemapart)
-    save_json(get_schema_dir(name, true) .. "/schemapart_" .. schemapart.offset_x ..
-                  "_" .. schemapart.offset_y .. "_" .. schemapart.offset_z ..
-                  ".json", schemapart)
-end
-
-function blockexchange.create_local_schemamods(name, mod_names)
-    save_json(get_schema_dir(name, true) .. "/mods.json", mod_names)
+function blockexchange.create_zip(name)
+    local f = io.open(SCHEMS_DIR .. "/" .. name .. ".zip", "w")
+    return mtzip.zip(f)
 end
 
 function blockexchange.get_local_schema(name)
