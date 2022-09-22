@@ -113,4 +113,5 @@ if minetest.get_modpath("mtt") then
 	dofile(MP .. "/mtt/schemapart_offset_spec.lua")
 	dofile(MP .. "/mtt/sort_pos_spec.lua")
 	dofile(MP .. "/mtt/validate_name_spec.lua")
+	dofile(MP .. "/mtt/load_save_local_spec.lua")
 end

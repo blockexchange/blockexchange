@@ -67,6 +67,7 @@ end
 function blockexchange.load_worker(ctx)
 	if ctx.cancel then
 		ctx.promise:reject("canceled")
+		return
 	end
 
 	if ctx.local_load then
@@ -79,11 +80,16 @@ function blockexchange.load_worker(ctx)
 		end
 
 		local relative_pos = vector.subtract(current_pos, ctx.pos1)
-		local schemapart = blockexchange.get_local_schemapart(
-			ctx.schemaname,
-			relative_pos.x, relative_pos.y, relative_pos.z
-		)
-		if schemapart then
+		local filename = "schemapart_" .. relative_pos.x .. "_" .. relative_pos.y .. "_" .. relative_pos.z .. ".json"
+		local entry = ctx.zip:get_entry(filename)
+		if entry then
+			-- non-air part
+			local schemapart_str, err_msg = ctx.zip:get(filename, true)
+			if err_msg then
+				ctx.promise:reject("schemapart error: " .. err_msg)
+				return
+			end
+			local schemapart = minetest.parse_json(schemapart_str)
 			place_schemapart(schemapart, ctx, false)
 		else
 			minetest.after(blockexchange.min_delay, blockexchange.load_worker, ctx)

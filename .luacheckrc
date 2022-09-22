@@ -17,5 +17,8 @@ read_globals = {
 	"VoxelArea",
 
 	-- opt deps
-	"areas", "monitoring", "mtt"
+	"areas", "monitoring", "mtt",
+
+	-- deps
+	"mtzip"
 }

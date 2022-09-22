@@ -32,6 +32,7 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 		current_pos = iterator(),
 		current_part = 0,
 		total_parts = total_parts,
+		total_size = 0,
 		progress_percent = 0,
 		mod_names = {},
 		promise = Promise.new()
@@ -48,7 +49,9 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 
 	if local_save then
 		-- offline, local saving
-		blockexchange.create_local_schema(create_schema)
+		ctx.zipfile = io.open(blockexchange.get_local_filename(name), "w")
+		ctx.zip = mtzip.zip(ctx.zipfile)
+		ctx.create_schema = create_schema
 
 		-- start save worker with context
 		blockexchange.save_worker(ctx)
