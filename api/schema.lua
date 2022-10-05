@@ -47,6 +47,37 @@ function blockexchange.api.update_schema_stats(token, schema_id)
   end)
 end
 
+--- updates the screenshot of a schema
+-- @param token the token in string format
+-- @param schema_id the schema_id to update
+-- @return a promise with the result
+function blockexchange.api.update_screenshot(token, schema_id)
+  return Promise.new(function(resolve, reject)
+    local json = minetest.write_json({
+      update = true
+    })
+
+    local update_url = url .. "/api/schema/" .. schema_id .. "/screenshot/update"
+
+    http.fetch({
+      url = update_url,
+      extra_headers = {
+        "Content-Type: application/json",
+        "Authorization: " .. token
+      },
+      timeout = 120,
+      method = "POST",
+      data = json
+    }, function(res)
+      if res.succeeded and res.code == 200 then
+        resolve(true)
+      else
+        reject(res.code or 0)
+      end
+    end)
+  end)
+end
+
 --- updates an existing schema
 -- @param token the token in string format
 -- @param schema the updated schema
