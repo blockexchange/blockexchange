@@ -13,13 +13,9 @@ local function finalize(ctx)
 	local msg = "Download complete with " .. ctx.schema.total_parts .. " parts"
 	minetest.log("action", "[blockexchange] " .. msg)
 	if not ctx.local_load then
-		-- check if the current player has write-access to the schema
-		local claims = blockexchange.get_claims(ctx.playername)
-		local is_owner = claims and claims.username == ctx.username
-
 		-- fetch updated schema and register area for future updates
 		blockexchange.api.get_schema_by_name(ctx.username, ctx.schemaname, true):next(function(schema)
-			blockexchange.register_area(ctx.pos1, ctx.pos2, ctx.playername, schema, is_owner)
+			blockexchange.register_area(ctx.pos1, ctx.pos2, ctx.username, schema)
 		end)
 	end
 

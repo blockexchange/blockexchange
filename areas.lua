@@ -28,15 +28,15 @@ local function save_areas()
     blockexchange.mod_storage:set_string("areas", minetest.serialize(area_list))
 end
 
-function blockexchange.register_area(pos1, pos2, playername, schema, is_owner)
+function blockexchange.register_area(pos1, pos2, username, schema)
     local data = {
         id = get_next_id(),
         pos1 = pos1,
         pos2 = pos2,
         schema_id = schema.id,
         mtime = schema.mtime,
-        playername = playername,
-        is_owner = is_owner,
+        name = schema.name,
+        username = username,
         sync = "off" -- off,pull,push,both
     }
     table.insert(area_list, data)
