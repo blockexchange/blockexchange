@@ -4,16 +4,26 @@ local downloaded_blocks
 
 if has_monitoring then
 	downloaded_blocks = monitoring.counter(
-		"blockexchange_downloaded_blocks", "number of successfully downloaded mapblocks"
+		"blockexchange_downloaded_blocks",
+		"number of successfully downloaded mapblocks"
 	)
 end
 
 local function finalize(ctx)
 	local msg = "Download complete with " .. ctx.schema.total_parts .. " parts"
 	minetest.log("action", "[blockexchange] " .. msg)
-	ctx.promise:resolve({
-		schema = ctx.schema
-	})
+	if not ctx.local_load then
+		-- check if the current player has write-access to the schema
+		local claims = blockexchange.get_claims(ctx.playername)
+		local is_owner = claims and claims.username == ctx.username
+
+		-- fetch updated schema and register area for future updates
+		blockexchange.api.get_schema_by_name(ctx.username, ctx.schemaname, true):next(function(schema)
+			blockexchange.register_area(ctx.pos1, ctx.pos2, ctx.playername, schema, is_owner)
+		end)
+	end
+
+	ctx.promise:resolve({ schema = ctx.schema })
 end
 
 local function place_schemapart(schemapart, ctx)
@@ -27,10 +37,7 @@ local function place_schemapart(schemapart, ctx)
 	ctx.progress_percent = math.floor(ctx.current_part / ctx.schema.total_parts * 100 * 10) / 10
 
 	local pos1 = blockexchange.place_schemapart(schemapart, ctx.origin)
-
-	minetest.log("action", "[blockexchange] Download of part " ..
-					 minetest.pos_to_string(pos1) ..
-					 " completed")
+	minetest.log("action", "[blockexchange] Download of part " .. minetest.pos_to_string(pos1) .. " completed")
 
 	if has_monitoring then
 		downloaded_blocks.inc(1)
@@ -43,8 +50,7 @@ local function place_schemapart(schemapart, ctx)
 end
 
 local function schedule_retry(ctx, http_code)
-	local msg = "[blockexchange] download schemapart failed with http code: " ..
-		(http_code or "unkown") .. " retrying..."
+	local msg = "[blockexchange] download schemapart failed with http code: " .. (http_code or "unkown") .. " retrying..."
 	minetest.log("error", msg)
 
 	-- wait a couple seconds
