@@ -1,118 +1,17 @@
 
-
--- pos_hash -> {pos1, pos2, schema}
-local autosave_controllers = {}
-
--- saves the autosave-enabled controllers to the mod-storage
-local function save_controllers()
-    local pos_list = {}
-    for pos_str in pairs(autosave_controllers) do
-        table.insert(pos_list, pos_str)
-    end
-    blockexchange.mod_storage:set_string("enabled_controllers", minetest.serialize(pos_list))
-end
-
--- loads the previously stored controllers
-local function load_controllers()
-    local pos_list = minetest.deserialize(blockexchange.mod_storage:get_string("enabled_controllers"))
-    for _, pos_str in ipairs(pos_list or {}) do
-        local pos = minetest.string_to_pos(pos_str)
-        blockexchange.enable_autosave(pos)
-    end
-end
-
--- load enabled controllers after a short delay
-minetest.after(1, load_controllers)
-
--- area cache
-local autosave_areas = AreaStore()
-
-function blockexchange.enable_autosave(controller_pos)
-    local data = minetest.pos_to_string(controller_pos)
-    local meta = minetest.get_meta(controller_pos)
-    local owner = meta:get_string("owner")
-    local claims = blockexchange.get_claims(owner)
-    local schema = minetest.deserialize(meta:get_string("schema"))
-    local origin = minetest.deserialize(meta:get_string("origin"))
-
-    if not claims.username or not schema or not origin or owner == "" then
-        minetest.log("warning", "[blockexchange] could not enable autosave on controller at " .. data)
-        return
-    end
-
-    local pos2 = vector.add(origin, vector.subtract({ x=schema.size_x, y=schema.size_y, z=schema.size_z }, 1))
-
-    -- TODO: validate vars
-
-    local ctx = {
-        type = "autosave",
-        controller_pos = controller_pos,
-        username = claims.username,
-        pos1 = origin,
-        pos2 = pos2,
-        schema = schema,
-        area_id = autosave_areas:insert_area(origin, pos2, data),
-        owner = owner,
-        update_count = 0
-    }
-
-    autosave_controllers[data] = ctx
-    blockexchange.set_job_context(owner, ctx)
-    save_controllers()
-end
-
-function blockexchange.disable_autosave(controller_pos)
-    local data = minetest.pos_to_string(controller_pos)
-    local ctx = autosave_controllers[data]
-
-    if ctx then
-        autosave_areas:remove_area(ctx.area_id)
-        blockexchange.set_job_context(ctx.owner, nil)
-        autosave_controllers[data] = nil
-        save_controllers()
-    end
-end
-
-function blockexchange.get_autosave(controller_pos)
-    local data = minetest.pos_to_string(controller_pos)
-    return autosave_controllers[data]
-end
-
 -- list of changed mapblocks marked for export
 local mapblocks = {}
 
--- autosave worker function
 local function worker()
-    -- check cancel flag
-    local contexts = blockexchange.get_job_contexts()
-    for _, ctx in pairs(contexts) do
-        if ctx.type == "autosave" and ctx.cancel then
-            blockexchange.disable_autosave(ctx.controller_pos)
-        end
-    end
-
-    -- go through all changed mapblocks and update the regions where autosave is enabled
-    local already_saved = {}
     for mapblock_pos_str in pairs(mapblocks) do
         local mapblock_pos = minetest.string_to_pos(mapblock_pos_str)
         local pos1, pos2 = blockexchange.get_mapblock_bounds_from_mapblock(mapblock_pos)
-
+        print(pos1, pos2) --TODO
+        --[[
         local list = autosave_areas:get_areas_in_area(pos1, pos2, true, true, true)
         for _, entry in pairs(list) do
-            local key = mapblock_pos_str .. "/" .. entry.data
-            if not already_saved[key] then
-                already_saved[key] = true
-                local autosave_key = entry.data
-                local ctx = autosave_controllers[autosave_key]
-                blockexchange.save_update_area(
-                    ctx.owner, ctx.pos1, ctx.pos2, pos1, pos2,
-                    ctx.username, ctx.schema.id):next(function(total_parts)
-                    ctx.update_count = ctx.update_count + total_parts
-                end):catch(function(err_msg)
-                    minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", err_msg))
-                end)
-            end
         end
+        --]]
     end
 
     mapblocks = {}

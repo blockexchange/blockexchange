@@ -26,23 +26,11 @@ local function place_schemapart(schemapart, ctx)
 	ctx.current_part = ctx.current_part + 1
 	ctx.progress_percent = math.floor(ctx.current_part / ctx.schema.total_parts * 100 * 10) / 10
 
-	local pos1, pos2, _, metadata = blockexchange.place_schemapart(schemapart, ctx.origin)
+	local pos1 = blockexchange.place_schemapart(schemapart, ctx.origin)
 
 	minetest.log("action", "[blockexchange] Download of part " ..
 					 minetest.pos_to_string(pos1) ..
 					 " completed")
-
-	if metadata.node_mapping["blockexchange:controller"] and not ctx.controller_placed then
-		-- controller found, save schema data to node metadata
-
-		-- find controller positions
-		local pos_list = minetest.find_nodes_in_area(pos1, pos2, {"blockexchange:controller"})
-		if #pos_list >= 1 then
-			blockexchange.program_controller(pos_list[1], ctx.playername, ctx.schema, ctx.origin)
-			-- there can only be one
-			ctx.controller_placed = true
-		end
-	end
 
 	if has_monitoring then
 		downloaded_blocks.inc(1)

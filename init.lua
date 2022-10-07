@@ -37,8 +37,7 @@ if blockexchange.is_online then
 end
 
 -- nodes
-dofile(MP.."/nodes/controller.lua")
-dofile(MP.."/nodes/placeholder.lua")
+dofile(MP.."/placeholder.lua")
 
 -- internal stuff
 dofile(MP.."/jobcontext.lua")
@@ -70,10 +69,6 @@ dofile(MP.."/util/unpack_schemapart.lua")
 dofile(MP.."/util/place_schemapart.lua")
 dofile(MP.."/util/validate_name.lua")
 dofile(MP.."/util/is_player_in_area.lua")
-
--- ui formspecs
-blockexchange.ui = {}
-dofile(MP.."/ui/controller_main.lua")
 
 -- commands
 if blockexchange.is_online then
