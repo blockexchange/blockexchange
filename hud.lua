@@ -9,24 +9,28 @@ local hud = {}
 
 local function update_player_hud(player)
 	local playername = player:get_player_name()
+	local pos = player:get_pos()
+
 	local hud_data = hud[playername]
 	local ctx = blockexchange.get_job_context(playername)
+	local area = blockexchange.get_area(pos)
+	local hud_info_available = ctx or area
 
-	if ctx and not hud_data.active then
+	if hud_info_available and not hud_data.active then
 		-- enable
 		hud_data.active = true
-	elseif not ctx and hud_data.active then
+	elseif not hud_info_available and hud_data.active then
 		-- disable
 		hud_data.active = false
 		player:hud_change(hud_data[HUD_ICON_KEY], "text", "")
 		player:hud_change(hud_data[HUD_TEXT_KEY], "text", "")
 	end
 
-	if ctx then
-		local icon_name = ""
-		local text = ""
-		local color = 0x00ff00
+	local icon_name = ""
+	local text = ""
+	local color = 0x00ff00
 
+	if ctx then
 		if ctx.type == "emerge" then
 			icon_name = "blockexchange_emerge.png"
 			text = "Emerging, progress: " .. ctx.progress_percent .. " %"
@@ -49,6 +53,13 @@ local function update_player_hud(player)
 
 		end
 
+	elseif area then
+		icon_name = "blockexchange_info.png"
+		text = string.format("BX-Area: '%s' Schema: %s/%s", area.id, area.username, area.name)
+	end
+
+	if icon_name ~= "" and text ~= "" then
+		-- apply changes
 		player:hud_change(hud_data[HUD_ICON_KEY], "text", icon_name)
 		player:hud_change(hud_data[HUD_TEXT_KEY], "text", text)
 		player:hud_change(hud_data[HUD_TEXT_KEY], "number", color)

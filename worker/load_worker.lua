@@ -14,7 +14,7 @@ local function finalize(ctx)
 	minetest.log("action", "[blockexchange] " .. msg)
 	if not ctx.local_load then
 		-- fetch updated schema and register area for future updates
-		blockexchange.api.get_schema_by_name(ctx.username, ctx.schemaname, true):next(function(schema)
+		blockexchange.api.get_schema_by_name(ctx.username, ctx.schemaname):next(function(schema)
 			blockexchange.register_area(ctx.pos1, ctx.pos2, ctx.username, schema)
 		end)
 	end

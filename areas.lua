@@ -37,7 +37,7 @@ function blockexchange.register_area(pos1, pos2, username, schema)
         mtime = schema.mtime,
         name = schema.name,
         username = username,
-        sync = "off" -- off,pull,push,both
+        sync = "off" -- off,load,save,both
     }
     table.insert(area_list, data)
     area_store:insert_area(pos1, pos2, minetest.serialize(data), data.id)
