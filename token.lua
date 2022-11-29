@@ -33,11 +33,11 @@ end
 
 --- returns the claims for the playername as table
 -- @param playername the name of the player
--- @return the claims for the player or an empty table
+-- @return the claims for the player or nil
 function blockexchange.get_claims(playername)
 	local token = blockexchange.get_token(playername)
 	local claims = blockexchange.parse_token(token)
-	return claims or {}
+	return claims
 end
 
 --- returns the token for the player in base64 format or nil if not present

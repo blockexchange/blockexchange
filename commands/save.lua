@@ -18,6 +18,10 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 	local license = blockexchange.get_license(playername)
 	local iterator = blockexchange.iterator(pos1, pos1, pos2)
 
+	if not token or not claims then
+		return Promise.new():reject("not logged in")
+	end
+
 	local ctx = {
 		type = "upload",
 		local_save = local_save,
