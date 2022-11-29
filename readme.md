@@ -49,6 +49,7 @@ Schemas can be browsed and administered on the central server: https://blockexch
 
 Local commands, they don't need the http-api and make no calls "home"
 
+* **/bx_hud [on|off]** enables or disables the blockexchange hud
 * **/bx_pos1** mark position 1
 * **/bx_pos2** mark position 2
 * **/bx_emerge** emerge the selected area

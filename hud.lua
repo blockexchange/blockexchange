@@ -9,10 +9,14 @@ local hud = {}
 
 local function update_player_hud(player)
 	local playername = player:get_player_name()
-	local pos = player:get_pos()
 
 	local hud_data = hud[playername]
+	if not hud_data then
+		return
+	end
+
 	local ctx = blockexchange.get_job_context(playername)
+	local pos = player:get_pos()
 	local area = blockexchange.get_area(pos)
 	local hud_info_available = ctx or area
 
@@ -70,30 +74,23 @@ end
 
 -- state tracking
 
--- update
-local function update_hud()
-	for _, player in ipairs(minetest.get_connected_players()) do
-		update_player_hud(player)
+local function create_hud(player)
+	local meta = player:get_meta()
+	if meta:get_int("bx_hud") ~= 1 then
+		-- not enabled
+		return
 	end
-	minetest.after(0.5, update_hud)
-end
-minetest.after(0.5, update_hud)
-
--- remove
-minetest.register_on_leaveplayer(function(player)
-	-- remove stale hud data
-	local playername = player:get_player_name()
-	hud[playername] = nil
-end)
-
--- create
-minetest.register_on_joinplayer(function(player)
-	-- create hud data
-	local hud_data = {}
 
 	local playername = player:get_player_name()
+	local hud_data = hud[playername]
+
+	if hud_data then
+		-- already enabled
+		return
+	end
+
+	hud_data = {}
 	hud[playername] = hud_data
-
 	hud_data[HUD_ICON_KEY] = player:hud_add({
 		hud_elem_type = "image",
 		position = HUD_POSITION,
@@ -112,4 +109,50 @@ minetest.register_on_joinplayer(function(player)
 		scale = { x = 100, y = 100 },
 		number = 0x00FF00
 	})
-end)
+end
+
+local function remove_hud(player)
+	local playername = player:get_player_name()
+	local hud_data = hud[playername]
+	if hud_data then
+		player:hud_remove(hud_data[HUD_ICON_KEY])
+		player:hud_remove(hud_data[HUD_TEXT_KEY])
+		hud[playername] = nil
+	end
+end
+
+-- update periodically
+local function update_hud()
+	for _, player in ipairs(minetest.get_connected_players()) do
+		update_player_hud(player)
+	end
+	minetest.after(0.5, update_hud)
+end
+minetest.after(0.5, update_hud)
+
+-- remove on leave
+minetest.register_on_leaveplayer(remove_hud)
+-- create on join
+minetest.register_on_joinplayer(create_hud)
+
+minetest.register_chatcommand("bx_hud", {
+	description = "Enables or disables the blockexchange hud",
+	params = "bx_hud [on|off]",
+	func = function(name, param)
+		local player = minetest.get_player_by_name(name)
+		if not player then
+			return
+		end
+
+		local meta = player:get_meta()
+		if param == "on" then
+			meta:set_int("bx_hud", 1)
+			create_hud(player)
+			return true, "Hud enabled"
+		else
+			meta:set_int("bx_hud", 0)
+			remove_hud(player)
+			return true, "Hud disabled"
+		end
+  end
+})
