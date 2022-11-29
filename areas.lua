@@ -1,22 +1,23 @@
 
 local area_store = AreaStore()
-local area_list
-local next_id = 1
 
-local function get_next_id()
-    next_id = next_id + 1
-    return next_id - 1
+-- storage_id -> { pos1 = ... }
+local area_map
+
+local function create_id()
+    local template = "xxxxx"
+    return string.gsub(template, '[x]', function ()
+        return string.format('%x', math.random(0, 0xf))
+    end)
 end
 
 local function load_areas()
-    area_list = minetest.deserialize(blockexchange.mod_storage:get_string("areas")) or {}
-    for _, persisted_area in ipairs(area_list) do
-        persisted_area.id = get_next_id()
+    area_map = minetest.deserialize(blockexchange.mod_storage:get_string("areas_v2")) or {}
+    for id, persisted_area in pairs(area_map) do
         area_store:insert_area(
             persisted_area.pos1,
             persisted_area.pos2,
-            minetest.serialize(persisted_area),
-            persisted_area.id
+            id
         )
     end
 end
@@ -25,12 +26,18 @@ end
 load_areas()
 
 local function save_areas()
-    blockexchange.mod_storage:set_string("areas", minetest.serialize(area_list))
+    blockexchange.mod_storage:set_string("areas_v2", minetest.serialize(area_map))
+end
+
+function blockexchange.clear_areas()
+    area_map = {}
+    save_areas()
 end
 
 function blockexchange.register_area(pos1, pos2, username, schema)
+    local id = create_id()
     local data = {
-        id = get_next_id(),
+        id = id,
         pos1 = pos1,
         pos2 = pos2,
         schema_id = schema.id,
@@ -39,8 +46,8 @@ function blockexchange.register_area(pos1, pos2, username, schema)
         username = username,
         sync = "off" -- off,load,save,both
     }
-    table.insert(area_list, data)
-    area_store:insert_area(pos1, pos2, minetest.serialize(data), data.id)
+    area_map[id] = data
+    area_store:insert_area(pos1, pos2, id)
     save_areas()
 end
 
@@ -48,7 +55,8 @@ function blockexchange.get_area(pos)
     local areas = area_store:get_areas_for_pos(pos, true, true)
     local id = next(areas)
     if id ~= nil then
-        return area_list[id]
+        local area = areas[id]
+        return area_map[area.data]
     end
 end
 
