@@ -60,3 +60,6 @@ function blockexchange.get_area(pos)
     end
 end
 
+function blockexchange.get_area_by_id(id)
+    return area_map[id]
+end
