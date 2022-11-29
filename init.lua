@@ -102,6 +102,7 @@ dofile(MP.."/worker/emerge_worker.lua")
 dofile(MP.."/worker/protectioncheck_worker.lua")
 
 if minetest.get_modpath("mtt") then
+	dofile(MP .. "/mtt/token_spec.lua")
 	dofile(MP .. "/mtt/areas_spec.lua")
 	dofile(MP .. "/mtt/clip_area_spec.lua")
 	dofile(MP .. "/mtt/get_base_pos_spec.lua")

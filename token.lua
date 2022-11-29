@@ -31,6 +31,10 @@ function blockexchange.parse_token(token)
 	return payload
 end
 
+function blockexchange.check_expiration(current_time, claims)
+	return claims.exp > current_time
+end
+
 --- returns the claims for the playername as table
 -- @param playername the name of the player
 -- @return the claims for the player or nil
