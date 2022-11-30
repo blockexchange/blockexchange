@@ -18,7 +18,7 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 	local license = blockexchange.get_license(playername)
 	local iterator = blockexchange.iterator(pos1, pos1, pos2)
 
-	if not token or not claims then
+	if not local_save and not token then
 		return Promise.new():reject("not logged in")
 	end
 
@@ -26,7 +26,7 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 		type = "upload",
 		local_save = local_save,
 		playername = playername,
-		username = claims.username,
+		username = claims and claims.username,
 		schemaname = name,
 		token = token,
 		origin = pos1,
