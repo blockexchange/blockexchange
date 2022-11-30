@@ -17,6 +17,6 @@ minetest.register_chatcommand("bx_load_update", {
             minetest.chat_send_player(name, minetest.colorize("#ff0000", err_msg2))
         end)
 
-        return true, "Updating (loading) area: " .. area_id
+        return true, "Updating (loading) area: " .. area.id
     end
 })

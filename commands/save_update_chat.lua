@@ -28,6 +28,6 @@ minetest.register_chatcommand("bx_save_update", {
             blockexchange.set_job_context(ctx.playername, nil)
             minetest.chat_send_player(name, minetest.colorize("#ff0000", err_msg2))
         end)
-        return true, "Updating (saving) area: " .. area_id
+        return true, "Updating (saving) area: " .. area.id
     end
 })
