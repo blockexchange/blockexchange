@@ -7,16 +7,26 @@ minetest.register_chatcommand("bx_load_update", {
             return true, err_msg
         end
 
-        local promise, ctx = blockexchange.load(name, area.pos1, area.username, area.name)
-        blockexchange.set_job_context(name, ctx)
-        promise:next(function()
-            blockexchange.set_job_context(ctx.playername, nil)
-            minetest.chat_send_player(name, "[blockexchange] Load-update complete")
+        blockexchange.api.get_schema_by_id(area.schema_id):next(function(remote_schema)
+            local remote_size = blockexchange.get_schema_size(remote_schema)
+            local local_size = vector.subtract(area.pos2, area.pos1)
+
+            if not vector.equals(local_size, remote_size) then
+                minetest.chat_send_player(name, minetest.colorize("#ff0000", "Remote schema-size changed"))
+                return
+            end
+
+            minetest.chat_send_player(name, "Updating (loading) area: " .. area.id)
+
+            local promise, ctx = blockexchange.load(name, area.pos1, area.username, area.name)
+            blockexchange.set_job_context(name, ctx)
+            return promise:next(function()
+                blockexchange.set_job_context(name, nil)
+                minetest.chat_send_player(name, "[blockexchange] Load-update complete")
+            end)
         end):catch(function(err_msg2)
-            blockexchange.set_job_context(ctx.playername, nil)
+            blockexchange.set_job_context(name, nil)
             minetest.chat_send_player(name, minetest.colorize("#ff0000", err_msg2))
         end)
-
-        return true, "Updating (loading) area: " .. area.id
     end
 })
