@@ -52,6 +52,7 @@ Local commands, they don't need the http-api and make no calls "home"
 * **/bx_hud [on|off]** enables or disables the blockexchange hud
 * **/bx_pos1** mark position 1
 * **/bx_pos2** mark position 2
+* **/bx_remove_area [area_id?]** removes the area information (not the build)
 * **/bx_emerge** emerge the selected area
 * **/bx_save_local [schemaname]** saves a local schema to `<worldmods>/bxschems`
 * **/bx_load_local [schemaname]** loads a local schema from `<worldmods>/bxschems`
