@@ -96,25 +96,16 @@ function blockexchange.save_worker(ctx)
 		minetest.after(blockexchange.min_delay, blockexchange.save_worker, ctx)
 	else
 		-- package data properly over the wire
-		local metadata = minetest.write_json({
-			node_mapping = data.node_mapping,
-			size = data.size,
-			metadata = data.metadata
-		})
-
-		local compressed_metadata = minetest.compress(metadata, "deflate")
-		local compressed_data = minetest.compress(data.serialized_data, "deflate")
-
 		local schemapart = {
 			schema_id = ctx.schema and ctx.schema.id,
 			offset_x = relative_pos.x,
 			offset_y = relative_pos.y,
 			offset_z = relative_pos.z,
-			data = minetest.encode_base64(compressed_data),
-			metadata = minetest.encode_base64(compressed_metadata)
+			data = minetest.encode_base64(blockexchange.compress_data(data)),
+			metadata = minetest.encode_base64(blockexchange.compress_metadata(data))
 		}
 
-		ctx.total_size = ctx.total_size + #data + #metadata
+		ctx.total_size = ctx.total_size + #schemapart.data + #schemapart.metadata
 
 		if ctx.local_save then
 			-- save locally

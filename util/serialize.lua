@@ -132,6 +132,10 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 
 	end
 
+	return data, node_count, air_only
+end
+
+function blockexchange.compress_data(data)
 	-- write node-data in serialized form
 	local serialized_data = ""
 	local size = #data.node_ids
@@ -146,7 +150,15 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 		serialized_data = serialized_data .. string.char(data.param2[i])
 	end
 
-	data.serialized_data = serialized_data
+	return minetest.compress(serialized_data, "deflate")
+end
 
-	return data, node_count, air_only
+function blockexchange.compress_metadata(data)
+	local metadata = minetest.write_json({
+		node_mapping = data.node_mapping,
+		size = data.size,
+		metadata = data.metadata
+	})
+
+	return minetest.compress(metadata, "deflate")
 end
