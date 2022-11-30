@@ -24,6 +24,19 @@ function blockexchange.placeholder_populate(pos, node_name, metadata)
 	end
 end
 
+-- unwraps the placeholder node to the original nodename and metadata
+function blockexchange.unwrap_placeholder(meta)
+	local nodename = meta:get_string("original_nodename")
+	local metadata
+
+	local serialized_metadata = meta:get_string("original_metadata")
+	if serialized_metadata and serialized_metadata ~= "" then
+		metadata = minetest.deserialize(serialized_metadata)
+	end
+
+	return nodename, metadata
+end
+
 -- try to restore the placeholder at the position
 function blockexchange.placeholder_replace(pos, node)
 	local meta = minetest.get_meta(pos)

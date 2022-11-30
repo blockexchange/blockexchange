@@ -10,6 +10,7 @@ minetest.register_on_mods_loaded(function()
 end)
 
 local air_content_id = minetest.get_content_id("air")
+local placeholder_id = minetest.get_content_id("blockexchange:placeholder")
 
 -- checks if a table is empty
 local function is_empty(tbl)
@@ -55,6 +56,9 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 	}
 
 	local air_only = true
+	local next_unknown_nodeid = -1
+	local placeholder_meta_pos_hashes = {}
+	local placeholder_node_id_names = {}
 
 	-- loop over all blocks and fill cid,param1 and param2
 	for x=pos1.x,pos2.x do
@@ -73,6 +77,31 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 					air_only = false
 				end
 
+				-- placeholder case: unwrap and store "raw"
+				if node_id == placeholder_id then
+					-- unwrap placeholder
+					local pos = {x=x, y=y, z=z}
+					local hash = minetest.hash_node_position(pos)
+
+					-- unwrap raw node-info
+					local meta = minetest.get_meta(pos)
+					local original_nodename, original_metadata = blockexchange.unwrap_placeholder(meta)
+
+					if data.node_mapping[original_nodename] then
+						-- already has a mapping
+						node_id = data.node_mapping[original_nodename]
+					else
+						-- create new mapping
+						node_id = next_unknown_nodeid
+						next_unknown_nodeid = next_unknown_nodeid - 1
+						data.node_mapping[original_nodename] = node_id
+						placeholder_node_id_names[node_id] = original_nodename
+					end
+
+					-- save metadata for later
+					placeholder_meta_pos_hashes[hash] = original_metadata
+				end
+
 				table.insert(data.node_ids, node_id)
 				table.insert(data.param1, param1[i])
 				table.insert(data.param2, param2[i])
@@ -86,32 +115,46 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 	-- collect statistics and node_id -> name mapping
 	node_count = node_count or {}
 	for node_id, count in pairs(node_id_count) do
-		local node_name = minetest.get_name_from_content_id(node_id)
+		local node_name = placeholder_node_id_names[node_id] or minetest.get_name_from_content_id(node_id)
 		data.node_mapping[node_name] = node_id
 		local counter = node_count[node_name] or 0
 		node_count[node_name] = counter + count
+	end
+
+	-- handle unwrapped placeholder metadata
+	for hash, metadata in pairs(placeholder_meta_pos_hashes) do
+		local pos = minetest.get_position_from_hash(hash)
+		local relative_pos = vector.subtract(pos, pos1)
+
+		data.metadata.meta = data.metadata.meta or {}
+		data.metadata.meta[minetest.pos_to_string(relative_pos)] = metadata
 	end
 
 	-- serialize metadata
 	local pos_with_meta = minetest.find_nodes_with_meta(pos1, pos2)
 	for _, pos in ipairs(pos_with_meta) do
 		local relative_pos = vector.subtract(pos, pos1)
-		local meta = minetest.get_meta(pos):to_table()
+		local node = minetest.get_node(pos)
+		local is_placeholder = node.name == "blockexchange:placeholder"
+		if not is_placeholder then
+			-- not a placeholder, serialize metadata
+			local meta = minetest.get_meta(pos):to_table()
 
-		-- Convert metadata item stacks to item strings
-		for _, invlist in pairs(meta.inventory) do
-			for index = 1, #invlist do
-				local itemstack = invlist[index]
-				if itemstack.to_string then
-					invlist[index] = itemstack:to_string()
+			-- Convert metadata item stacks to item strings
+			for _, invlist in pairs(meta.inventory) do
+				for index = 1, #invlist do
+					local itemstack = invlist[index]
+					if itemstack.to_string then
+						invlist[index] = itemstack:to_string()
+					end
 				end
 			end
-		end
 
-		-- re-check if metadata actually exists (may happen with minetest.find_nodes_with_meta)
-		if not is_empty(meta.fields) or not is_empty(meta.inventory) then
-			data.metadata.meta = data.metadata.meta or {}
-			data.metadata.meta[minetest.pos_to_string(relative_pos)] = meta
+			-- re-check if metadata actually exists (may happen with minetest.find_nodes_with_meta)
+			if not is_empty(meta.fields) or not is_empty(meta.inventory) then
+				data.metadata.meta = data.metadata.meta or {}
+				data.metadata.meta[minetest.pos_to_string(relative_pos)] = meta
+			end
 		end
 	end
 
