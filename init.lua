@@ -50,6 +50,7 @@ dofile(MP.."/areas.lua")
 -- dofile(MP.."/autosave.lua")
 
 -- utils
+dofile(MP.."/util/player_area.lua")
 dofile(MP.."/util/ignored_content_ids.lua")
 dofile(MP.."/util/serialize.lua")
 dofile(MP.."/util/deserialize.lua")
