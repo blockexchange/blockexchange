@@ -7,13 +7,6 @@ local function shift(ctx)
 	ctx.progress_percent = math.floor(ctx.progress * 100 * 10) / 10
 end
 
-local function create_key(schema_id, relative_pos)
-	return schema_id .. "/" .. minetest.pos_to_string(relative_pos)
-end
-
--- map of already deleted schemaparts, skip the requests on those
-local already_deleted_parts = {}
-
 function blockexchange.save_update_worker(ctx)
 	if ctx.cancel then
 		ctx.promise:reject("canceled")
@@ -45,7 +38,7 @@ function blockexchange.save_update_worker(ctx)
 	pos2.y = math.min(pos2.y, ctx.pos2.y)
 	pos2.z = math.min(pos2.z, ctx.pos2.z)
 
-	local data, node_count, air_only = blockexchange.serialize_part(ctx.current_pos, pos2)
+	local data, node_count = blockexchange.serialize_part(ctx.current_pos, pos2)
 
 	-- collect mod count info
 	blockexchange.collect_node_count(node_count, ctx.mod_names)
@@ -53,50 +46,28 @@ function blockexchange.save_update_worker(ctx)
 	local diff = minetest.get_us_time() - start
 	local relative_pos = vector.subtract(ctx.current_pos, ctx.origin)
 
-	if air_only then
-		-- delete air-only parts in the remote repository
-		minetest.log("action", "[blockexchange] Deleting part " .. minetest.pos_to_string(ctx.current_pos) ..
-		" because it is air-only (processing took " .. diff .. " micros)")
-		local cache_key = create_key(ctx.schema_id, relative_pos)
-		if already_deleted_parts[cache_key] then
-			-- this part was already processed a while back, skip it
-			shift(ctx)
-			minetest.after(blockexchange.min_delay, blockexchange.save_update_worker, ctx)
-			return
-		end
+	-- package data properly over the wire
+	local schemapart = {
+		schema_id = ctx.schema_id,
+		offset_x = relative_pos.x,
+		offset_y = relative_pos.y,
+		offset_z = relative_pos.z,
+		data = minetest.encode_base64(blockexchange.compress_data(data)),
+		metadata = minetest.encode_base64(blockexchange.compress_metadata(data))
+	}
 
-		blockexchange.api.remove_schemapart(ctx.token, ctx.schema_id, relative_pos):next(function()
-			already_deleted_parts[cache_key] = true
-			shift(ctx)
-			minetest.after(blockexchange.min_delay, blockexchange.save_update_worker, ctx)
-		end):catch(function(err_msg)
-			ctx.promise:reject(err_msg)
-		end)
-	else
-		-- package data properly over the wire
-		local schemapart = {
-			schema_id = ctx.schema_id,
-			offset_x = relative_pos.x,
-			offset_y = relative_pos.y,
-			offset_z = relative_pos.z,
-			data = minetest.encode_base64(blockexchange.compress_data(data)),
-			metadata = minetest.encode_base64(blockexchange.compress_metadata(data))
-		}
+	-- upload part online
+	blockexchange.api.create_schemapart(ctx.token, schemapart):next(function()
+		minetest.log("action", "[blockexchange] Save-update of part " .. minetest.pos_to_string(ctx.current_pos) ..
+		" completed (processing took " .. diff .. " micros)")
 
-		-- upload part online
-		blockexchange.api.create_schemapart(ctx.token, schemapart):next(function()
-			minetest.log("action", "[blockexchange] Save-update of part " .. minetest.pos_to_string(ctx.current_pos) ..
-			" completed (processing took " .. diff .. " micros)")
-
-			shift(ctx)
-			minetest.after(blockexchange.min_delay, blockexchange.save_update_worker, ctx)
-		end):catch(function(http_code)
-			local msg = "[blockexchange] create schemapart failed with http code: " .. (http_code or "unkown") ..
-			" retrying..."
-			minetest.log("error", msg)
-			-- wait a couple seconds
-			minetest.after(5, blockexchange.save_update_worker, ctx)
-		end)
-	end
-
+		shift(ctx)
+		minetest.after(blockexchange.min_delay, blockexchange.save_update_worker, ctx)
+	end):catch(function(http_code)
+		local msg = "[blockexchange] create schemapart failed with http code: " .. (http_code or "unkown") ..
+		" retrying..."
+		minetest.log("error", msg)
+		-- wait a couple seconds
+		minetest.after(5, blockexchange.save_update_worker, ctx)
+	end)
 end
