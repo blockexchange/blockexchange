@@ -16,10 +16,26 @@ minetest.register_chatcommand("bx_save_update", {
             return true, "You are not authorized to update that schema"
         end
 
-        local promise, ctx = blockexchange.save_update(
-            name, area.pos1, area.pos1, area.pos2,
-            claims.username, area.schema_id
-        )
+        local promise, ctx
+
+        local pos1 = blockexchange.get_pos(1, name)
+        local pos2 = blockexchange.get_pos(2, name)
+
+        if pos1 and pos2 then
+            -- partial update with the marked area
+            pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
+            promise, ctx = blockexchange.save_update_area(
+                name, area.pos1, area.pos2, pos1, pos2,
+                claims.username, area.schema_id
+            )
+        else
+            -- update _everything_
+            promise, ctx = blockexchange.save_update(
+                name, area.pos1, area.pos1, area.pos2,
+                claims.username, area.schema_id
+            )
+        end
+
         blockexchange.set_job_context(name, ctx)
         promise:next(function()
             blockexchange.set_job_context(ctx.playername, nil)
