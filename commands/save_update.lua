@@ -46,15 +46,6 @@ function blockexchange.save_update_area(playername, pos1, pos2, save_pos1, save_
 	abs_pos1, abs_pos2 = blockexchange.clip_area(pos1, pos2, abs_pos1, abs_pos2)
 	abs_pos1, abs_pos2 = blockexchange.sort_pos(abs_pos1, abs_pos2)
 
-	print(dump({
-		abs_pos1 = abs_pos1,
-		abs_pos2 = abs_pos2,
-		save_pos1 = save_pos1,
-		save_pos2 = save_pos2,
-		offset_pos1 = offset_pos1,
-		offset_pos2 = offset_pos2
-	}))
-
 	return blockexchange.save_update(playername, pos1, abs_pos1, abs_pos2, username, schema_id)
 end
 

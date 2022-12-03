@@ -18,9 +18,12 @@ minetest.register_chatcommand("bx_load_update", {
 
             minetest.chat_send_player(name, "Updating (loading) area: " .. area.id)
 
-            local promise, ctx = blockexchange.load(name, area.pos1, area.username, area.name)
+            local promise, ctx = blockexchange.load(name, area.pos1, area.username, area.name, false, area.mtime)
             blockexchange.set_job_context(name, ctx)
-            return promise:next(function()
+            return promise:next(function(stat)
+                -- save last mtime
+                area.mtime = stat.mtime
+                blockexchange.save_areas()
                 blockexchange.set_job_context(name, nil)
                 minetest.chat_send_player(name, "[blockexchange] Load-update complete")
             end)

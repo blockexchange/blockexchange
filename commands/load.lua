@@ -6,10 +6,11 @@
 -- @param pos1 lower position to load
 -- @param username the username/owner of the schema
 -- @param schemaname the name of the schema
--- @param local_load load from the filesystem
+-- @param[opt] local_load load from the filesystem
+-- @param[opt] from_mtime start with block mtime
 -- @return a promise that resolves if the operation is complete
 -- @return the job context
-function blockexchange.load(playername, pos1, username, schemaname, local_load)
+function blockexchange.load(playername, pos1, username, schemaname, local_load, from_mtime)
 	local ctx = {
 		type = "download",
 		local_load = local_load,
@@ -19,6 +20,7 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load)
 		pos1 = pos1,
 		current_part = 0,
 		progress_percent = 0,
+		from_mtime = from_mtime or 0,
 		promise = Promise.new()
 	}
 
