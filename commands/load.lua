@@ -55,9 +55,8 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load, 
 		ctx.origin = ctx.pos1
 
 		ctx.iterator = blockexchange.iterator(ctx.origin, ctx.pos1, ctx.pos2)
-		ctx.schema = {
-			total_parts = total_parts
-		}
+		ctx.total_parts = total_parts
+		ctx.schema = {}
 
 		blockexchange.set_pos(2, playername, pos2)
 		blockexchange.load_worker(ctx)
@@ -67,6 +66,10 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load, 
 			ctx.schema = schema
 			-- calculate origin point
 			ctx.origin = ctx.pos1
+			-- fetch total parts
+			return blockexchange.api.count_next_schemapart_by_mtime(schema.id, ctx.from_mtime)
+		end):next(function(total_parts)
+			ctx.total_parts = total_parts
 			blockexchange.load_worker(ctx)
 		end):catch(function()
 			ctx.promise:reject("schema not found")

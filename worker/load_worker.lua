@@ -10,7 +10,7 @@ if has_monitoring then
 end
 
 local function finalize(ctx)
-	local msg = "Download complete with " .. ctx.schema.total_parts .. " parts"
+	local msg = "Download complete with " .. ctx.total_parts .. " parts"
 	minetest.log("action", "[blockexchange] " .. msg)
 	if not ctx.local_load then
 		-- fetch updated schema and register area for future updates
@@ -31,7 +31,7 @@ local function place_schemapart(schemapart, ctx)
 
 	-- increment stats
 	ctx.current_part = ctx.current_part + 1
-	ctx.progress_percent = math.floor(ctx.current_part / ctx.schema.total_parts * 100 * 10) / 10
+	ctx.progress_percent = math.floor(ctx.current_part / ctx.total_parts * 100 * 10) / 10
 
 	local pos1 = blockexchange.place_schemapart(schemapart, ctx.origin)
 	minetest.log("action", "[blockexchange] Download of part " .. minetest.pos_to_string(pos1) .. " completed")

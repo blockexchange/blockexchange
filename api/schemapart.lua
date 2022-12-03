@@ -136,3 +136,18 @@ function blockexchange.api.get_next_schemapart_by_mtime(schema_id, mtime)
     end)
   end)
 end
+
+function blockexchange.api.count_next_schemapart_by_mtime(schema_id, mtime)
+  return Promise.new(function(resolve, reject)
+    http.fetch({
+      url = url .. "/api/schemapart_count/by-mtime/" .. schema_id .. "/" .. mtime,
+      timeout = 5
+    }, function(res)
+      if res.succeeded and res.code == 200 then
+        resolve(tonumber(res.data))
+      else
+        reject(res.code or 0)
+      end
+    end)
+  end)
+end
