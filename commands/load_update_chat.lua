@@ -25,7 +25,10 @@ minetest.register_chatcommand("bx_load_update", {
                 area.mtime = stat.mtime
                 blockexchange.save_areas()
                 blockexchange.set_job_context(name, nil)
-                minetest.chat_send_player(name, "[blockexchange] Load-update complete")
+                minetest.chat_send_player(
+                    name,
+                    "[blockexchange] Load-update complete with " .. ctx.total_parts .. " parts"
+                )
             end)
         end):catch(function(err_msg2)
             blockexchange.set_job_context(name, nil)

@@ -18,8 +18,8 @@ minetest.register_chatcommand("bx_load_local", {
         local promise, ctx = blockexchange.load(name, pos1, name, schemaname, true)
         blockexchange.set_job_context(name, ctx)
 
-        promise:next(function(result)
-            minetest.chat_send_player(name, "Download complete with " .. result.schema.total_parts .. " parts")
+        promise:next(function()
+            minetest.chat_send_player(name, "Download complete with " .. ctx.total_parts .. " parts")
             blockexchange.set_job_context(name, nil)
         end):catch(function(err_msg)
             minetest.chat_send_player(name, minetest.colorize("#ff0000", err_msg))

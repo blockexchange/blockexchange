@@ -45,7 +45,7 @@ minetest.register_chatcommand("bx_save_update", {
             area.mtime = schema.mtime
             blockexchange.save_areas()
             blockexchange.set_job_context(ctx.playername, nil)
-            minetest.chat_send_player(name, "[blockexchange] Save-update complete")
+            minetest.chat_send_player(name, "[blockexchange] Save-update complete with " .. ctx.total_parts .. " parts")
         end):catch(function(err_msg2)
             blockexchange.set_job_context(ctx.playername, nil)
             minetest.chat_send_player(name, minetest.colorize("#ff0000", err_msg2))
