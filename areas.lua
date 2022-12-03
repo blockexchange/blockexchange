@@ -25,13 +25,13 @@ end
 -- load areas on startup
 load_areas()
 
-local function save_areas()
+function blockexchange.save_areas()
     blockexchange.mod_storage:set_string("areas_v2", minetest.serialize(area_map))
 end
 
 function blockexchange.clear_areas()
     area_map = {}
-    save_areas()
+    blockexchange.save_areas()
 end
 
 function blockexchange.register_area(pos1, pos2, username, schema)
@@ -48,7 +48,7 @@ function blockexchange.register_area(pos1, pos2, username, schema)
     }
     area_map[area_id] = data
     area_store:insert_area(pos1, pos2, area_id)
-    save_areas()
+    blockexchange.save_areas()
 end
 
 function blockexchange.get_area(pos)
@@ -62,7 +62,7 @@ end
 
 function blockexchange.remove_area(area_id)
     area_map[area_id] = nil
-    save_areas()
+    blockexchange.save_areas()
 end
 
 function blockexchange.get_area_by_id(area_id)

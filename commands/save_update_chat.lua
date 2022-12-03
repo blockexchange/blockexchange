@@ -38,6 +38,12 @@ minetest.register_chatcommand("bx_save_update", {
 
         blockexchange.set_job_context(name, ctx)
         promise:next(function()
+            -- fetch updated schema
+            return blockexchange.api.get_schema_by_id(area.schema_id)
+        end):next(function(schema)
+            -- update mtime in local area
+            area.mtime = schema.mtime
+            blockexchange.save_areas()
             blockexchange.set_job_context(ctx.playername, nil)
             minetest.chat_send_player(name, "[blockexchange] Save-update complete")
         end):catch(function(err_msg2)
