@@ -117,3 +117,22 @@ function blockexchange.api.get_next_schemapart(schema_id, pos)
     end)
   end)
 end
+
+function blockexchange.api.get_next_schemapart_by_mtime(schema_id, mtime)
+  return Promise.new(function(resolve, reject)
+    http.fetch({
+      url = url .. "/api/schemapart_next/by-mtime/" .. schema_id .. "/" .. mtime,
+      timeout = 5
+    }, function(res)
+      if res.succeeded and res.code == 200 then
+        -- schema part found
+        resolve(minetest.parse_json(res.data))
+      elseif (res.succeeded and res.code == 204) or (res.code == 404) then
+        -- air only part
+        resolve(false)
+      else
+        reject(res.code or 0)
+      end
+    end)
+  end)
+end
