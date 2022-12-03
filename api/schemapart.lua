@@ -50,8 +50,7 @@ function blockexchange.api.get_schemapart(schema_id, pos)
     }, function(res)
       if res.succeeded and res.code == 200 then
         -- schema part found
-        local schemapart = minetest.parse_json(res.data)
-        resolve(schemapart)
+        resolve(minetest.parse_json(res.data))
       elseif (res.succeeded and res.code == 204) or (res.code == 404) then
         -- air only part
         resolve(false)
@@ -70,8 +69,7 @@ function blockexchange.api.get_schemapart_chunk(schema_id, pos)
     }, function(res)
       if res.succeeded and res.code == 200 then
         -- schema part found
-        local schemaparts = minetest.parse_json(res.data)
-        resolve(schemaparts)
+        resolve(minetest.parse_json(res.data))
       elseif (res.succeeded and res.code == 204) or (res.code == 404) then
         -- air only part
         resolve(false)
@@ -90,8 +88,7 @@ function blockexchange.api.get_first_schemapart(schema_id)
     }, function(res)
       if res.succeeded and res.code == 200 then
         -- schema part found
-        local schemapart = minetest.parse_json(res.data)
-        resolve(schemapart)
+        resolve(minetest.parse_json(res.data))
       elseif (res.succeeded and res.code == 204) or (res.code == 404) then
         -- air only part
         resolve(false)
@@ -110,8 +107,7 @@ function blockexchange.api.get_next_schemapart(schema_id, pos)
     }, function(res)
       if res.succeeded and res.code == 200 then
         -- schema part found
-        local schemapart = minetest.parse_json(res.data)
-        resolve(schemapart)
+        resolve(minetest.parse_json(res.data))
       elseif (res.succeeded and res.code == 204) or (res.code == 404) then
         -- air only part
         resolve(false)
