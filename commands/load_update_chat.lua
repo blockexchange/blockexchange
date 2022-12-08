@@ -21,14 +21,22 @@ minetest.register_chatcommand("bx_load_update", {
             local promise, ctx = blockexchange.load(name, area.pos1, area.username, area.name, false, area.mtime)
             blockexchange.set_job_context(name, ctx)
             return promise:next(function(stat)
-                -- save last mtime
-                area.mtime = stat.mtime
-                blockexchange.save_areas()
+                -- clear job
                 blockexchange.set_job_context(name, nil)
-                minetest.chat_send_player(
-                    name,
-                    "[blockexchange] Load-update complete with " .. ctx.total_parts .. " parts"
-                )
+
+                if stat.last_schemapart then
+                    -- some parts have been updated
+                    -- save last mtime
+                    area.mtime = stat.last_schemapart.mtime
+                    blockexchange.save_areas()
+                    minetest.chat_send_player(
+                        name,
+                        "[blockexchange] Load-update complete with " .. ctx.total_parts .. " parts"
+                    )
+                else
+                    -- nothing has been updated
+                    minetest.chat_send_player(name, "[blockexchange] No updates available")
+                end
             end)
         end):catch(function(err_msg2)
             blockexchange.set_job_context(name, nil)

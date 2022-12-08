@@ -53,10 +53,14 @@ end
 
 function blockexchange.get_area(pos)
     local areas = area_store:get_areas_for_pos(pos, true, true)
-    local id = next(areas)
-    if id ~= nil then
-        local area = areas[id]
-        return area_map[area.data]
+    for id, area in pairs(areas) do
+        if area_map[area.data] then
+            -- return
+            return area_map[area.data]
+        else
+            -- cleanup
+            area_store:remove_area(id)
+        end
     end
 end
 

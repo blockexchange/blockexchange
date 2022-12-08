@@ -19,7 +19,7 @@ local function finalize(ctx)
 
 	ctx.promise:resolve({
 		schema = ctx.schema,
-		mtime = ctx.from_mtime
+		last_schemapart = ctx.last_schemapart
 	})
 end
 
@@ -41,8 +41,6 @@ local function place_schemapart(schemapart, ctx)
 	end
 
 	ctx.last_schemapart = schemapart
-	-- shift from-mtime to next block
-	ctx.from_mtime = schemapart.mtime
 	minetest.after(blockexchange.min_delay, blockexchange.load_worker, ctx)
 
 	-- TODO: overwrite inworld parts if downloaded part is air-only
@@ -88,13 +86,39 @@ function blockexchange.load_worker(ctx)
 			minetest.after(blockexchange.min_delay, blockexchange.load_worker, ctx)
 		end
 
-	else
-		-- online
-		-- next part
-		blockexchange.api.get_next_schemapart_by_mtime(ctx.schema.id, ctx.from_mtime):next(function(schemapart)
+	elseif ctx.from_mtime > 0 then
+		-- online, incremental download by mtime
+		local mtime = ctx.from_mtime
+		if ctx.last_schemapart then
+			-- start from last schema part
+			mtime = ctx.last_schemapart.mtime
+		end
+		blockexchange.api.get_next_schemapart_by_mtime(ctx.schema.id,  mtime):next(function(schemapart)
 			place_schemapart(schemapart, ctx, false)
 		end):catch(function(http_code)
 			schedule_retry(ctx, http_code)
 		end)
+	else
+		-- online, full download
+		if not ctx.last_schemapart then
+			-- start from the beginning
+			blockexchange.api.get_first_schemapart(ctx.schema.id):next(function(schemapart)
+				place_schemapart(schemapart, ctx, false)
+			end):catch(function(http_code)
+				schedule_retry(ctx, http_code)
+			end)
+		else
+			-- start from last position
+			local pos = {
+				x = ctx.last_schemapart.offset_x,
+				y = ctx.last_schemapart.offset_y,
+				z = ctx.last_schemapart.offset_z
+			}
+			blockexchange.api.get_next_schemapart(ctx.schema.id, pos):next(function(schemapart)
+				place_schemapart(schemapart, ctx, false)
+			end):catch(function(http_code)
+				schedule_retry(ctx, http_code)
+			end)
+		end
 	end
 end
