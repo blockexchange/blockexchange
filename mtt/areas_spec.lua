@@ -21,5 +21,9 @@ mtt.register("load, query and save areas", function(callback)
     assert(vector.equals(area.pos2, pos2))
     assert(area.schema_id == schema.id)
 
+    blockexchange.load_areas()
+    area = blockexchange.get_area(pos1)
+    assert(area)
+
     callback()
 end)

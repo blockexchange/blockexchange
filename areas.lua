@@ -1,5 +1,5 @@
 
-local area_store = AreaStore()
+local area_store
 
 -- area_id -> { pos1 = ... }
 local area_map
@@ -11,7 +11,8 @@ local function create_area_id()
     end)
 end
 
-local function load_areas()
+function blockexchange.load_areas()
+    area_store = AreaStore()
     area_map = minetest.deserialize(blockexchange.mod_storage:get_string("areas_v2")) or {}
     for area_id, persisted_area in pairs(area_map) do
         area_store:insert_area(
@@ -23,7 +24,7 @@ local function load_areas()
 end
 
 -- load areas on startup
-load_areas()
+blockexchange.load_areas()
 
 function blockexchange.save_areas()
     blockexchange.mod_storage:set_string("areas_v2", minetest.serialize(area_map))

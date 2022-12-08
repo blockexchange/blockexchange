@@ -7,17 +7,17 @@ function blockexchange.get_pos(index, playername)
 	if minetest.get_modpath("worldedit") then
 		-- use WE's positions
 		if index == 1 then
-			return worldedit.pos1[playername]
+			return table.copy(worldedit.pos1[playername])
 		else
-			return worldedit.pos2[playername]
+			return table.copy(worldedit.pos2[playername])
 		end
 	end
 
 	-- use local positions
 	if index == 1 then
-		return blockexchange.pos1[playername]
+		return table.copy(blockexchange.pos1[playername])
 	else
-		return blockexchange.pos2[playername]
+		return table.copy(blockexchange.pos2[playername])
 	end
 end
 
