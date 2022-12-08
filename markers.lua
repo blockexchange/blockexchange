@@ -3,21 +3,27 @@
 local pos1_player_map = {}
 local pos2_player_map = {}
 
+local function copy(pos)
+	if pos then
+		return table.copy(pos)
+	end
+end
+
 function blockexchange.get_pos(index, playername)
 	if minetest.get_modpath("worldedit") then
 		-- use WE's positions
 		if index == 1 then
-			return table.copy(worldedit.pos1[playername])
+			return copy(worldedit.pos1[playername])
 		else
-			return table.copy(worldedit.pos2[playername])
+			return copy(worldedit.pos2[playername])
 		end
 	end
 
 	-- use local positions
 	if index == 1 then
-		return table.copy(blockexchange.pos1[playername])
+		return copy(blockexchange.pos1[playername])
 	else
-		return table.copy(blockexchange.pos2[playername])
+		return copy(blockexchange.pos2[playername])
 	end
 end
 
