@@ -76,7 +76,7 @@ Online commands, they call the remote-server with the http api
 ### Write (needs a login)
 
 * **/bx_save [schemaname]** saves/uploads the selected area as a new schema
-* **/bx_save_update [area_id?]** saves the changes of a loaded area
+* **/bx_save_update [area_id?]** saves the changes of a loaded area (use it with the position markers)
 * **/bx_logout** logs out
 * **/bx_login** shows the login status
 
