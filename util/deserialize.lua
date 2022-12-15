@@ -1,7 +1,7 @@
 ---------
 -- deserialization functions
 
-local placeholder_id = minetest.get_content_id("blockexchange:placeholder")
+local placeholder_id = minetest.get_content_id("placeholder:placeholder")
 
 -- local nodename->id cache
 local local_nodename_to_id_mapping = {} -- name -> id
@@ -113,7 +113,7 @@ function blockexchange.deserialize_part(pos1, pos2, data, metadata, update_light
 				-- extract node name
 				local node_name = unknown_nodes_id_to_name_mapping[unknown_node_id]
 				-- populate proper placeholder node with metadata
-				blockexchange.placeholder_populate(absolute_pos, node_name, md)
+				placeholder.populate(absolute_pos, {name=node_name}, md)
 				-- remove from placeholder hashes
 				placeholder_pos_hashes[hash] = nil
 			else
@@ -127,7 +127,7 @@ function blockexchange.deserialize_part(pos1, pos2, data, metadata, update_light
 	for hash, nodeid in pairs(placeholder_pos_hashes) do
 		local node_name = unknown_nodes_id_to_name_mapping[nodeid]
 		local pos = minetest.get_position_from_hash(hash)
-		blockexchange.placeholder_populate(pos, node_name)
+		placeholder.populate(pos, {name=node_name})
 	end
 
 	-- deserialize node timers

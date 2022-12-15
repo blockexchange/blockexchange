@@ -36,9 +36,6 @@ if blockexchange.is_online then
 	loadfile(MP.."/api/token.lua")(http, blockexchange.url)
 end
 
--- nodes
-dofile(MP.."/placeholder.lua")
-
 -- internal stuff
 dofile(MP.."/jobcontext.lua")
 dofile(MP.."/privs.lua")

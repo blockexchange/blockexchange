@@ -62,7 +62,7 @@ mtt.register("serialize unknown node (placeholder placement)", function(callback
 
     -- verify
     local node = minetest.get_node(pos1)
-    assert(node.name == "blockexchange:placeholder")
+    assert(node.name == "placeholder:placeholder")
 
     local meta = minetest.get_meta(pos1)
     assert(meta:get_string("original_nodename") == "unknown:node")
@@ -73,8 +73,7 @@ end)
 mtt.register("serialize placeholder to proper node", function(callback)
 
     -- set placeholder
-    minetest.set_node(pos1, {name="blockexchange:placeholder"})
-    blockexchange.placeholder_populate(pos1, "default:mese", {
+    placeholder.place(pos1, {name="default:mese"}, {
         inventory = {},
         fields = {
             x = "y"
@@ -86,7 +85,7 @@ mtt.register("serialize placeholder to proper node", function(callback)
     assert(data)
     assert(node_count)
     assert(#data.node_ids == 8)
-    assert(not data.node_mapping["blockexchange:placeholder"])
+    assert(not data.node_mapping["placeholder:placeholder"])
 
     -- compress
     local compressed_data = blockexchange.compress_data(data)

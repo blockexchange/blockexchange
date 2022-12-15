@@ -20,5 +20,5 @@ read_globals = {
 	"areas", "monitoring", "mtt",
 
 	-- deps
-	"mtzip"
+	"mtzip", "placeholder"
 }

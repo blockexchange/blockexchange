@@ -10,7 +10,7 @@ minetest.register_on_mods_loaded(function()
 end)
 
 local air_content_id = minetest.get_content_id("air")
-local placeholder_id = minetest.get_content_id("blockexchange:placeholder")
+local placeholder_id = minetest.get_content_id("placeholder:placeholder")
 
 -- checks if a table is empty
 local function is_empty(tbl)
@@ -85,17 +85,17 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 
 					-- unwrap raw node-info
 					local meta = minetest.get_meta(pos)
-					local original_nodename, original_metadata = blockexchange.unwrap_placeholder(meta)
+					local original_node, original_metadata = placeholder.unwrap(meta)
 
-					if data.node_mapping[original_nodename] then
+					if data.node_mapping[original_node.name] then
 						-- already has a mapping
-						node_id = data.node_mapping[original_nodename]
+						node_id = data.node_mapping[original_node.name]
 					else
 						-- create new mapping
 						node_id = next_unknown_nodeid
 						next_unknown_nodeid = next_unknown_nodeid - 1
-						data.node_mapping[original_nodename] = node_id
-						placeholder_node_id_names[node_id] = original_nodename
+						data.node_mapping[original_node.name] = node_id
+						placeholder_node_id_names[node_id] = original_node.name
 					end
 
 					-- save metadata for later
@@ -135,7 +135,7 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 	for _, pos in ipairs(pos_with_meta) do
 		local relative_pos = vector.subtract(pos, pos1)
 		local node = minetest.get_node(pos)
-		local is_placeholder = node.name == "blockexchange:placeholder"
+		local is_placeholder = node.name == "placeholder:placeholder"
 		if not is_placeholder then
 			-- not a placeholder, serialize metadata
 			local meta = minetest.get_meta(pos):to_table()
