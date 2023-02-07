@@ -53,7 +53,7 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 
 	if local_save then
 		-- offline, local saving
-		ctx.zipfile = io.open(blockexchange.get_local_filename(name), "w")
+		ctx.zipfile = io.open(blockexchange.get_local_filename(name), "wb")
 		ctx.zip = mtzip.zip(ctx.zipfile)
 		ctx.create_schema = create_schema
 

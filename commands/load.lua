@@ -26,7 +26,7 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load, 
 
 	if local_load then
 		local filename = blockexchange.get_local_filename(schemaname)
-		ctx.zipfile = io.open(filename)
+		ctx.zipfile = io.open(filename, "rb")
 		if not ctx.zipfile then
 			ctx.promise:reject("file not found: " .. filename)
 			return ctx.promise

@@ -26,7 +26,7 @@ function blockexchange.allocate(playername, pos1, username, schemaname, local_lo
   if local_load then
     -- local operation
     local filename = blockexchange.get_local_filename(schemaname)
-    local f = io.open(filename)
+    local f = io.open(filename, "rb")
     if not f then
       promise:reject("file not found: " .. filename)
       return promise
