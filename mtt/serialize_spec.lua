@@ -5,6 +5,16 @@ local pos2 = vector.add(pos1, 1)
 
 mtt.emerge_area(pos1, pos2)
 
+mtt.benchmark("blockexchange.serialize_part", function(callback, iterations)
+    for _=1,iterations do
+        local data, node_count = blockexchange.serialize_part(pos1, pos2)
+        assert(data)
+        assert(node_count)
+        assert(#data.node_ids == 8)
+    end
+    callback()
+end)
+
 mtt.register("serialize and modify", function(callback)
 
     -- serialize
