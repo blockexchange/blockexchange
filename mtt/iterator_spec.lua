@@ -1,3 +1,19 @@
+mtt.register("blockexchange.iterator, smoke tests", function(callback)
+	local origin = { x=0, y=0, z=0 }
+	local pos1 = { x=0, y=0, z=0 }
+	local pos2 = { x=17, y=0, z=0 }
+
+	local last_progress = 0
+	for abs_pos, pos, progress in blockexchange.iterator(origin, pos1, pos2) do
+		assert(abs_pos and abs_pos.x)
+		assert(pos and pos.x)
+		assert(progress >= last_progress)
+		last_progress = progress
+	end
+
+	callback()
+end)
+
 mtt.register("blockexchange.iterator, returns proper positive coordinates", function(callback)
 	local origin = { x=0, y=0, z=0 }
 	local pos1 = { x=0, y=0, z=0 }
