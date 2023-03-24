@@ -15,4 +15,4 @@ jobs:
         docker-compose up --exit-code-from sut
         sudo sed -i 's#/root/.minetest/worlds/world/worldmods/blockexchange/##g' coverage/lcov.info
     - name: Coveralls
-      uses: coverallsapp/github-action@v1
+      uses: coverallsapp/github-action@v2
