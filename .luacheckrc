@@ -1,7 +1,6 @@
 globals = {
 	"blockexchange",
 	"worldedit",
-	"Promise",
 	"minetest"
 }
 
@@ -20,5 +19,5 @@ read_globals = {
 	"areas", "monitoring", "mtt",
 
 	-- deps
-	"mtzip", "placeholder"
+	"mtzip", "placeholder", "Promise"
 }

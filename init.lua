@@ -3,12 +3,6 @@ local MP = minetest.get_modpath("blockexchange")
 -- optional http instance
 local http = minetest.request_http_api()
 
--- load Promise lib
-Promise = dofile(MP.."/util/promise.lua")
-Promise.async = function(callback)
-	minetest.after(0, callback)
-end
-
 -- global namespace
 blockexchange = {
 	-- online flag
@@ -109,7 +103,6 @@ if minetest.get_modpath("mtt") then
 	dofile(MP .. "/mtt/clip_area_spec.lua")
 	dofile(MP .. "/mtt/get_base_pos_spec.lua")
 	dofile(MP .. "/mtt/iterator_spec.lua")
-	dofile(MP .. "/mtt/promise_spec.lua")
 	dofile(MP .. "/mtt/schemapart_offset_spec.lua")
 	dofile(MP .. "/mtt/sort_pos_spec.lua")
 	dofile(MP .. "/mtt/validate_name_spec.lua")
