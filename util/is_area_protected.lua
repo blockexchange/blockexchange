@@ -2,10 +2,9 @@ local has_areas_mod = minetest.get_modpath("areas")
 local has_protector_mod = minetest.get_modpath("protector")
 
 local protector_radius = (tonumber(minetest.settings:get("protector_radius")) or 5)
+local radius_vector = {x=protector_radius, y=protector_radius, z=protector_radius}
 
-blockexchange.is_area_protected = function(pos1, pos2, playername)
-
-	local radius_vector = {x=protector_radius, y=protector_radius, z=protector_radius}
+function blockexchange.is_area_protected(pos1, pos2, playername)
 	local check_pos1 = vector.subtract(pos1, radius_vector)
 	local check_pos2 = vector.add(pos2, radius_vector)
 
