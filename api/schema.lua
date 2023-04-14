@@ -8,11 +8,13 @@ local http, url = ...
 -- @param create_schema the new schema as table
 -- @return a promise with the result
 function blockexchange.api.create_schema(token, create_schema)
-  return blockexchange.api.json({
-    endpoint = "schema",
-    data = create_schema,
+  return Promise.http(http, url .. "/api/schema", {
     method = "POST",
-    token = token
+    data = create_schema,
+    json = true,
+    headers = {
+      "Authorization: " .. token
+    }
   })
 end
 
@@ -21,30 +23,15 @@ end
 -- @param schema_id the schema_id to update
 -- @return a promise with the result
 function blockexchange.api.update_schema_stats(token, schema_id)
-  return Promise.new(function(resolve, reject)
-    local json = minetest.write_json({
-      done = true
-    })
-
-    local update_url = url .. "/api/schema/" .. schema_id .. "/update"
-
-    http.fetch({
-      url = update_url,
-      extra_headers = {
-        "Content-Type: application/json",
-        "Authorization: " .. token
-      },
-      timeout = 120,
-      method = "POST",
-      data = json
-    }, function(res)
-      if res.succeeded and res.code == 200 then
-        resolve(true)
-      else
-        reject(res.code or 0)
-      end
-    end)
-  end)
+  return Promise.http(http, url .. "/api/schema/" .. schema_id .. "/update", {
+    method = "POST",
+    data = { done = true },
+    json = true,
+    timeout = 120,
+    headers = {
+      "Authorization: " .. token
+    }
+  })
 end
 
 --- updates the screenshot of a schema

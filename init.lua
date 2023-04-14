@@ -42,6 +42,7 @@ dofile(MP.."/areas.lua")
 
 -- utils
 dofile(MP.."/util/player_area.lua")
+dofile(MP.."/util/compare_area.lua")
 dofile(MP.."/util/ignored_content_ids.lua")
 dofile(MP.."/util/serialize.lua")
 dofile(MP.."/util/deserialize.lua")
@@ -106,5 +107,5 @@ if minetest.get_modpath("mtt") then
 	dofile(MP .. "/mtt/schemapart_offset_spec.lua")
 	dofile(MP .. "/mtt/sort_pos_spec.lua")
 	dofile(MP .. "/mtt/validate_name_spec.lua")
-	dofile(MP .. "/mtt/load_save_local_spec.lua")
+	dofile(MP .. "/mtt/load_save.spec.lua")
 end
