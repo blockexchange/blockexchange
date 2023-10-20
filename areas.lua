@@ -1,3 +1,4 @@
+local has_mapsync = minetest.get_modpath("mapsync")
 
 local area_store
 
@@ -13,7 +14,15 @@ end
 
 function blockexchange.load_areas()
     area_store = AreaStore()
-    area_map = minetest.deserialize(blockexchange.mod_storage:get_string("areas_v2")) or {}
+    if has_mapsync then
+        -- try loading mapsync persisted bx-areas
+        area_map = mapsync.load_data("bx_areas")
+    end
+
+    if not area_map then
+        -- load bx-areas from mod-storage or create an empty table
+        area_map = minetest.deserialize(blockexchange.mod_storage:get_string("areas_v2")) or {}
+    end
     for area_id, persisted_area in pairs(area_map) do
         area_store:insert_area(
             persisted_area.pos1,
@@ -23,11 +32,17 @@ function blockexchange.load_areas()
     end
 end
 
--- load areas on startup
-blockexchange.load_areas()
+-- load areas after all mods are loaded
+minetest.register_on_mods_loaded(blockexchange.load_areas)
 
 function blockexchange.save_areas()
+    -- save to mod-storage
     blockexchange.mod_storage:set_string("areas_v2", minetest.serialize(area_map))
+
+    if has_mapsync then
+        -- persist to mapsync too
+        mapsync.save_data("bx_areas", area_map)
+    end
 end
 
 function blockexchange.clear_areas()
