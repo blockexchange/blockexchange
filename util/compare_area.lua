@@ -30,7 +30,11 @@ function blockexchange.compare_area(pos1, pos2, pos1_load, pos2_load, opts)
                 local i2 = area2:indexp(vector.add(pos, offset))
 
                 if nodeids1[i1] ~= nodeids2[i2] then
-                    return false, "node-ids, pos: " .. minetest.pos_to_string(pos)
+                    return false, "node-id1: " .. nodeids1[i1] ..
+                        " nodename1: " .. minetest.get_name_from_content_id(nodeids1[i1]) ..
+                        " node-id2: " .. nodeids2[i2] ..
+                        " nodename2: " .. minetest.get_name_from_content_id(nodeids2[i2]) ..
+                        " pos: " .. minetest.pos_to_string(pos)
                 end
                 if opts.check_param1 and param1_data1[i1] ~= param1_data2[i2] then
                     return false, "light, pos: " .. minetest.pos_to_string(pos)
