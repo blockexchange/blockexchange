@@ -89,6 +89,8 @@ dofile(MP.."/commands/save_local_chat.lua")
 dofile(MP.."/commands/emerge.lua")
 dofile(MP.."/commands/emerge_chat.lua")
 dofile(MP.."/commands/protectioncheck.lua")
+dofile(MP.."/commands/cleanup.lua")
+dofile(MP.."/commands/cleanup_chat.lua")
 
 -- worker functions
 dofile(MP.."/worker/load_worker.lua")
@@ -96,6 +98,7 @@ dofile(MP.."/worker/save_worker.lua")
 dofile(MP.."/worker/save_update_worker.lua")
 dofile(MP.."/worker/emerge_worker.lua")
 dofile(MP.."/worker/protectioncheck_worker.lua")
+dofile(MP.."/worker/cleanup_worker.lua")
 
 if minetest.get_modpath("mtt") then
 	dofile(MP .. "/mtt/serialize_spec.lua")

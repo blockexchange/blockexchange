@@ -53,6 +53,7 @@ Local commands, they don't need the http-api and make no calls "home"
 * **/bx_hud [on|off]** enables or disables the blockexchange hud
 * **/bx_pos1** mark position 1
 * **/bx_pos2** mark position 2
+* **/bx_cleanup** cleans up stray metadata and invalid param2 values
 * **/bx_area_remove [area_id?]** removes the area information (not the build)
 * **/bx_area_mark [area_id?]** marks the area
 * **/bx_emerge** emerge the selected area

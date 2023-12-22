@@ -55,6 +55,10 @@ local function update_player_hud(player)
 			icon_name = "blockexchange_upload.png"
 			text = "Updating upload, progress: " .. ctx.progress_percent .. " %"
 
+		elseif ctx.type == "cleanup" then
+			icon_name = "blockexchange_cleanup.png"
+			text = "Cleanup, progress: " .. ctx.progress_percent .. " %"
+
 		end
 
 	elseif area then

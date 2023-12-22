@@ -12,8 +12,8 @@ function blockexchange.emerge_worker(ctx)
     return
   end
 
-	local pos2 = vector.add(ctx.current_pos, 15)
-	pos2.x = math.min(pos2.x, ctx.pos2.x)
+  local pos2 = vector.add(ctx.current_pos, 15)
+  pos2.x = math.min(pos2.x, ctx.pos2.x)
   pos2.y = math.min(pos2.y, ctx.pos2.y)
   pos2.z = math.min(pos2.z, ctx.pos2.z)
 
@@ -25,8 +25,7 @@ function blockexchange.emerge_worker(ctx)
       -- increment stats
       ctx.current_part = ctx.current_part + 1
       ctx.progress_percent = math.floor(ctx.progress * 100 * 10) / 10
-			minetest.after(0.1, blockexchange.emerge_worker, ctx)
+      minetest.after(0.1, blockexchange.emerge_worker, ctx)
     end
   end)
-
 end

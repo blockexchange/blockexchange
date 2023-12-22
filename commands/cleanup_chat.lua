@@ -1,5 +1,5 @@
-minetest.register_chatcommand("bx_emerge", {
-	description = "Emerges the selected region",
+minetest.register_chatcommand("bx_cleanup", {
+	description = "Cleans up the selected region (stray metadata, invalid param2 values)",
   privs = { blockexchange = true },
 	func = function(name)
     if blockexchange.get_job_context(name) then
@@ -14,12 +14,13 @@ minetest.register_chatcommand("bx_emerge", {
       return false, "you need to set /bx_pos1 and /bx_pos2 first!"
     end
 
-    local promise, ctx = blockexchange.emerge(name, pos1, pos2)
+    local promise, ctx = blockexchange.cleanup(name, pos1, pos2)
     blockexchange.set_job_context(ctx.playername, ctx)
 
-    promise:next(function(total_parts)
+    promise:next(function(result)
       blockexchange.set_job_context(ctx.playername, nil)
-      local msg = "[blockexchange] Emerge complete with " .. total_parts .. " parts"
+      local msg = "[blockexchange] Cleanup complete, " ..
+        "cleaned metadata: " .. result.meta .. ", cleaned param2: " .. result.param2
       minetest.log("action", msg)
       minetest.chat_send_player(name, msg)
     end):catch(function(err_msg)
