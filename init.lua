@@ -9,6 +9,7 @@ blockexchange = {
 	is_online = http ~= nil,
 	mod_storage = minetest.get_mod_storage(),
 	api = {},
+	ui = {},
 	api_version_major = 1,
 	url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.ch",
 	min_delay = tonumber(minetest.settings:get("blockexchange.min_delay") or "0.1"),
@@ -64,6 +65,9 @@ dofile(MP.."/util/place_schemapart.lua")
 dofile(MP.."/util/validate_name.lua")
 dofile(MP.."/util/is_player_in_area.lua")
 
+-- ui
+dofile(MP.."/ui/main.lua")
+
 -- commands
 if blockexchange.is_online then
 	dofile(MP.."/commands/api_check_wrapper.lua")
@@ -76,6 +80,7 @@ if blockexchange.is_online then
 	dofile(MP.."/commands/load_update_chat.lua")
 	dofile(MP.."/commands/load_chat.lua")
 end
+dofile(MP.."/commands/ui.lua")
 dofile(MP.."/commands/pos.lua")
 dofile(MP.."/commands/area.lua")
 dofile(MP.."/commands/cancel_chat.lua")
