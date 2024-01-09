@@ -34,6 +34,9 @@ minetest.register_chatcommand("bx_save_update", {
             -- fetch updated schema
             return blockexchange.api.get_schema_by_id(area.schema_id)
         end):next(function(schema)
+            if not schema then
+                return Promise.rejected("schema not found: " .. areas.schema_id)
+            end
             -- update mtime in local area
             area.mtime = schema.mtime
             blockexchange.save_areas()

@@ -11,11 +11,10 @@ function blockexchange.api.create_schema(token, create_schema)
   return Promise.http(http, url .. "/api/schema", {
     method = "POST",
     data = create_schema,
-    json = true,
     headers = {
       "Authorization: " .. token
     }
-  })
+  }):next(function(res) return res.json() end)
 end
 
 --- updates the stats of an existing schema
@@ -26,12 +25,11 @@ function blockexchange.api.update_schema_stats(token, schema_id)
   return Promise.http(http, url .. "/api/schema/" .. schema_id .. "/update", {
     method = "POST",
     data = { done = true },
-    json = true,
     timeout = 120,
     headers = {
       "Authorization: " .. token
     }
-  })
+  }):next(function(res) return res.json() end)
 end
 
 --- updates the screenshot of a schema
@@ -105,6 +103,8 @@ function blockexchange.api.get_schema_by_id(schema_id)
       if res.succeeded and res.code == 200 then
         local schema = minetest.parse_json(res.data)
         resolve(schema)
+      elseif res.succeeded and res.code == 404 then
+        resolve(nil)
       else
         reject(res.code or 0)
       end

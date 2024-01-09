@@ -6,5 +6,5 @@ local http, url = ...
 --- returns the blockexchange info data (version, etc)
 -- @return a promise with the result (fields: api_version_major, api_version_minor, name, owner)
 function blockexchange.api.get_info()
-  return Promise.http(http, url .. "/api/info", { json = true })
+  return Promise.http(http, url .. "/api/info"):next(function(res) return res.json() end)
 end
