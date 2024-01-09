@@ -71,6 +71,10 @@ function blockexchange.allocate(playername, pos1, username, schemaname, local_lo
   else
     -- online
     blockexchange.api.get_schema_by_name(username, schemaname, false):next(function(schema)
+      if not schema then
+        promise:reject("Schema not found: '" .. username .. "/" .. schemaname .. "'")
+        return
+      end
       local pos2 = vector.add(pos1, blockexchange.get_schema_size(schema))
       pos2 = vector.subtract(pos2, 1)
       blockexchange.set_pos(2, playername, pos2)
@@ -86,8 +90,6 @@ function blockexchange.allocate(playername, pos1, username, schemaname, local_lo
         minetest.log("error", err_msg)
         promise:reject(err_msg)
       end)
-    end):catch(function()
-      promise:reject("Schema not found: '" .. username .. "/" .. schemaname .. "'")
     end)
   end
 

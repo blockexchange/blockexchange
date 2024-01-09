@@ -95,20 +95,14 @@ end
 -- @param schema_id the schema_id
 -- @return a promise with the result
 function blockexchange.api.get_schema_by_id(schema_id)
-  return Promise.new(function(resolve, reject)
-    http.fetch({
-      url = url .. "/api/schema/" .. schema_id,
-      timeout = 10
-    }, function(res)
-      if res.succeeded and res.code == 200 then
-        local schema = minetest.parse_json(res.data)
-        resolve(schema)
-      elseif res.succeeded and res.code == 404 then
-        resolve(nil)
-      else
-        reject(res.code or 0)
-      end
-    end)
+  return Promise.http(http, url .. "/api/schema/" .. schema_id):next(function(res)
+    if res.code == 200 then
+      return res.json()
+    elseif res.code == 404 then
+      return nil
+    else
+      return Promise.rejected("unexpected http error")
+    end
   end)
 end
 
@@ -118,24 +112,18 @@ end
 -- @param download true/false to count as additional download in the stats
 -- @return a promise with the result
 function blockexchange.api.get_schema_by_name(username, schemaname, download)
-  return Promise.new(function(resolve, reject)
-      -- replace spaces with %20
-    local schema_url = url .. "/api/search/schema/byname/" .. username .. "/" .. schemaname:gsub(" ", '%%20')
+  local schema_url = url .. "/api/search/schema/byname/" .. username .. "/" .. schemaname
     if download then
       -- increment download counter
       schema_url = schema_url .. "?download=true"
     end
-
-    http.fetch({
-      url = schema_url,
-      timeout = 10
-    }, function(res)
-      if res.succeeded and res.code == 200 then
-        local schema = minetest.parse_json(res.data)
-        resolve(schema)
-      else
-        reject(res.code or 0)
-      end
-    end)
+  return Promise.http(http, schema_url):next(function(res)
+    if res.code == 200 then
+      return res.json()
+    elseif res.code == 404 then
+      return nil
+    else
+      return Promise.rejected("unexpected http error")
+    end
   end)
 end
