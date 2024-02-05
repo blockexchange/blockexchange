@@ -14,7 +14,7 @@ local function finalize(ctx)
 	minetest.log("action", "[blockexchange] " .. msg)
 	if not ctx.local_load then
 		-- fetch updated schema and register area for future updates
-		blockexchange.register_area(ctx.pos1, ctx.pos2, ctx.username, ctx.schema)
+		blockexchange.register_area(ctx.pos1, ctx.pos2, ctx.playername, ctx.username, ctx.schema)
 	end
 
 	ctx.promise:resolve({

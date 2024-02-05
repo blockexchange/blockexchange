@@ -50,7 +50,7 @@ function blockexchange.clear_areas()
     blockexchange.save_areas()
 end
 
-function blockexchange.register_area(pos1, pos2, username, schema)
+function blockexchange.register_area(pos1, pos2, playername, username, schema)
     local area_id = create_area_id()
     local data = {
         id = area_id,
@@ -60,11 +60,23 @@ function blockexchange.register_area(pos1, pos2, username, schema)
         mtime = schema.mtime,
         name = schema.name,
         username = username,
+        playername = playername,
         sync = "off" -- off,load,save,both
     }
     area_map[area_id] = data
     area_store:insert_area(pos1, pos2, area_id)
     blockexchange.save_areas()
+end
+
+function blockexchange.get_areas_in_area(pos1, pos2)
+    local areas = area_store:get_areas_in_area(pos1, pos2, true, true, true)
+    local list = {}
+    for _, area in pairs(areas) do
+        if area_map[area.data] then
+            table.insert(list, area_map[area.data])
+        end
+    end
+    return list
 end
 
 function blockexchange.get_area(pos)

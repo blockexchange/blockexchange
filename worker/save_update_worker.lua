@@ -10,6 +10,12 @@ end
 function blockexchange.save_update_worker(ctx)
 	if ctx.cancel then
 		ctx.promise:reject("canceled")
+		return
+	end
+
+	if not ctx.token then
+		ctx.promise:reject("no token found")
+		return
 	end
 
 	if not ctx.current_pos then

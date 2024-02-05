@@ -41,7 +41,7 @@ dofile(MP.."/token.lua")
 dofile(MP.."/license.lua")
 dofile(MP.."/hud.lua")
 dofile(MP.."/areas.lua")
--- dofile(MP.."/autosave.lua")
+dofile(MP.."/autosave.lua")
 
 -- utils
 dofile(MP.."/util/player_area.lua")
@@ -78,6 +78,7 @@ if blockexchange.is_online then
 	dofile(MP.."/commands/save_update_chat.lua")
 	dofile(MP.."/commands/load_update_chat.lua")
 	dofile(MP.."/commands/load_chat.lua")
+	dofile(MP.."/commands/autosave.lua")
 end
 dofile(MP.."/commands/pos.lua")
 dofile(MP.."/commands/area.lua")

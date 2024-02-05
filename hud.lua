@@ -64,6 +64,9 @@ local function update_player_hud(player)
 	elseif area then
 		icon_name = "blockexchange_info.png"
 		text = string.format("BX-Area: '%s' Schema: %s/%s", area.id, area.username, area.name)
+		if area.autosave then
+			text = text .. " [Autosave]"
+		end
 	end
 
 	if icon_name ~= "" and text ~= "" then

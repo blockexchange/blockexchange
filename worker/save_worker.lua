@@ -59,7 +59,7 @@ function blockexchange.save_worker(ctx)
 				return blockexchange.api.get_schema_by_name(ctx.username, ctx.schemaname)
 			end):next(function(schema)
 				-- register for later future updates
-				blockexchange.register_area(ctx.pos1, ctx.pos2, ctx.username, schema)
+				blockexchange.register_area(ctx.pos1, ctx.pos2, ctx.playername, ctx.username, schema)
 			end):catch(function(http_code)
 				local msg = "[blockexchange] finalize schema failed with http code: " .. (http_code or "unkown") ..
 				" retry manual on the web-ui please"
