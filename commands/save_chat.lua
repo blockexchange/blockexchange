@@ -36,6 +36,9 @@ minetest.register_chatcommand("bx_save", {
       return true, "you need to set /bx_pos1 and /bx_pos2 first!"
     end
 
+    -- force-enable player-hud
+    blockexchange.set_player_hud(name, true)
+
     if not has_blockexchange_priv and has_protected_upload_priv and not has_protection_bypass_priv then
       -- kick off protection-check worker and add deferred upload context
       local promise, ctx = blockexchange.protectioncheck(name, pos1, pos2, schemaname)
