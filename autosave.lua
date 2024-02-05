@@ -2,6 +2,13 @@
 -- list of changed mapblocks marked for export
 local mapblocks = {}
 
+-- list of currently autosaving areas
+local busy_areas = {}
+
+function blockexchange.is_area_autosaving(area_id)
+    return busy_areas[area_id]
+end
+
 local function worker()
     local pending_entries = {} -- area.id => { pos1, pos2, area }
 
@@ -37,12 +44,16 @@ local function worker()
             " pos1: " .. minetest.pos_to_string(entry.pos1) ..
             " pos2: " .. minetest.pos_to_string(entry.pos2)
         )
+        busy_areas[area.id] = true
         local promise = blockexchange.save_update_area(area.playername,
             area.pos1, area.pos2,
             entry.pos1, entry.pos2,
             area.username, area.schema_id
         )
-        promise:catch(function(e)
+        promise:next(function()
+            busy_areas[area.id] = nil
+        end):catch(function(e)
+            busy_areas[area.id] = nil
             minetest.log("error",
                 "[blockexchange] autosave failed for area: " .. area.id ..
                 " reason: " .. (e or "<unkown>")

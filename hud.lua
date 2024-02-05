@@ -67,6 +67,9 @@ local function update_player_hud(player)
 		if area.autosave then
 			text = text .. " [Autosave]"
 		end
+		if blockexchange.is_area_autosaving(area.id) then
+			icon_name = "blockexchange_upload.png"
+		end
 	end
 
 	if icon_name ~= "" and text ~= "" then
