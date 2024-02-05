@@ -1,6 +1,6 @@
 minetest.register_chatcommand("bx_save_update", {
     params = "[area_id?]",
-    description = "uploads changes",
+    description = "uploads selected changes or the whole area",
     func = function(name, area_id)
         local area, err_msg = blockexchange.select_player_area(name, area_id)
         if err_msg then
@@ -20,7 +20,9 @@ minetest.register_chatcommand("bx_save_update", {
         local pos2 = blockexchange.get_pos(2, name)
 
         if not pos1 or not pos2 then
-            return true, "Please mark the to be updated area of your schematic"
+            -- upload everything
+            pos1 = area.pos1
+            pos2 = area.pos2
         end
 
         -- partial update with the marked area
