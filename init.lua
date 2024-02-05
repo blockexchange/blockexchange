@@ -16,6 +16,9 @@ blockexchange = {
 	pos2 = {} -- name -> pos
 }
 
+assert(mtzip.api_version == 1, "mtzip api compatibility")
+assert(Promise.api_version == 1, "Promise api compatibility")
+
 if not blockexchange.is_online then
 	minetest.log("warning", "[blockexchange] the http api is not enabled, functionality is limited to local operations")
 end
