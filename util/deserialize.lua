@@ -1,6 +1,9 @@
 ---------
 -- deserialization functions
 
+local string_byte, math_floor, hash_node_position = string.byte, math.floor, minetest.hash_node_position
+local table_insert = table.insert
+
 local placeholder_id = minetest.get_content_id("placeholder:placeholder")
 
 -- local nodename->id cache
@@ -20,19 +23,19 @@ function blockexchange.deserialize_part(pos1, pos2, data, metadata, update_light
 		param1 = {},
 		param2 = {}
 	}
-	local data_length = math.floor(#data / 4)
+	local data_length = math_floor(#data / 4)
 	for i=1,data_length do
 		-- 1, 3, 5 ... 8191
 		local node_id_offset = (i * 2) - 1
-		local node_id = (string.byte(data, node_id_offset) * 256) +
-		string.byte(data, node_id_offset+1) - 32768
+		local node_id = (string_byte(data, node_id_offset) * 256) +
+		string_byte(data, node_id_offset+1) - 32768
 
-		local param1 = string.byte(data, (data_length * 2) + i)
-		local param2 = string.byte(data, (data_length * 3) + i)
+		local param1 = string_byte(data, (data_length * 2) + i)
+		local param2 = string_byte(data, (data_length * 3) + i)
 
-		table.insert(mapblock.node_ids, node_id)
-		table.insert(mapblock.param1, param1)
-		table.insert(mapblock.param2, param2)
+		table_insert(mapblock.node_ids, node_id)
+		table_insert(mapblock.param1, param1)
+		table_insert(mapblock.param2, param2)
 	end
 
 	local foreign_nodeid_to_name_mapping = {} -- id -> name
@@ -83,7 +86,7 @@ function blockexchange.deserialize_part(pos1, pos2, data, metadata, update_light
 					-- unknown node, set placeholder
 					node_data[i] = placeholder_id
 					-- mark node for later
-					local hash = minetest.hash_node_position({x=x, y=y, z=z})
+					local hash = hash_node_position({x=x, y=y, z=z})
 					placeholder_pos_hashes[hash] = mapblock.node_ids[j]
 				else
 					node_data[i] = mapblock.node_ids[j]

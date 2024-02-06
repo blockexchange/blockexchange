@@ -1,9 +1,15 @@
+---------
+-- serialization functions
+
+local string_char, math_floor = string.char, math.floor
+local table_insert = table.insert
+
 -- collect nodes with on_timer attributes
 local node_names_with_timer = {}
 minetest.register_on_mods_loaded(function()
 	for _,node in pairs(minetest.registered_nodes) do
 		if node.on_timer then
-			table.insert(node_names_with_timer, node.name)
+			table_insert(node_names_with_timer, node.name)
 		end
 	end
 	minetest.log("action", "[blockexchange] collected " .. #node_names_with_timer .. " items with node timers")
@@ -28,9 +34,9 @@ end
 
 local function int_to_bytes(i)
 	local x =i + 32768
-	local h = math.floor(x/256) % 256;
-	local l = math.floor(x % 256);
-	return(string.char(h, l));
+	local h = math_floor(x/256) % 256;
+	local l = math_floor(x % 256);
+	return(string_char(h, l));
 end
 
 
@@ -102,9 +108,9 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 					placeholder_meta_pos_hashes[hash] = original_metadata
 				end
 
-				table.insert(data.node_ids, node_id)
-				table.insert(data.param1, param1[i])
-				table.insert(data.param2, param2[i])
+				table_insert(data.node_ids, node_id)
+				table_insert(data.param1, param1[i])
+				table_insert(data.param2, param2[i])
 
 				local count = node_id_count[node_id] or 0
 				node_id_count[node_id] = count + 1
@@ -187,10 +193,10 @@ function blockexchange.compress_data(data)
 		serialized_data = serialized_data .. int_to_bytes(data.node_ids[i])
 	end
 	for i=1,size do
-		serialized_data = serialized_data .. string.char(data.param1[i])
+		serialized_data = serialized_data .. string_char(data.param1[i])
 	end
 	for i=1,size do
-		serialized_data = serialized_data .. string.char(data.param2[i])
+		serialized_data = serialized_data .. string_char(data.param2[i])
 	end
 
 	return minetest.compress(serialized_data, "deflate")
