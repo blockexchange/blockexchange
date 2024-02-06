@@ -25,7 +25,6 @@ end
 
 -- http api
 if blockexchange.is_online then
-	loadfile(MP.."/api/util.lua")(http, blockexchange.url)
 	loadfile(MP.."/api/info.lua")(http, blockexchange.url)
 	loadfile(MP.."/api/schema.lua")(http, blockexchange.url)
 	loadfile(MP.."/api/schemapart.lua")(http, blockexchange.url)
