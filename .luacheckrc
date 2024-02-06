@@ -4,6 +4,8 @@ globals = {
 	"minetest"
 }
 
+max_cyclomatic_complexity = 30
+
 read_globals = {
 	-- Stdlib
 	string = {fields = {"split", "trim"}},
