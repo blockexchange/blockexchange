@@ -61,7 +61,8 @@ function blockexchange.register_area(pos1, pos2, playername, username, schema)
         name = schema.name,
         username = username,
         playername = playername,
-        sync = "off" -- off,load,save,both
+        autosave = false,
+        autoload = false
     }
     area_map[area_id] = data
     area_store:insert_area(pos1, pos2, area_id)
