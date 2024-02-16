@@ -72,7 +72,7 @@ function blockexchange.api.update_schema(token, schema)
     local json = minetest.write_json(schema)
 
     http.fetch({
-      url = url .. "/api/schema/" .. schema.id,
+      url = url .. "/api/schema/" .. schema.uid,
       extra_headers = {
         "Content-Type: application/json",
         "Authorization: " .. token
