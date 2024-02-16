@@ -56,7 +56,7 @@ function blockexchange.register_area(pos1, pos2, playername, username, schema)
         id = area_id,
         pos1 = pos1,
         pos2 = pos2,
-        schema_id = schema.id,
+        schema_uid = schema.uid,
         mtime = schema.mtime,
         name = schema.name,
         username = username,

@@ -19,10 +19,10 @@ end
 
 --- updates the stats of an existing schema
 -- @param token the token in string format
--- @param schema_id the schema_id to update
+-- @param schema_uid the schema_uid to update
 -- @return a promise with the result
-function blockexchange.api.update_schema_stats(token, schema_id)
-  return Promise.http(http, url .. "/api/schema/" .. schema_id .. "/update", {
+function blockexchange.api.update_schema_stats(token, schema_uid)
+  return Promise.http(http, url .. "/api/schema/" .. schema_uid .. "/update", {
     method = "POST",
     data = { done = true },
     timeout = 120,
@@ -34,15 +34,15 @@ end
 
 --- updates the screenshot of a schema
 -- @param token the token in string format
--- @param schema_id the schema_id to update
+-- @param schema_uid the schema_uid to update
 -- @return a promise with the result
-function blockexchange.api.update_screenshot(token, schema_id)
+function blockexchange.api.update_screenshot(token, schema_uid)
   return Promise.new(function(resolve, reject)
     local json = minetest.write_json({
       update = true
     })
 
-    local update_url = url .. "/api/schema/" .. schema_id .. "/screenshot/update"
+    local update_url = url .. "/api/schema/" .. schema_uid .. "/screenshot/update"
 
     http.fetch({
       url = update_url,
@@ -91,11 +91,11 @@ function blockexchange.api.update_schema(token, schema)
   end)
 end
 
---- search for a schema by id
--- @param schema_id the schema_id
+--- search for a schema by uid
+-- @param schema_uid the schema_uid
 -- @return a promise with the result
-function blockexchange.api.get_schema_by_id(schema_id)
-  return Promise.http(http, url .. "/api/schema/" .. schema_id):next(function(res)
+function blockexchange.api.get_schema_by_uid(schema_uid)
+  return Promise.http(http, url .. "/api/schema/" .. schema_uid):next(function(res)
     if res.code == 200 then
       return res.json()
     elseif res.code == 404 then

@@ -1,10 +1,10 @@
 local http, url = ...
 
-function blockexchange.api.create_schemamods(token, schema_id, mod_names)
+function blockexchange.api.create_schemamods(token, schema_uid, mod_names)
   return Promise.new(function(resolve, reject)
     local json = minetest.write_json(mod_names);
     http.fetch({
-      url = url .. "/api/schema/" .. schema_id .. "/mods",
+      url = url .. "/api/schema/" .. schema_uid .. "/mods",
       extra_headers = {
         "Content-Type: application/json",
         "Authorization: " .. token
@@ -21,10 +21,10 @@ function blockexchange.api.create_schemamods(token, schema_id, mod_names)
   end)
 end
 
-function blockexchange.api.get_schemamods(schema_id)
+function blockexchange.api.get_schemamods(schema_uid)
   return Promise.new(function(resolve, reject)
     http.fetch({
-      url = url .. "/api/schema/" .. schema_id .. "/mods",
+      url = url .. "/api/schema/" .. schema_uid .. "/mods",
       timeout = 5
     }, function(res)
       if res.succeeded and res.code == 200 then

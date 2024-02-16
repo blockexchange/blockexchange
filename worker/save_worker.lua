@@ -97,7 +97,7 @@ function blockexchange.save_worker(ctx)
 	else
 		-- package data properly over the wire
 		local schemapart = {
-			schema_id = ctx.schema and ctx.schema.id,
+			schema_uid = ctx.schema and ctx.schema.uid,
 			offset_x = relative_pos.x,
 			offset_y = relative_pos.y,
 			offset_z = relative_pos.z,

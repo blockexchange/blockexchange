@@ -48,7 +48,7 @@ local function worker()
         local promise = blockexchange.save_update_area(area.playername,
             area.pos1, area.pos2,
             entry.pos1, entry.pos2,
-            area.username, area.schema_id
+            area.username, area.schema_uid
         )
         promise:next(function()
             busy_areas[area.id] = nil

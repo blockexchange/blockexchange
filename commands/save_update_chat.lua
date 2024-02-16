@@ -28,16 +28,16 @@ minetest.register_chatcommand("bx_save_update", {
         -- partial update with the marked area
         pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
         local promise, ctx = blockexchange.save_update_area(
-            name, area.pos1, area.pos2, pos1, pos2, claims.username, area.schema_id
+            name, area.pos1, area.pos2, pos1, pos2, claims.username, area.schema_uid
         )
 
         blockexchange.set_job_context(name, ctx)
         promise:next(function()
             -- fetch updated schema
-            return blockexchange.api.get_schema_by_id(area.schema_id)
+            return blockexchange.api.get_schema_by_uid(area.schema_uid)
         end):next(function(schema)
             if not schema then
-                return Promise.rejected("schema not found: " .. areas.schema_id)
+                return Promise.rejected("schema not found: " .. areas.schema_uid)
             end
             -- update mtime in local area
             area.mtime = schema.mtime
