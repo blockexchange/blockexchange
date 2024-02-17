@@ -93,7 +93,7 @@ function blockexchange.load_worker(ctx)
 			-- start from last schema part
 			mtime = ctx.last_schemapart.mtime
 		end
-		blockexchange.api.get_next_schemapart_by_mtime(ctx.schema.id,  mtime):next(function(schemapart)
+		blockexchange.api.get_next_schemapart_by_mtime(ctx.schema.uid,  mtime):next(function(schemapart)
 			place_schemapart(schemapart, ctx, false)
 		end):catch(function(http_code)
 			schedule_retry(ctx, http_code)
@@ -102,7 +102,7 @@ function blockexchange.load_worker(ctx)
 		-- online, full download
 		if not ctx.last_schemapart then
 			-- start from the beginning
-			blockexchange.api.get_first_schemapart(ctx.schema.id):next(function(schemapart)
+			blockexchange.api.get_first_schemapart(ctx.schema.uid):next(function(schemapart)
 				place_schemapart(schemapart, ctx, false)
 			end):catch(function(http_code)
 				schedule_retry(ctx, http_code)
@@ -114,7 +114,7 @@ function blockexchange.load_worker(ctx)
 				y = ctx.last_schemapart.offset_y,
 				z = ctx.last_schemapart.offset_z
 			}
-			blockexchange.api.get_next_schemapart(ctx.schema.id, pos):next(function(schemapart)
+			blockexchange.api.get_next_schemapart(ctx.schema.uid, pos):next(function(schemapart)
 				place_schemapart(schemapart, ctx, false)
 			end):catch(function(http_code)
 				schedule_retry(ctx, http_code)

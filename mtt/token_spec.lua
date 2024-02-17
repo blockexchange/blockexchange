@@ -12,7 +12,6 @@ mtt.register("token", function(callback)
     assert(blockexchange.get_token(playername))
     local claims = assert(blockexchange.get_claims(playername))
 
-    assert(claims.user_id == 1)
     assert(claims.username == "Testuser")
     assert(claims.exp == 10893102813)
 

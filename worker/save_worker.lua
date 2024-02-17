@@ -48,8 +48,8 @@ function blockexchange.save_worker(ctx)
 			ctx.promise:resolve({ total_parts = ctx.total_parts})
 		else
 			-- online save
-			blockexchange.api.create_schemamods(ctx.token, ctx.schema.id, mod_names):next(function()
-				return blockexchange.api.update_schema_stats(ctx.token, ctx.schema.id)
+			blockexchange.api.create_schemamods(ctx.token, ctx.schema.uid, mod_names):next(function()
+				return blockexchange.api.update_schema_stats(ctx.token, ctx.schema.uid)
 			end):next(function()
 				local msg = "[blockexchange] Save complete with " .. ctx.total_parts .. " parts"
 				minetest.log("action", msg)
@@ -97,7 +97,7 @@ function blockexchange.save_worker(ctx)
 	else
 		-- package data properly over the wire
 		local schemapart = {
-			schema_id = ctx.schema and ctx.schema.id,
+			schema_uid = ctx.schema and ctx.schema.uid,
 			offset_x = relative_pos.x,
 			offset_y = relative_pos.y,
 			offset_z = relative_pos.z,

@@ -18,14 +18,19 @@ minetest.register_chatcommand("bx_login", {
 
 			-- logged in, show status
 			local payload = blockexchange.parse_token(token)
-			-- TODO: check validity
-			return true, "Logged in as '" .. payload.username .. "' with user_id: " .. payload.user_id
+			if not payload or not payload.user_uid then
+				-- invalid or old token
+				-- TODO: check validity
+				return false, "Not logged in, token invalid or expired"
+			end
+
+			return true, "Logged in as '" .. payload.username .. "' with user_uid: " .. payload.user_uid
 		end
 
 		blockexchange.api.get_token(username, access_token):next(function(token)
 			blockexchange.set_token(name, token)
 			local payload = blockexchange.parse_token(token)
-			minetest.chat_send_player(name, "Logged in as '" .. payload.username .. "' with user_id: " .. payload.user_id)
+			minetest.chat_send_player(name, "Logged in as '" .. payload.username .. "' with user_uid: " .. payload.user_uid)
 		end):catch(function(http_code)
 			minetest.log("error", "[blockexchange] get_token failed with error: " .. http_code or "?")
 			minetest.chat_send_player(name, "Login failed with error: " .. http_code or "?")

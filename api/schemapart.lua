@@ -21,10 +21,10 @@ function blockexchange.api.create_schemapart(token, data)
   end)
 end
 
-function blockexchange.api.remove_schemapart(token, schema_id, pos)
+function blockexchange.api.remove_schemapart(token, schema_uid, pos)
   return Promise.new(function(resolve, reject)
     http.fetch({
-      url = url .. "/api/schemapart/" .. schema_id .. "/" .. pos.x .. "/" .. pos.y .. "/" .. pos.z .. "/delete",
+      url = url .. "/api/schemapart/" .. schema_uid .. "/" .. pos.x .. "/" .. pos.y .. "/" .. pos.z .. "/delete",
       extra_headers = {
         "Content-Type: application/json",
         "Authorization: " .. token
@@ -42,10 +42,10 @@ function blockexchange.api.remove_schemapart(token, schema_id, pos)
   end)
 end
 
-function blockexchange.api.get_schemapart(schema_id, pos)
+function blockexchange.api.get_schemapart(schema_uid, pos)
   return Promise.new(function(resolve, reject)
     http.fetch({
-      url = url .. "/api/schemapart/" .. schema_id .. "/" .. pos.x .. "/" .. pos.y .. "/" .. pos.z,
+      url = url .. "/api/schemapart/" .. schema_uid .. "/" .. pos.x .. "/" .. pos.y .. "/" .. pos.z,
       timeout = 5
     }, function(res)
       if res.succeeded and res.code == 200 then
@@ -61,10 +61,10 @@ function blockexchange.api.get_schemapart(schema_id, pos)
   end)
 end
 
-function blockexchange.api.get_schemapart_chunk(schema_id, pos)
+function blockexchange.api.get_schemapart_chunk(schema_uid, pos)
   return Promise.new(function(resolve, reject)
     http.fetch({
-      url = url .. "/api/schemapart_chunk/" .. schema_id .. "/" .. pos.x .. "/" .. pos.y .. "/" .. pos.z,
+      url = url .. "/api/schemapart_chunk/" .. schema_uid .. "/" .. pos.x .. "/" .. pos.y .. "/" .. pos.z,
       timeout = 5
     }, function(res)
       if res.succeeded and res.code == 200 then
@@ -80,10 +80,10 @@ function blockexchange.api.get_schemapart_chunk(schema_id, pos)
   end)
 end
 
-function blockexchange.api.get_first_schemapart(schema_id)
+function blockexchange.api.get_first_schemapart(schema_uid)
   return Promise.new(function(resolve, reject)
     http.fetch({
-      url = url .. "/api/schemapart_first/" .. schema_id,
+      url = url .. "/api/schemapart_first/" .. schema_uid,
       timeout = 5
     }, function(res)
       if res.succeeded and res.code == 200 then
@@ -99,10 +99,10 @@ function blockexchange.api.get_first_schemapart(schema_id)
   end)
 end
 
-function blockexchange.api.get_next_schemapart(schema_id, pos)
+function blockexchange.api.get_next_schemapart(schema_uid, pos)
   return Promise.new(function(resolve, reject)
     http.fetch({
-      url = url .. "/api/schemapart_next/" .. schema_id .. "/" .. pos.x .. "/" .. pos.y .. "/" .. pos.z,
+      url = url .. "/api/schemapart_next/" .. schema_uid .. "/" .. pos.x .. "/" .. pos.y .. "/" .. pos.z,
       timeout = 5
     }, function(res)
       if res.succeeded and res.code == 200 then
@@ -118,10 +118,10 @@ function blockexchange.api.get_next_schemapart(schema_id, pos)
   end)
 end
 
-function blockexchange.api.get_next_schemapart_by_mtime(schema_id, mtime)
+function blockexchange.api.get_next_schemapart_by_mtime(schema_uid, mtime)
   return Promise.new(function(resolve, reject)
     http.fetch({
-      url = url .. "/api/schemapart_next/by-mtime/" .. schema_id .. "/" .. mtime,
+      url = url .. "/api/schemapart_next/by-mtime/" .. schema_uid .. "/" .. mtime,
       timeout = 5
     }, function(res)
       if res.succeeded and res.code == 200 then
@@ -137,10 +137,10 @@ function blockexchange.api.get_next_schemapart_by_mtime(schema_id, mtime)
   end)
 end
 
-function blockexchange.api.count_next_schemapart_by_mtime(schema_id, mtime)
+function blockexchange.api.count_next_schemapart_by_mtime(schema_uid, mtime)
   return Promise.new(function(resolve, reject)
     http.fetch({
-      url = url .. "/api/schemapart_count/by-mtime/" .. schema_id .. "/" .. mtime,
+      url = url .. "/api/schemapart_count/by-mtime/" .. schema_uid .. "/" .. mtime,
       timeout = 5
     }, function(res)
       if res.succeeded and res.code == 200 then

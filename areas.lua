@@ -1,4 +1,5 @@
 local has_mapsync = minetest.get_modpath("mapsync")
+local area_storage_key = "areas_v3"
 
 local area_store
 
@@ -21,7 +22,11 @@ function blockexchange.load_areas()
 
     if not area_map then
         -- load bx-areas from mod-storage or create an empty table
-        area_map = minetest.deserialize(blockexchange.mod_storage:get_string("areas_v2")) or {}
+        local json = blockexchange.mod_storage:get_string(area_storage_key)
+        if not json or json == "" then
+            json = "{}"
+        end
+        area_map = minetest.parse_json(json) or {}
     end
     for area_id, persisted_area in pairs(area_map) do
         area_store:insert_area(
@@ -37,7 +42,7 @@ minetest.register_on_mods_loaded(blockexchange.load_areas)
 
 function blockexchange.save_areas()
     -- save to mod-storage
-    blockexchange.mod_storage:set_string("areas_v2", minetest.serialize(area_map))
+    blockexchange.mod_storage:set_string(area_storage_key, minetest.write_json(area_map))
 
     if has_mapsync then
         -- persist to mapsync too
@@ -56,7 +61,7 @@ function blockexchange.register_area(pos1, pos2, playername, username, schema)
         id = area_id,
         pos1 = pos1,
         pos2 = pos2,
-        schema_id = schema.id,
+        schema_uid = schema.uid,
         mtime = schema.mtime,
         name = schema.name,
         username = username,

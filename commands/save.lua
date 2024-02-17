@@ -63,7 +63,7 @@ function blockexchange.save(playername, pos1, pos2, name, local_save)
 		-- online
 		blockexchange.api.create_schema(token, create_schema):next(function(schema)
 			ctx.schema = schema
-			minetest.log("action", "[blockexchange] schema created with id: " .. schema.id)
+			minetest.log("action", "[blockexchange] schema created with id: " .. schema.uid)
 
 			-- start save worker with context
 			blockexchange.save_worker(ctx)

@@ -4,12 +4,12 @@ minetest.register_chatcommand("bx_load_update", {
     func = function(name, area_id)
         local area, err_msg = blockexchange.select_player_area(name, area_id)
         if err_msg then
-            return true, err_msg
+            return false, err_msg
         end
 
-        blockexchange.api.get_schema_by_id(area.schema_id):next(function(remote_schema)
+        blockexchange.api.get_schema_by_uid(area.schema_uid):next(function(remote_schema)
             if not remote_schema then
-                return Promise.rejected("schema not found: " .. areas.schema_id)
+                return Promise.rejected("schema not found: " .. areas.schema_uid)
             end
             local remote_size = blockexchange.get_schema_size(remote_schema)
             local local_size = vector.subtract(area.pos2, area.pos1)

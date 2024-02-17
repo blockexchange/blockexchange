@@ -71,7 +71,7 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load, 
 			-- calculate origin point
 			ctx.origin = ctx.pos1
 			-- fetch total parts
-			return blockexchange.api.count_next_schemapart_by_mtime(schema.id, ctx.from_mtime)
+			return blockexchange.api.count_next_schemapart_by_mtime(schema.uid, ctx.from_mtime)
 		end):next(function(total_parts)
 			if total_parts then
 				ctx.total_parts = total_parts
