@@ -18,7 +18,12 @@ minetest.register_chatcommand("bx_login", {
 
 			-- logged in, show status
 			local payload = blockexchange.parse_token(token)
-			-- TODO: check validity
+			if not payload or not payload.user_uid then
+				-- invalid or old token
+				-- TODO: check validity
+				return false, "Not logged in, token invalid or expired"
+			end
+
 			return true, "Logged in as '" .. payload.username .. "' with user_uid: " .. payload.user_uid
 		end
 

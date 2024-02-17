@@ -21,7 +21,11 @@ function blockexchange.load_areas()
 
     if not area_map then
         -- load bx-areas from mod-storage or create an empty table
-        area_map = minetest.deserialize(blockexchange.mod_storage:get_string("areas_v2")) or {}
+        local json = blockexchange.mod_storage:get_string("areas_v3")
+        if not json or json == "" then
+            json = "{}"
+        end
+        area_map = minetest.parse_json(json) or {}
     end
     for area_id, persisted_area in pairs(area_map) do
         area_store:insert_area(
@@ -37,7 +41,7 @@ minetest.register_on_mods_loaded(blockexchange.load_areas)
 
 function blockexchange.save_areas()
     -- save to mod-storage
-    blockexchange.mod_storage:set_string("areas_v2", minetest.serialize(area_map))
+    blockexchange.mod_storage:set_string("areas_v2", minetest.write_json(area_map))
 
     if has_mapsync then
         -- persist to mapsync too

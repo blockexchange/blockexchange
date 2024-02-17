@@ -4,7 +4,7 @@ minetest.register_chatcommand("bx_load_update", {
     func = function(name, area_id)
         local area, err_msg = blockexchange.select_player_area(name, area_id)
         if err_msg then
-            return true, err_msg
+            return false, err_msg
         end
 
         blockexchange.api.get_schema_by_uid(area.schema_uid):next(function(remote_schema)
