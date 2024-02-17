@@ -28,4 +28,10 @@ function blockexchange.remove_nodes(pos1, pos2)
         local meta = minetest.get_meta(pos)
         meta:from_table({})
     end
+
+    -- remove areas
+    local list = blockexchange.get_areas_in_area(pos1, pos2)
+    for _, a in ipairs(list) do
+        blockexchange.remove_area(a.id)
+    end
 end
