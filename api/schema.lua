@@ -94,8 +94,14 @@ end
 --- search for a schema by uid
 -- @param schema_uid the schema_uid
 -- @return a promise with the result
-function blockexchange.api.get_schema_by_uid(schema_uid)
-  return Promise.http(http, url .. "/api/schema/" .. schema_uid):next(function(res)
+function blockexchange.api.get_schema_by_uid(schema_uid, download)
+  local schema_url = url .. "/api/schema/" .. schema_uid
+  if download then
+    -- increment download counter
+    schema_url = schema_url .. "?download=true"
+  end
+
+  return Promise.http(http, schema_url):next(function(res)
     if res.code == 200 then
       return res.json()
     elseif res.code == 404 then
@@ -107,23 +113,26 @@ function blockexchange.api.get_schema_by_uid(schema_uid)
 end
 
 --- search for a schema by username and schemaname
--- @param username the username
--- @param schemaname the name of the schema
+-- @param user_name the username
+-- @param schema_name the name of the schema
 -- @param download true/false to count as additional download in the stats
 -- @return a promise with the result
-function blockexchange.api.get_schema_by_name(username, schemaname, download)
-  local schema_url = url .. "/api/search/schema/byname/" .. username .. "/" .. schemaname
-    if download then
-      -- increment download counter
-      schema_url = schema_url .. "?download=true"
-    end
-  return Promise.http(http, schema_url):next(function(res)
-    if res.code == 200 then
-      return res.json()
-    elseif res.code == 404 then
-      return nil
+function blockexchange.api.get_schema_by_name(user_name, schema_name, download)
+  return Promise.http(http, url .. "/api/search", {
+    method = "POST",
+    data = {
+      user_name = user_name,
+      schema_name = schema_name
+    }
+  }):next(function(res)
+    return res.json()
+  end):next(function(search_result)
+    if #search_result ~= 1 then
+      return Promise.rejected("no results")
     else
-      return Promise.rejected("unexpected http error")
+      return search_result[1].uid
     end
+  end):next(function(schema_uid)
+    return blockexchange.api.get_schema_by_uid(schema_uid, download)
   end)
 end
