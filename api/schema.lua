@@ -118,7 +118,7 @@ end
 -- @param download true/false to count as additional download in the stats
 -- @return a promise with the result
 function blockexchange.api.get_schema_by_name(user_name, schema_name, download)
-  return Promise.http(http, url .. "/api/search", {
+  return Promise.http(http, url .. "/api/search/schema", {
     method = "POST",
     data = {
       user_name = user_name,
@@ -127,12 +127,13 @@ function blockexchange.api.get_schema_by_name(user_name, schema_name, download)
   }):next(function(res)
     return res.json()
   end):next(function(search_result)
+    -- extract uid
     if #search_result ~= 1 then
+      -- no results, abort
       return Promise.rejected("no results")
     else
-      return search_result[1].uid
+      -- download schematic
+      return blockexchange.api.get_schema_by_uid(search_result[1].schema.uid, download)
     end
-  end):next(function(schema_uid)
-    return blockexchange.api.get_schema_by_uid(schema_uid, download)
   end)
 end
