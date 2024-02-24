@@ -28,9 +28,6 @@ function blockexchange.save_update_worker(ctx)
 		blockexchange.api.create_schemamods(ctx.token, ctx.schema_uid, mod_names):next(function()
 			local msg = "[blockexchange] Save-update complete with " .. ctx.total_parts .. " parts"
 			minetest.log("action", msg)
-			-- update screenshot
-			return blockexchange.api.update_screenshot(ctx.token, ctx.schema_uid)
-		end):next(function()
 			ctx.promise:resolve(ctx.total_parts)
 		end):catch(function(http_code)
 			local msg = "[blockexchange] mod-update failed with http code: " .. (http_code or "unkown")
