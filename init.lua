@@ -73,6 +73,7 @@ dofile(MP.."/util/is_player_in_area.lua")
 
 -- commands
 if blockexchange.is_online then
+	-- online commands
 	dofile(MP.."/commands/api_check_wrapper.lua")
 	dofile(MP.."/commands/info.lua")
 	dofile(MP.."/commands/license.lua")
@@ -85,6 +86,7 @@ if blockexchange.is_online then
 	dofile(MP.."/commands/load_chat.lua")
 	dofile(MP.."/commands/autosave.lua")
 end
+-- commands that are available offline
 dofile(MP.."/commands/pos.lua")
 dofile(MP.."/commands/area.lua")
 dofile(MP.."/commands/cancel_chat.lua")
@@ -109,6 +111,12 @@ dofile(MP.."/worker/emerge_worker.lua")
 dofile(MP.."/worker/protectioncheck_worker.lua")
 dofile(MP.."/worker/cleanup_worker.lua")
 
+-- compat
+if minetest.get_modpath("advtrains") then
+	dofile(MP.."/compat/advtrains.lua")
+end
+
+-- testing
 if minetest.get_modpath("mtt") then
 	dofile(MP .. "/mtt/serialize_spec.lua")
 	dofile(MP .. "/mtt/token_spec.lua")

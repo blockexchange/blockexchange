@@ -11,12 +11,20 @@ local local_nodename_to_id_mapping = {} -- name -> id
 local next_unknown_nodeid = -1
 local unknown_nodes_id_to_name_mapping = {}
 
+-- deserialization callbacks
+local deserialization_callbacks = {} -- nodeid -> fn()
+function blockexchange.register_node_deserialize_callback(node_id, fn)
+	deserialization_callbacks[node_id] = fn
+end
+
 --- place the meta and metadata to the world at the given positions
 -- @param pos1 the start pos
 -- @param pos2 the end pos
 -- @param data the nodeis/param1/param2 data
 -- @param metadata the schemapart metdata
 function blockexchange.deserialize_part(pos1, pos2, data, metadata, update_light)
+
+	local callbacks = {} -- list of {pos, node_id}
 
 	local mapblock = {
 		node_ids = {},
@@ -79,25 +87,32 @@ function blockexchange.deserialize_part(pos1, pos2, data, metadata, update_light
 
 	local j = 1
 	for x=pos1.x,pos2.x do
-		for y=pos1.y,pos2.y do
-			for z=pos1.z,pos2.z do
-				local i = area:index(x,y,z)
-				if mapblock.node_ids[j] < 0 then
-					-- unknown node, set placeholder
-					node_data[i] = placeholder_id
-					-- mark node for later
-					local hash = hash_node_position({x=x, y=y, z=z})
-					placeholder_pos_hashes[hash] = mapblock.node_ids[j]
-				else
-					node_data[i] = mapblock.node_ids[j]
-				end
-
-				-- place param1 and param2 regardless of known/unknown node
-				param1[i] = mapblock.param1[j]
-				param2[i] = mapblock.param2[j]
-				j = j + 1
+	for y=pos1.y,pos2.y do
+	for z=pos1.z,pos2.z do
+		local i = area:index(x,y,z)
+		local node_id = mapblock.node_ids[j]
+		if node_id < 0 then
+			-- unknown node, set placeholder
+			node_data[i] = placeholder_id
+			-- mark node for later
+			local hash = hash_node_position({x=x, y=y, z=z})
+			placeholder_pos_hashes[hash] = node_id
+		else
+			-- known node
+			node_data[i] = node_id
+			if deserialization_callbacks[node_id] then
+				-- register callback for this node
+				local pos = { x=x, y=y, z=z }
+				table.insert(callbacks, { pos=pos, node_id=node_id })
 			end
 		end
+
+		-- place param1 and param2 regardless of known/unknown node
+		param1[i] = mapblock.param1[j]
+		param2[i] = mapblock.param2[j]
+		j = j + 1
+	end
+	end
 	end
 
 	manip:set_data(node_data)
@@ -139,6 +154,14 @@ function blockexchange.deserialize_part(pos1, pos2, data, metadata, update_light
 			local relative_pos = minetest.string_to_pos(pos_str)
 			local absolute_pos = vector.add(pos1, relative_pos)
 			minetest.get_node_timer(absolute_pos):set(timer_data.timeout, timer_data.elapsed)
+		end
+	end
+
+	-- run deserialization callbacks
+	for _, cb in ipairs(callbacks) do
+		local fn = deserialization_callbacks[cb.node_id]
+		if type(fn) == "function" then
+			fn(cb.pos)
 		end
 	end
 

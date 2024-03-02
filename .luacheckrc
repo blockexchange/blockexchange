@@ -21,5 +21,5 @@ read_globals = {
 	"areas", "monitoring", "mtt", "mapsync",
 
 	-- deps
-	"mtzip", "placeholder", "Promise"
+	"mtzip", "placeholder", "Promise", "advtrains"
 }
