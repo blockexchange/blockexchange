@@ -13,7 +13,8 @@ blockexchange = {
 	url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.ch",
 	min_delay = tonumber(minetest.settings:get("blockexchange.min_delay") or "0.1"),
 	pos1 = {}, -- name -> pos
-	pos2 = {} -- name -> pos
+	pos2 = {}, -- name -> pos
+	max_size = 1000
 }
 
 assert(mtzip.api_version == 1, "mtzip api compatibility")
@@ -65,6 +66,7 @@ dofile(MP.."/util/is_area_protected.lua")
 dofile(MP.."/util/get_base_pos.lua")
 dofile(MP.."/util/iterator.lua")
 dofile(MP.."/util/collect_node_count.lua")
+dofile(MP.."/util/check_size.lua")
 dofile(MP.."/util/count_schemaparts.lua")
 dofile(MP.."/util/unpack_schemapart.lua")
 dofile(MP.."/util/place_schemapart.lua")

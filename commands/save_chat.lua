@@ -36,6 +36,10 @@ minetest.register_chatcommand("bx_save", {
       return true, "you need to set /bx_pos1 and /bx_pos2 first!"
     end
 
+    if not blockexchange.check_size(pos1, pos2) then
+      return true, "axis size limit of " .. blockexchange.max_size .. " nodes exceeded"
+    end
+
     -- force-enable player-hud
     blockexchange.set_player_hud(name, true)
 
