@@ -51,8 +51,8 @@ Schemas can be browsed and administered on the central server: https://blockexch
 Local commands, they don't need the http-api and make no calls "home"
 
 * **/bx_hud [on|off]** enables or disables the blockexchange hud
-* **/bx_pos1** mark position 1
-* **/bx_pos2** mark position 2
+* **/bx_pos1 [pos?]** mark position 1 (uses WE positions if available)
+* **/bx_pos2 [pos?]** mark position 2 (uses WE positions if available)
 * **/bx_cleanup** cleans up stray metadata and invalid param2 values
 * **/bx_area_remove [area_id?]** removes the area information (not the build)
 * **/bx_area_mark [area_id?]** marks the area
