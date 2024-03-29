@@ -1,40 +1,4 @@
 
-local function upload_nodedefs(token, nodedefs)
-    local promise = Promise.new()
-
-    local function process_next()
-        local nodedef = table.remove(nodedefs)
-        if not nodedef then
-            promise:resolve()
-            return
-        end
-        blockexchange.api.create_media_nodedef(token, nodedef)
-        :next(process_next)
-        :catch(function(e) promise:reject(e) end)
-    end
-    process_next()
-
-    return promise
-end
-
-local function upload_mediafiles(token, mediafiles)
-    local promise = Promise.new()
-
-    local function process_next()
-        local mediafile = table.remove(mediafiles)
-        if not mediafile then
-            promise:resolve({})
-            return
-        end
-        blockexchange.api.create_media_mediafile(token, mediafile)
-        :next(process_next)
-        :catch(function(e) promise:reject(e) end)
-    end
-    process_next()
-
-    return promise
-end
-
 function blockexchange.upload_mod_media(token, mod_name, license, source)
     local modpath = minetest.get_modpath(mod_name)
 
@@ -68,7 +32,7 @@ function blockexchange.upload_mod_media(token, mod_name, license, source)
                 })
             end
         end
-        local nodedef_promise = upload_nodedefs(token, nodedefs)
+        local nodedef_promise = blockexchange.api.create_media_nodedefs(token, nodedefs)
 
         local mediafiles = {}
         for _, foldername in ipairs({"textures", "models"}) do
@@ -88,7 +52,7 @@ function blockexchange.upload_mod_media(token, mod_name, license, source)
                 })
             end
         end
-        local mediafile_promise = upload_mediafiles(token, mediafiles)
+        local mediafile_promise = blockexchange.api.create_media_mediafiles(token, mediafiles)
 
         return Promise.all(nodedef_promise, mediafile_promise):next(function()
             return stats

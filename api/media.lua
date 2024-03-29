@@ -23,26 +23,26 @@ function blockexchange.api.create_media_mod(token, mod)
     }):next(response_handler)
 end
 
---- creates a new nodedef
+--- creates or updates nodedefs
 -- @param token the token in string format
--- @param mod the nodedef to create
+-- @param nodedefs the nodedefs to create
 -- @return a promise with the result
-function blockexchange.api.create_media_nodedef(token, nodedef)
-    return Promise.http(http, url .. "/api/media/nodedef/" .. nodedef.name, {
+function blockexchange.api.create_media_nodedefs(token, nodedefs)
+    return Promise.http(http, url .. "/api/media/nodedef", {
         method = "POST",
-        data = nodedef,
+        data = nodedefs,
         headers = { "Authorization: " .. token }
     }):next(response_handler)
 end
 
---- creates a new mediafile
+--- creates or updates mediafiles
 -- @param token the token in string format
--- @param mod the mediafile to create
+-- @param mediafiles the mediafiles to create
 -- @return a promise with the result
-function blockexchange.api.create_media_mediafile(token, mediafile)
-    return Promise.http(http, url .. "/api/media/mediafile/" .. mediafile.name, {
+function blockexchange.api.create_media_mediafiles(token, mediafiles)
+    return Promise.http(http, url .. "/api/media/mediafile", {
         method = "POST",
-        data = mediafile,
+        data = mediafiles,
         headers = { "Authorization: " .. token }
     }):next(response_handler)
 end
