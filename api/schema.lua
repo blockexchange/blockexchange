@@ -78,7 +78,7 @@ function blockexchange.api.update_schema(token, schema)
         "Authorization: " .. token
       },
       timeout = 10,
-      method = "PUT",
+      method = "PUT", -- NOTE: might not work (https://github.com/minetest/minetest/issues/14394)
       data = json
     }, function(res)
       if res.succeeded and res.code == 200 then

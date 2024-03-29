@@ -31,6 +31,7 @@ if blockexchange.is_online then
 	loadfile(MP.."/api/schemapart.lua")(http, blockexchange.url)
 	loadfile(MP.."/api/schemamods.lua")(http, blockexchange.url)
 	loadfile(MP.."/api/token.lua")(http, blockexchange.url)
+	loadfile(MP.."/api/media.lua")(http, blockexchange.url)
 end
 
 -- internal stuff
@@ -87,6 +88,8 @@ if blockexchange.is_online then
 	dofile(MP.."/commands/load_update_chat.lua")
 	dofile(MP.."/commands/load_chat.lua")
 	dofile(MP.."/commands/autosave.lua")
+	dofile(MP.."/commands/media.lua")
+	dofile(MP.."/commands/media_chat.lua")
 end
 -- commands that are available offline
 dofile(MP.."/commands/pos.lua")
