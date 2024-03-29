@@ -3,6 +3,14 @@
 
 local http, url = ...
 
+local function response_handler(res)
+    if res.code == 200 then
+        return res.json()
+    else
+        return Promise.rejected("unexpected http error")
+    end
+end
+
 --- creates a new mod
 -- @param token the token in string format
 -- @param mod the mod to create
@@ -12,7 +20,7 @@ function blockexchange.api.create_media_mod(token, mod)
         method = "POST",
         data = mod,
         headers = { "Authorization: " .. token }
-    }):next(function(res) return res.json() end)
+    }):next(response_handler)
 end
 
 --- creates a new nodedef
@@ -24,7 +32,7 @@ function blockexchange.api.create_media_nodedef(token, nodedef)
         method = "POST",
         data = nodedef,
         headers = { "Authorization: " .. token }
-    }):next(function(res) return res.json() end)
+    }):next(response_handler)
 end
 
 --- creates a new mediafile
@@ -36,5 +44,5 @@ function blockexchange.api.create_media_mediafile(token, mediafile)
         method = "POST",
         data = mediafile,
         headers = { "Authorization: " .. token }
-    }):next(function(res) return res.json() end)
+    }):next(response_handler)
 end
