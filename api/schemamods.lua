@@ -9,17 +9,12 @@ function blockexchange.api.create_schemamods(token, schema_uid, mod_names)
 end
 
 function blockexchange.api.get_schemamods(schema_uid)
-  return Promise.new(function(resolve, reject)
-    http.fetch({
-      url = url .. "/api/schema/" .. schema_uid .. "/mods",
-      timeout = 5
-    }, function(res)
-      if res.succeeded and res.code == 200 then
-        local mod_names = minetest.parse_json(res.data)
-        resolve(mod_names)
-      else
-        reject(res.code or 0)
-      end
-    end)
+  return Promise.http(http, url .. "/api/schema/" .. schema_uid .. "/mods")
+  :next(function(res)
+    if res.code == 200 then
+      return res.json()
+    else
+      return Promise.rejected("http error: " .. res.code)
+    end
   end)
 end
