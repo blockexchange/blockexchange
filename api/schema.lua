@@ -129,8 +129,8 @@ function blockexchange.api.get_schema_by_name(user_name, schema_name, download)
   end):next(function(search_result)
     -- extract uid
     if #search_result ~= 1 then
-      -- no results, abort
-      return Promise.rejected("no results")
+      -- no results, resolve with nil-promise
+      return Promise.resolve(nil)
     else
       -- download schematic
       return blockexchange.api.get_schema_by_uid(search_result[1].schema.uid, download)
