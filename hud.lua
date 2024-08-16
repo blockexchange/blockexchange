@@ -102,7 +102,7 @@ local function create_hud(player)
 	hud_data = {}
 	hud[playername] = hud_data
 	hud_data[HUD_ICON_KEY] = player:hud_add({
-		hud_elem_type = "image",
+		[minetest.features.hud_def_type_field and "type" or "hud_elem_type"] = "image",
 		position = HUD_POSITION,
 		offset = {x=0, y=0},
 		text = "",
@@ -111,7 +111,7 @@ local function create_hud(player)
 	})
 
 	hud_data[HUD_TEXT_KEY] = player:hud_add({
-		hud_elem_type = "text",
+		[minetest.features.hud_def_type_field and "type" or "hud_elem_type"] = "text",
 		position = HUD_POSITION,
 		offset = {x=20, y=0},
 		text = "",

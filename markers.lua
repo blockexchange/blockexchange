@@ -59,7 +59,7 @@ function blockexchange.set_pos(index, playername, pos)
 		end
 
 		hud_map[playername] = player:hud_add({
-			hud_elem_type = "waypoint",
+			[minetest.features.hud_def_type_field and "type" or "hud_elem_type"] = "waypoint",
 			name = "Position " .. index .. " @ " .. pos_str,
 			text = "m",
 			number = 0xFF0000,
