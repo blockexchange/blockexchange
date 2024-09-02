@@ -1,7 +1,7 @@
 local MP = minetest.get_modpath("blockexchange")
 
 -- optional http instance
-local http = minetest.request_http_api()
+local http = minetest.request_http_api and minetest.request_http_api()
 
 -- global namespace
 blockexchange = {
