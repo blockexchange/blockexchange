@@ -1,38 +1,24 @@
 local http, url = ...
 
+local function response_handler(res)
+  if res.code >= 200 and res.code < 300 then
+      return res.json()
+  else
+      return Promise.rejected("unexpected http error: " .. (res.code or 0))
+  end
+end
+
 function blockexchange.api.create_schemamods(token, schema_uid, mod_names)
-  return Promise.new(function(resolve, reject)
-    local json = minetest.write_json(mod_names);
-    http.fetch({
-      url = url .. "/api/schema/" .. schema_uid .. "/mods",
-      extra_headers = {
-        "Content-Type: application/json",
-        "Authorization: " .. token
-      },
-      timeout = 5,
-      post_data = json
-    }, function(res)
-      if res.succeeded and (res.code >= 200 or res.code < 300) then
-        resolve(true)
-      else
-        reject(res.code or 0)
-      end
-    end)
-  end)
+  return Promise.http(http, url .. "/api/schema/" .. schema_uid .. "/mods", {
+    method = "POST",
+    data = mod_names,
+    headers = {
+      "Content-Type: application/json",
+      "Authorization: " .. token
+    }
+  })
 end
 
 function blockexchange.api.get_schemamods(schema_uid)
-  return Promise.new(function(resolve, reject)
-    http.fetch({
-      url = url .. "/api/schema/" .. schema_uid .. "/mods",
-      timeout = 5
-    }, function(res)
-      if res.succeeded and res.code == 200 then
-        local mod_names = minetest.parse_json(res.data)
-        resolve(mod_names)
-      else
-        reject(res.code or 0)
-      end
-    end)
-  end)
+  return Promise.http(http, url .. "/api/schema/" .. schema_uid .. "/mods"):next(response_handler)
 end
