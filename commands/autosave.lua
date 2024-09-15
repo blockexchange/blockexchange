@@ -9,7 +9,7 @@ minetest.register_chatcommand("bx_autosave", {
         end
 
         local claims = blockexchange.get_claims(name)
-        if area.username ~= claims.username then
+        if not claims or area.username ~= claims.username then
             return true, "You are not authorized to edit that area"
         end
 
