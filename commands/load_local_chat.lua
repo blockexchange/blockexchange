@@ -3,6 +3,9 @@ minetest.register_chatcommand("bx_load_local", {
     description = "loads a local schema to the selected pos1",
     privs = {blockexchange = true},
     func = function(name, schemaname)
+        -- force-enable the hud
+        blockexchange.set_player_hud(name, true)
+
         if blockexchange.get_job_context(name) then
             return true, "There is a job already running"
         end

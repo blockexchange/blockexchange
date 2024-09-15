@@ -3,6 +3,9 @@ minetest.register_chatcommand("bx_load", {
     description = "Downloads a schema from the blockexchange to the selected pos1",
     privs = {blockexchange = true},
     func = blockexchange.api_check_wrapper(function(name, param)
+        -- force-enable the hud
+        blockexchange.set_player_hud(name, true)
+
         if blockexchange.get_job_context(name) then
             return true, "There is a job already running"
         end

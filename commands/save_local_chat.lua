@@ -4,6 +4,9 @@ minetest.register_chatcommand("bx_save_local", {
   privs = { blockexchange = true },
   description = "Saves the selected region to the disk",
   func = function(name, schemaname)
+    -- force-enable the hud
+    blockexchange.set_player_hud(name, true)
+
     if blockexchange.get_job_context(name) then
       return true, "There is a job already running"
     end

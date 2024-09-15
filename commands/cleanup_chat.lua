@@ -2,6 +2,9 @@ minetest.register_chatcommand("bx_cleanup", {
 	description = "Cleans up the selected region (stray metadata, invalid param2 values)",
   privs = { blockexchange = true },
 	func = function(name)
+    -- force-enable the hud
+    blockexchange.set_player_hud(name, true)
+
     if blockexchange.get_job_context(name) then
       return true, "There is a job already running"
     end
