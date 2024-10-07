@@ -121,6 +121,13 @@ if minetest.get_modpath("worldedit") then
         blockexchange.mark_changed(pos1, pos2)
         return old_keeploaded(pos1, pos2)
     end
+
+    -- //fixlight
+    local old_fixlight = worldedit.fixlight
+    worldedit.fixlight = function(pos1, pos2)
+        blockexchange.mark_changed(pos1, pos2)
+        return old_fixlight(pos1, pos2)
+    end
 end
 
 -- intercept various node-based events
