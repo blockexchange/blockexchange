@@ -15,6 +15,9 @@ function blockexchange.cleanup_worker(ctx)
     if not ctx.current_pos then
         -- done
         ctx.promise:resolve(ctx.result)
+
+        -- mark changed
+        blockexchange.mark_changed(ctx.pos1, ctx.pos2)
         return
     end
 
