@@ -59,7 +59,14 @@ function blockexchange.load(playername, pos1, username, schemaname, local_load, 
 		ctx.schema = {}
 
 		blockexchange.set_pos(2, playername, pos2)
-		blockexchange.load_worker(ctx)
+		blockexchange.load_local_worker(ctx):next(function()
+			ctx.promise:resolve({
+				schema = ctx.schema,
+				last_schemapart = ctx.last_schemapart
+			})
+		end):catch(function(err)
+			ctx.promise:reject(err)
+		end)
 	else
 		blockexchange.api.get_schema_by_name(username, schemaname, true):next(function(schema)
 			if not schema then

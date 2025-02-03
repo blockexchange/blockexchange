@@ -61,32 +61,7 @@ function blockexchange.load_worker(ctx)
 		return
 	end
 
-	if ctx.local_load then
-		-- local operation
-		local current_pos = ctx.iterator()
-
-		if not current_pos then
-			finalize(ctx)
-			return
-		end
-
-		local relative_pos = vector.subtract(current_pos, ctx.pos1)
-		local filename = "schemapart_" .. relative_pos.x .. "_" .. relative_pos.y .. "_" .. relative_pos.z .. ".json"
-		local entry = ctx.zip:get_entry(filename)
-		if entry then
-			-- non-air part
-			local schemapart_str, err_msg = ctx.zip:get(filename, true)
-			if err_msg then
-				ctx.promise:reject("schemapart error: " .. err_msg)
-				return
-			end
-			local schemapart = minetest.parse_json(schemapart_str)
-			place_schemapart(schemapart, ctx, false)
-		else
-			minetest.after(blockexchange.min_delay, blockexchange.load_worker, ctx)
-		end
-
-	elseif ctx.from_mtime > 0 then
+	if ctx.from_mtime > 0 then
 		-- online, incremental download by mtime
 		local mtime = ctx.from_mtime
 		if ctx.last_schemapart then

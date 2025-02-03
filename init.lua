@@ -110,6 +110,7 @@ dofile(MP.."/commands/cleanup_chat.lua")
 
 -- worker functions
 dofile(MP.."/worker/load_worker.lua")
+dofile(MP.."/worker/load_local_worker.lua")
 dofile(MP.."/worker/save_worker.lua")
 dofile(MP.."/worker/save_update_worker.lua")
 dofile(MP.."/worker/emerge_worker.lua")
