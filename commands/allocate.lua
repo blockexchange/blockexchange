@@ -85,8 +85,8 @@ function blockexchange.allocate(playername, pos1, username, schemaname, local_lo
           schema = schema,
           missing_mods = missing_mods
         })
-      end):catch(function(http_code)
-        local err_msg = "[blockexchange] get schemamods failed with http code: " .. (http_code or "unkown")
+      end):catch(function(err)
+        local err_msg = "[blockexchange] get schemamods failed: " .. (err or "unkown")
         minetest.log("error", err_msg)
         promise:reject(err_msg)
       end)

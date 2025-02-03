@@ -8,23 +8,18 @@ local http, url = ...
 -- @param access_token the access code of the token (used in "/bx_login <username> <access_token>")
 -- @return a promise with the result
 function blockexchange.api.get_token(name, access_token)
-  return Promise.new(function(resolve, reject)
-    local json = minetest.write_json({
+  return Promise.http(http, url .. "/api/token", {
+    extra_headers = { "Content-Type: application/json" },
+    method = "POST",
+    data = minetest.write_json({
       name = name,
       access_token = access_token
-    });
-
-    http.fetch({
-      url = url .. "/api/token",
-      extra_headers = { "Content-Type: application/json" },
-      timeout = 5,
-      post_data = json
-    }, function(res)
-      if res.succeeded and res.code == 200 then
-        resolve(res.data)
-      else
-        reject(res.code or 0)
-      end
-    end)
+    })
+  }):next(function(res)
+    if res.code == 200 then
+      return res:text()
+    else
+      return Promise.rejected("unexpected http code: " .. res.code)
+    end
   end)
 end

@@ -29,8 +29,8 @@ function blockexchange.save_update_worker(ctx)
 			local msg = "[blockexchange] Save-update complete with " .. ctx.total_parts .. " parts"
 			minetest.log("action", msg)
 			ctx.promise:resolve(ctx.total_parts)
-		end):catch(function(http_code)
-			local msg = "[blockexchange] mod-update failed with http code: " .. (http_code or "unkown")
+		end):catch(function(err)
+			local msg = "[blockexchange] mod-update failed: " .. (err or "unkown")
 			minetest.log("error", msg)
 			ctx.promise:reject(msg)
 		end)
@@ -69,8 +69,8 @@ function blockexchange.save_update_worker(ctx)
 
 		shift(ctx)
 		minetest.after(blockexchange.min_delay, blockexchange.save_update_worker, ctx)
-	end):catch(function(http_code)
-		local msg = "[blockexchange] create schemapart failed with http code: " .. (http_code or "unkown") ..
+	end):catch(function(err)
+		local msg = "[blockexchange] create schemapart failed: " .. (err or "unkown") ..
 		" retrying..."
 		minetest.log("error", msg)
 		-- wait a couple seconds

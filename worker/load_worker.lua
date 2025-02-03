@@ -46,8 +46,8 @@ local function place_schemapart(schemapart, ctx)
 	-- TODO: overwrite inworld parts if downloaded part is air-only
 end
 
-local function schedule_retry(ctx, http_code)
-	local msg = "[blockexchange] download schemapart failed with http code: " .. (http_code or "unkown") .. " retrying..."
+local function schedule_retry(ctx, err)
+	local msg = "[blockexchange] download schemapart failed: " .. (err or "unkown") .. " retrying..."
 	minetest.log("error", msg)
 
 	-- wait a couple seconds
@@ -95,8 +95,8 @@ function blockexchange.load_worker(ctx)
 		end
 		blockexchange.api.get_next_schemapart_by_mtime(ctx.schema.uid,  mtime):next(function(schemapart)
 			place_schemapart(schemapart, ctx, false)
-		end):catch(function(http_code)
-			schedule_retry(ctx, http_code)
+		end):catch(function(err)
+			schedule_retry(ctx, err)
 		end)
 	else
 		-- online, full download
@@ -104,8 +104,8 @@ function blockexchange.load_worker(ctx)
 			-- start from the beginning
 			blockexchange.api.get_first_schemapart(ctx.schema.uid):next(function(schemapart)
 				place_schemapart(schemapart, ctx, false)
-			end):catch(function(http_code)
-				schedule_retry(ctx, http_code)
+			end):catch(function(err)
+				schedule_retry(ctx, err)
 			end)
 		else
 			-- start from last position
@@ -116,8 +116,8 @@ function blockexchange.load_worker(ctx)
 			}
 			blockexchange.api.get_next_schemapart(ctx.schema.uid, pos):next(function(schemapart)
 				place_schemapart(schemapart, ctx, false)
-			end):catch(function(http_code)
-				schedule_retry(ctx, http_code)
+			end):catch(function(err)
+				schedule_retry(ctx, err)
 			end)
 		end
 	end

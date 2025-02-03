@@ -11,8 +11,8 @@ minetest.register_chatcommand("bx_info", {
 			msg = msg .. " URL: " .. blockexchange.url
 
 			minetest.chat_send_player(name, msg)
-		end):catch(function(http_code)
-			minetest.chat_send_player(name, "HTTP-Error: " .. (http_code or "unknown"))
+		end):catch(function(err)
+			minetest.chat_send_player(name, "Error: " .. (err or "unknown"))
 		end)
 
 		return true

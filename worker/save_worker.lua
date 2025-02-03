@@ -60,8 +60,8 @@ function blockexchange.save_worker(ctx)
 			end):next(function(schema)
 				-- register for later future updates
 				blockexchange.register_area(ctx.pos1, ctx.pos2, ctx.playername, ctx.username, schema)
-			end):catch(function(http_code)
-				local msg = "[blockexchange] finalize schema failed with http code: " .. (http_code or "unkown") ..
+			end):catch(function(err)
+				local msg = "[blockexchange] finalize schema failed: " .. (err or "unkown") ..
 				" retry manual on the web-ui please"
 				minetest.log("error", msg)
 				minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
@@ -129,8 +129,8 @@ function blockexchange.save_worker(ctx)
 
 				shift(ctx)
 				minetest.after(blockexchange.min_delay, blockexchange.save_worker, ctx)
-			end):catch(function(http_code)
-				local msg = "[blockexchange] create schemapart failed with http code: " .. (http_code or "unkown") ..
+			end):catch(function(err)
+				local msg = "[blockexchange] create schemapart failed: " .. (err or "unkown") ..
 				" retrying..."
 				minetest.log("error", msg)
 				minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))

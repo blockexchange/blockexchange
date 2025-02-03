@@ -31,9 +31,9 @@ minetest.register_chatcommand("bx_login", {
 			blockexchange.set_token(name, token)
 			local payload = blockexchange.parse_token(token)
 			minetest.chat_send_player(name, "Logged in as '" .. payload.username .. "' with user_uid: " .. payload.user_uid)
-		end):catch(function(http_code)
-			minetest.log("error", "[blockexchange] get_token failed with error: " .. http_code or "?")
-			minetest.chat_send_player(name, "Login failed with error: " .. http_code or "?")
+		end):catch(function(err)
+			minetest.log("error", "[blockexchange] get_token failed: " .. err or "?")
+			minetest.chat_send_player(name, "Login failed: " .. err or "?")
 		end)
   end
 })
