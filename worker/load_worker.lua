@@ -9,23 +9,17 @@ if has_monitoring then
 	)
 end
 
-local function finalize(ctx)
-	local msg = "Download complete with " .. ctx.total_parts .. " parts"
-	minetest.log("action", "[blockexchange] " .. msg)
-	if not ctx.local_load then
-		-- fetch updated schema and register area for future updates
-		blockexchange.register_area(ctx.pos1, ctx.pos2, ctx.playername, ctx.username, ctx.schema)
-	end
-
-	ctx.promise:resolve({
-		schema = ctx.schema,
-		last_schemapart = ctx.last_schemapart
-	})
-end
-
 local function place_schemapart(schemapart, ctx)
 	if not schemapart then
-		finalize(ctx)
+		blockexchange.log("action", "Download complete with " .. ctx.total_parts .. " parts")
+
+		-- fetch updated schema and register area for future updates
+		blockexchange.register_area(ctx.pos1, ctx.pos2, ctx.playername, ctx.username, ctx.schema)
+
+		ctx.promise:resolve({
+			schema = ctx.schema,
+			last_schemapart = ctx.last_schemapart
+		})
 		return
 	end
 
