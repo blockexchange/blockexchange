@@ -43,7 +43,7 @@ function blockexchange.emerge(playername, pos1, pos2)
   return promise, ctx
 end
 
-minetest.register_chatcommand("bx_emerge", {
+Promise.register_chatcommand("bx_emerge", {
 	description = "Emerges the selected region",
   privs = { blockexchange = true },
 	func = function(name)
@@ -65,15 +65,12 @@ minetest.register_chatcommand("bx_emerge", {
     local promise, ctx = blockexchange.emerge(name, pos1, pos2)
     blockexchange.set_job_context(ctx.playername, ctx)
 
-    promise:next(function(total_parts)
+    promise:always(function()
       blockexchange.set_job_context(ctx.playername, nil)
-      local msg = "[blockexchange] Emerge complete with " .. total_parts .. " parts"
-      minetest.log("action", msg)
-      minetest.chat_send_player(name, msg)
-    end):catch(function(err_msg)
-      blockexchange.set_job_context(ctx.playername, nil)
-      minetest.chat_send_player(name, minetest.colorize("#ff0000", err_msg))
     end)
-		return true
+
+    return promise:next(function(total_parts)
+      return "emerged " .. total_parts
+    end)
   end
 })
