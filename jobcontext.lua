@@ -11,7 +11,7 @@ local job_context_map = {}
 function blockexchange.set_job_context(playername, ctx, promise)
     job_context_map[playername] = ctx
     if promise then
-        promise:always(function()
+        promise:finally(function()
             job_context_map[playername] = nil
         end)
     end

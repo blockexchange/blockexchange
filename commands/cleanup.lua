@@ -41,6 +41,8 @@ function blockexchange.cleanup(playername, pos1, pos2)
         error("canceled", 0)
       end
     end
+
+    return result
   end)
 
   blockexchange.set_job_context(ctx.playername, ctx, promise)

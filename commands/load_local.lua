@@ -1,5 +1,5 @@
 
-function blockexchange.load_local(playername, pos1, schemaname)
+function blockexchange.load_local(playername, origin, schemaname)
     local ctx = {
 		type = "download_local",
 		schemaname = schemaname,
@@ -27,13 +27,14 @@ function blockexchange.load_local(playername, pos1, schemaname)
         end
         local schema = minetest.parse_json(schema_str)
 
-        local pos2 = vector.add(pos1, blockexchange.get_schema_size(schema))
+        local pos2 = vector.add(origin, blockexchange.get_schema_size(schema))
         pos2 = vector.subtract(pos2, 1)
         blockexchange.set_pos(2, playername, pos2)
-        ctx.total_parts = blockexchange.count_schemaparts(pos1, pos2)
+        ctx.total_parts = blockexchange.count_schemaparts(origin, pos2)
 
-		for current_pos in blockexchange.iterator(ctx.origin, ctx.pos1, ctx.pos2) do
-			local relative_pos = vector.subtract(current_pos, ctx.pos1)
+		for current_pos in blockexchange.iterator(origin, origin, pos2) do
+            -- TODO: maybe iterate over files instead of map-parts
+			local relative_pos = vector.subtract(current_pos, origin)
 			local entry_filename = "schemapart_" .. relative_pos.x .. "_" .. relative_pos.y .. "_" .. relative_pos.z .. ".json"
 			local entry = ctx.zip:get_entry(entry_filename)
 			if entry then
@@ -49,7 +50,7 @@ function blockexchange.load_local(playername, pos1, schemaname)
 				ctx.current_part = ctx.current_part + 1
 				ctx.progress_percent = math.floor(ctx.current_part / ctx.total_parts * 100 * 10) / 10
 
-				blockexchange.place_schemapart(schemapart, pos1)
+				blockexchange.place_schemapart(schemapart, origin)
 				minetest.log("action", "[blockexchange] Extraction of part " .. minetest.pos_to_string(current_pos) .. " completed")
 
 				ctx.last_schemapart = schemapart

@@ -78,7 +78,6 @@ dofile(MP.."/util/is_player_in_area.lua")
 
 if blockexchange.is_online then
 	-- online commands
-	dofile(MP.."/commands/api_check_wrapper.lua")
 	dofile(MP.."/commands/info.lua")
 	dofile(MP.."/commands/license.lua")
 	dofile(MP.."/commands/user.lua")

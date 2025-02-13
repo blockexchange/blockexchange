@@ -21,82 +21,89 @@ local function get_missing_mods(mods)
 end
 
 function blockexchange.allocate(playername, pos1, username, schemaname, local_load)
-  local promise = Promise.new()
 
-  if local_load then
-    -- local operation
-    local filename = blockexchange.get_local_filename(schemaname)
-    local f = io.open(filename, "rb")
-    if not f then
-      promise:reject("file not found: " .. filename)
-      return promise
-    end
-    local z, err_msg = mtzip.unzip(f)
-    if err_msg then
-      promise:reject("unzip error: " .. err_msg)
-      return promise
-    end
-
-    local schema_str
-    schema_str, err_msg = z:get("schema.json", true)
-    if err_msg then
-      promise:reject("schema.json error: " .. err_msg)
-      return promise
-    end
-    local schema = minetest.parse_json(schema_str)
-    if not schema then
-      promise:reject("Schema not found: '" .. schemaname .. "'")
-      return
-    end
-		local pos2 = vector.add(pos1, blockexchange.get_schema_size(schema))
-    pos2 = vector.subtract(pos2, 1)
-
-    blockexchange.set_pos(2, playername, pos2)
-
-    local mods_str
-    mods_str, err_msg = z:get("mods.json")
-    if err_msg then
-      promise:reject("mods.json error: " .. err_msg)
-      return promise
-    end
-    f:close()
-
-    local mods = minetest.parse_json(mods_str)
-    local missing_mods = get_missing_mods(mods)
-
-    promise:resolve({
-      schema = schema,
-      missing_mods = missing_mods
-    })
-  else
-    -- online
-    blockexchange.api.get_schema_by_name(username, schemaname, false):next(function(schema)
-      if not schema then
-        promise:reject("Schema not found: '" .. username .. "/" .. schemaname .. "'")
-        return
+  return Promise.async(function(await)
+    if local_load then
+      -- local operation
+      local filename = blockexchange.get_local_filename(schemaname)
+      local f = io.open(filename, "rb")
+      if not f then
+        error("file not found: " .. filename, 0)
       end
+      local z, err_msg = mtzip.unzip(f)
+      if err_msg then
+        error("unzip error: " .. err_msg, 0)
+      end
+
+      local schema_str
+      schema_str, err_msg = z:get("schema.json", true)
+      if err_msg then
+        error("schema.json error: " .. err_msg, 0)
+      end
+      local schema = minetest.parse_json(schema_str)
+      if not schema then
+        error("Schema not found: '" .. schemaname .. "'", 0)
+      end
+      local pos2 = vector.add(pos1, blockexchange.get_schema_size(schema))
+      pos2 = vector.subtract(pos2, 1)
+
+      blockexchange.set_pos(2, playername, pos2)
+
+      local mods_str
+      mods_str, err_msg = z:get("mods.json")
+      if err_msg then
+        error("mods.json error: " .. err_msg, 0)
+      end
+      f:close()
+
+      local mods = minetest.parse_json(mods_str)
+      local missing_mods = get_missing_mods(mods)
+
+      return {
+        schema = schema,
+        missing_mods = missing_mods
+      }
+    else
+      -- online
+      local schema, err = await(blockexchange.api.get_schema_by_name(username, schemaname, false))
+      if err then
+        error("fetch schema error: " .. err, 0)
+      elseif not schema then
+        error("Schema not found: '" .. username .. "/" .. schemaname .. "'", 0)
+      end
+
       local pos2 = vector.add(pos1, blockexchange.get_schema_size(schema))
       pos2 = vector.subtract(pos2, 1)
       blockexchange.set_pos(2, playername, pos2)
 
-      blockexchange.api.get_schemamods(schema.uid):next(function(mods)
-        local missing_mods = get_missing_mods(mods)
-        promise:resolve({
-          schema = schema,
-          missing_mods = missing_mods
-        })
-      end):catch(function(err)
-        local err_msg = "[blockexchange] get schemamods failed: " .. (err or "unkown")
-        minetest.log("error", err_msg)
-        promise:reject(err_msg)
-      end)
-    end)
-  end
+      local mods
+      mods, err = await(blockexchange.api.get_schemamods(schema.uid))
+      if err then
+        error("fetch mods error: " .. err, 0)
+      end
 
-  return promise
+      local missing_mods = get_missing_mods(mods)
+      return {
+        schema = schema,
+        missing_mods = missing_mods
+      }
+    end
+  end)
 end
 
-minetest.register_chatcommand("bx_allocate_local", {
+local function allocate_reporter(result)
+  local msg = "Total parts: " .. result.schema.total_parts ..
+    " total size: " .. result.schema.total_size .. " bytes"
+
+  if #result.missing_mods > 0 then
+    msg = msg .. ", "
+    msg = msg .. minetest.colorize("#ff0000", "missing mods: " .. result.missing_mods)
+  end
+
+  return msg
+end
+
+Promise.register_chatcommand("bx_allocate_local", {
   params = "<schemaname>",
   description = "Show where the selected schema would end up",
   privs = { blockexchange = true },
@@ -111,27 +118,16 @@ minetest.register_chatcommand("bx_allocate_local", {
       return false, "Usage: /bx_allocate_local <schemaname>"
     end
 
-    blockexchange.allocate(name, pos1, name, schemaname, true):next(function(result)
-      minetest.chat_send_player(name, "Total parts: " .. result.schema.total_parts ..
-        " total size: " .. result.schema.total_size .. " bytes")
-
-      if #result.missing_mods > 0 then
-        minetest.chat_send_player(name, minetest.colorize("#ff0000", "Missing mods: " .. result.missing_mods))
-      end
-
-    end):catch(function(err_msg)
-      minetest.chat_send_player(name, minetest.colorize("#ff0000", err_msg))
-    end)
-    return true
+    return blockexchange.allocate(name, pos1, name, schemaname, true):next(allocate_reporter)
   end
 })
 
 if blockexchange.is_online then
-  minetest.register_chatcommand("bx_allocate", {
+  Promise.register_chatcommand("bx_allocate", {
     params = "<username> <schemaname>",
     description = "Show where the selected schema would end up",
     privs = { blockexchange = true },
-    func = blockexchange.api_check_wrapper(function(name, param)
+    func = function(name, param)
       local pos1 = blockexchange.get_pos(1, name)
 
       if not pos1 then
@@ -143,17 +139,7 @@ if blockexchange.is_online then
         return false, "Usage: /bx_allocate <username> <schemaname>"
       end
 
-      blockexchange.allocate(name, pos1, username, schemaname):next(function(result)
-        minetest.chat_send_player(name, "Total parts: " .. result.schema.total_parts ..
-          " total size: " .. result.schema.total_size .. " bytes")
-
-        if #result.missing_mods > 0 then
-          minetest.chat_send_player(name, minetest.colorize("#ff0000", "Missing mods: " .. result.missing_mods))
-        end
-      end):catch(function(err_msg)
-        minetest.chat_send_player(name, minetest.colorize("#ff0000", err_msg))
-      end)
-      return true
-    end)
+      return blockexchange.allocate(name, pos1, username, schemaname):next(allocate_reporter)
+    end
   })
 end

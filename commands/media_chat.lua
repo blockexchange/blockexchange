@@ -3,7 +3,7 @@ minetest.register_chatcommand("bx_upload_media", {
     params = "<modname> <license>",
     privs = { blockexchange = true },
     description = "Uploads the media of the given mod and license",
-    func = blockexchange.api_check_wrapper(function(name, param)
+    func = function(name, param)
         local _, _, modname, license = string.find(param, "^([^%s]+)%s+(.*)$")
 
         if not modname or not license then
@@ -28,5 +28,5 @@ minetest.register_chatcommand("bx_upload_media", {
         end)
 
         return true, "uploading media from mod '" .. modname .. "' with license '" .. license .. "'"
-    end)
+    end
 })

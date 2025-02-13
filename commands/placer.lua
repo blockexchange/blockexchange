@@ -31,7 +31,7 @@ minetest.register_chatcommand("bx_placer", {
     params = "<username> <schemaname>",
     description = "Creates a placement tool for the schematic",
     privs = {blockexchange = true},
-    func = blockexchange.api_check_wrapper(function(name, param)
+    func = function(name, param)
         local _, _, username, schemaname = string.find(param, "^([^%s]+)%s+(.*)$")
         if not username or not schemaname then
             return false, "Usage: /bx_placer <username> <schemaname>"
@@ -65,5 +65,5 @@ minetest.register_chatcommand("bx_placer", {
         end)
 
         return true
-    end)
+    end
 })

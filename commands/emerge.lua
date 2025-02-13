@@ -20,6 +20,7 @@ function blockexchange.emerge(playername, pos1, pos2)
     local total_parts = 0
 
     for current_pos, _, progress in blockexchange.iterator(pos1, pos1, pos2) do
+      -- TODO: chunk-granular iterator
       local current_pos2 = vector.add(current_pos, 15)
 
       ctx.progress_percent = math.floor(progress * 100 * 10) / 10
@@ -65,12 +66,12 @@ Promise.register_chatcommand("bx_emerge", {
     local promise, ctx = blockexchange.emerge(name, pos1, pos2)
     blockexchange.set_job_context(ctx.playername, ctx)
 
-    promise:always(function()
+    promise:finally(function()
       blockexchange.set_job_context(ctx.playername, nil)
     end)
 
     return promise:next(function(total_parts)
-      return "emerged " .. total_parts
+      return "emerged " .. total_parts .. " parts"
     end)
   end
 })

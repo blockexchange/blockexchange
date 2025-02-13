@@ -20,20 +20,22 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 	local promise = Promise.async(function(await)
 		local schema, err = await(blockexchange.api.get_schema_by_name(username, schemaname, true))
 		if err then
-			error("error fetching schema: " .. err)
+			error("error fetching schema: " .. err, 0)
 		elseif not schema then
-			error("schema not found: '" .. username .. "/" .. schemaname .. "'")
+			error("schema not found: '" .. username .. "/" .. schemaname .. "'", 0)
 		end
 		local pos2 = vector.add(pos1, blockexchange.get_schema_size(schema))
 
-		local total_parts
-		total_parts, err = await(blockexchange.api.count_next_schemapart_by_mtime(schema.uid, from_mtime))
-		if err then
-			error("error fetching total parts: " .. err)
-		end
-
 		-- current mtime, if set
 		local mtime = from_mtime or 0
+
+		local total_parts
+		total_parts, err = await(blockexchange.api.count_next_schemapart_by_mtime(schema.uid, mtime))
+		if err then
+			error("error fetching total parts: " .. err, 0)
+		end
+
+		-- current schemapart
 		local schemapart
 
 		while true do
@@ -57,7 +59,7 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 				-- full download
 				if not schemapart then
 					-- first part
-					schemapart, err = blockexchange.api.get_first_schemapart(schema.uid)
+					schemapart, err = await(blockexchange.api.get_first_schemapart(schema.uid))
 					if err then
 						-- retry later
 						ctx.retries = ctx.retries + 1
@@ -76,7 +78,7 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 						y = schemapart.offset_y,
 						z = schemapart.offset_z
 					}
-					schemapart, err = blockexchange.api.get_next_schemapart(schema.uid, pos)
+					schemapart, err = await(blockexchange.api.get_next_schemapart(schema.uid, pos))
 					if err then
 						ctx.retries = ctx.retries + 1
 						await(Promise.after(5))
@@ -119,7 +121,7 @@ Promise.register_chatcommand("bx_load", {
     params = "<username> <schemaname>",
     description = "Downloads a schema from the blockexchange to the selected pos1",
     privs = {blockexchange = true},
-    func = blockexchange.api_check_wrapper(function(name, param)
+    func = function(name, param)
 
         if blockexchange.get_job_context(name) then
             return true, "There is a job already running"
@@ -141,7 +143,7 @@ Promise.register_chatcommand("bx_load", {
         return blockexchange.load(name, pos1, username, schemaname):next(function(result)
             return "Download complete with " .. result.schema.total_parts .. " parts"
         end)
-    end)
+    end
 })
 
 minetest.register_chatcommand("bx_load_update", {
