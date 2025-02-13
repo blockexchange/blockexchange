@@ -48,36 +48,29 @@ minetest.register_chatcommand("bx_save", {
 
     if not has_blockexchange_priv and has_protected_upload_priv and not has_protection_bypass_priv then
       -- kick off protection-check worker and add deferred upload context
-      local promise, ctx = blockexchange.protectioncheck(name, pos1, pos2, schemaname)
-      blockexchange.set_job_context(name, ctx)
-      promise:next(function(result)
+      blockexchange.protectioncheck(name, pos1, pos2, schemaname):next(function(result)
         if not result.success then
-          blockexchange.set_job_context(ctx.playername, nil)
           local msg = "Protection check failed between pos " .. minetest.pos_to_string(result.pos1) ..
             " and " .. minetest.pos_to_string(result.pos2)
           minetest.chat_send_player(name, minetest.colorize("#ff0000", msg))
           return
         end
         -- kick off save process
-        promise, ctx = blockexchange.save(name, pos1, pos2, schemaname)
-        blockexchange.set_job_context(name, ctx)
+        local promise, ctx = blockexchange.save(name, pos1, pos2, schemaname)
+        blockexchange.set_job_context(name, ctx, promise)
         return promise
       end):next(function(result)
-        blockexchange.set_job_context(ctx.playername, nil)
         minetest.chat_send_player(name, "[blockexchange] Save complete with " .. result.total_parts .. " parts")
       end):catch(function(err_msg)
-        blockexchange.set_job_context(ctx.playername, nil)
         minetest.chat_send_player(name, minetest.colorize("#ff0000", err_msg))
       end)
     else
       -- kick off upload directly without protect check
       local promise, ctx = blockexchange.save(name, pos1, pos2, schemaname)
-      blockexchange.set_job_context(name, ctx)
+      blockexchange.set_job_context(name, ctx, promise)
       promise:next(function(result)
-        blockexchange.set_job_context(ctx.playername, nil)
         minetest.chat_send_player(name, "[blockexchange] Save complete with " .. result.total_parts .. " parts")
       end):catch(function(err_msg)
-        blockexchange.set_job_context(ctx.playername, nil)
         minetest.chat_send_player(name, minetest.colorize("#ff0000", err_msg))
       end)
     end

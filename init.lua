@@ -110,7 +110,6 @@ dofile(MP.."/worker/load_worker.lua")
 dofile(MP.."/worker/load_local_worker.lua")
 dofile(MP.."/worker/save_worker.lua")
 dofile(MP.."/worker/save_update_worker.lua")
-dofile(MP.."/worker/protectioncheck_worker.lua")
 
 -- compat
 if minetest.get_modpath("advtrains") then

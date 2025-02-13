@@ -2,20 +2,31 @@
 -- async cleanup command
 
 --- cleanup the given area
--- @param ctx the ctx to update progress in
+-- @param playername the playername to update progress in
 -- @param pos1 lower position to emerge
 -- @param pos2 upper position to emerge
 -- @return a promise that resolves if the operation is complete
--- @return the job context
-function blockexchange.cleanup(ctx, pos1, pos2)
+function blockexchange.cleanup(playername, pos1, pos2)
   local result = {
     meta = 0,
     param2 = 0
   }
 
-  return Promise.async(function(await)
+  local ctx = {
+    type = "cleanup",
+    playername = playername,
+    current_part = 0,
+    progress_percent = 0,
+    total_parts = blockexchange.count_schemaparts(pos1, pos2)
+  }
+
+  local promise = Promise.async(function(await)
     for current_pos in blockexchange.iterator(pos1, pos1, pos2) do
       local current_pos2 = vector.add(current_pos, 15)
+      current_pos2.x = math.min(current_pos2.x, pos2.x)
+      current_pos2.y = math.min(current_pos2.y, pos2.y)
+      current_pos2.z = math.min(current_pos2.z, pos2.z)
+
       local area_result = blockexchange.cleanup_area(current_pos, current_pos2)
       result.meta = result.meta + area_result.meta
       result.param2 = result.param2 + area_result.param2
@@ -27,16 +38,19 @@ function blockexchange.cleanup(ctx, pos1, pos2)
       await(Promise.after(blockexchange.min_delay))
 
       if ctx.cancel then
-				error("canceled", 0)
-			end
+        error("canceled", 0)
+      end
     end
   end)
+
+  blockexchange.set_job_context(ctx.playername, ctx, promise)
+  return promise
 end
 
-minetest.register_chatcommand("bx_cleanup", {
-	description = "Cleans up the selected region (stray metadata, invalid param2 values)",
+Promise.register_chatcommand("bx_cleanup", {
+  description = "Cleans up the selected region (stray metadata, invalid param2 values)",
   privs = { blockexchange = true },
-	func = function(name)
+  func = function(name)
     -- force-enable the hud
     blockexchange.set_player_hud(name, true)
 
@@ -52,18 +66,7 @@ minetest.register_chatcommand("bx_cleanup", {
       return false, "you need to set /bx_pos1 and /bx_pos2 first!"
     end
 
-    local ctx = {
-      type = "cleanup",
-      playername = name,
-      current_part = 0,
-      progress_percent = 0,
-      total_parts = blockexchange.count_schemaparts(pos1, pos2)
-    }
-
-    local promise = blockexchange.cleanup(ctx, pos1, pos2)
-    blockexchange.set_job_context(ctx.playername, ctx, promise)
-
-    return promise:next(function(result)
+    return blockexchange.cleanup(name, pos1, pos2):next(function(result)
       return "cleaned metadata: " .. result.meta .. ", cleaned param2: " .. result.param2
     end)
   end
