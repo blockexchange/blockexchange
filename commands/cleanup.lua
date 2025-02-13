@@ -2,36 +2,35 @@
 -- async cleanup command
 
 --- cleanup the given area
--- @param playername the playername to use in messages
+-- @param ctx the ctx to update progress in
 -- @param pos1 lower position to emerge
 -- @param pos2 upper position to emerge
 -- @return a promise that resolves if the operation is complete
 -- @return the job context
-function blockexchange.cleanup(playername, pos1, pos2)
-    local total_parts = blockexchange.count_schemaparts(pos1, pos2)
-    local iterator = blockexchange.iterator(pos1, pos1, pos2)
+function blockexchange.cleanup(ctx, pos1, pos2)
+  local result = {
+    meta = 0,
+    param2 = 0
+  }
 
-    local ctx = {
-        type = "cleanup",
-        playername = playername,
-        pos1 = pos1,
-        pos2 = pos2,
-        iterator = iterator,
-        current_pos = iterator(),
-        current_part = 0,
-        progress_percent = 0,
-        total_parts = total_parts,
-        promise = Promise.new(),
-        result = {
-            meta = 0,
-            param2 = 0
-        }
-    }
+  return Promise.async(function(await)
+    for current_pos in blockexchange.iterator(pos1, pos1, pos2) do
+      local current_pos2 = vector.add(current_pos, 15)
+      local area_result = blockexchange.cleanup_area(current_pos, current_pos2)
+      result.meta = result.meta + area_result.meta
+      result.param2 = result.param2 + area_result.param2
 
-    -- start emerge worker with context
-    blockexchange.cleanup_worker(ctx)
+      -- increment stats
+      ctx.current_part = ctx.current_part + 1
+      ctx.progress_percent = math.floor(ctx.current_part / ctx.total_parts * 100 * 10) / 10
 
-    return ctx.promise, ctx
+      await(Promise.after(blockexchange.min_delay))
+
+      if ctx.cancel then
+				error("canceled", 0)
+			end
+    end
+  end)
 end
 
 minetest.register_chatcommand("bx_cleanup", {
@@ -53,19 +52,19 @@ minetest.register_chatcommand("bx_cleanup", {
       return false, "you need to set /bx_pos1 and /bx_pos2 first!"
     end
 
-    local promise, ctx = blockexchange.cleanup(name, pos1, pos2)
-    blockexchange.set_job_context(ctx.playername, ctx)
+    local ctx = {
+      type = "cleanup",
+      playername = name,
+      current_part = 0,
+      progress_percent = 0,
+      total_parts = blockexchange.count_schemaparts(pos1, pos2)
+    }
 
-    promise:next(function(result)
-      blockexchange.set_job_context(ctx.playername, nil)
-      local msg = "[blockexchange] Cleanup complete, " ..
-        "cleaned metadata: " .. result.meta .. ", cleaned param2: " .. result.param2
-      minetest.log("action", msg)
-      minetest.chat_send_player(name, msg)
-    end):catch(function(err_msg)
-      blockexchange.set_job_context(ctx.playername, nil)
-      minetest.chat_send_player(name, minetest.colorize("#ff0000", err_msg))
+    local promise = blockexchange.cleanup(ctx, pos1, pos2)
+    blockexchange.set_job_context(ctx.playername, ctx, promise)
+
+    return promise:next(function(result)
+      return "cleaned metadata: " .. result.meta .. ", cleaned param2: " .. result.param2
     end)
-		return true
   end
 })

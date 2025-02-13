@@ -1,4 +1,3 @@
-
 -- nodenames without metadata
 local metadata_free_nodenames = {
     ["air"] = true
@@ -11,29 +10,15 @@ local param2_zero_nodeids = {
     [minetest.CONTENT_IGNORE] = true
 }
 
-function blockexchange.cleanup_worker(ctx)
-    if not ctx.current_pos then
-        -- done
-        ctx.promise:resolve(ctx.result)
-
-        -- mark changed
-        blockexchange.mark_changed(ctx.pos1, ctx.pos2)
-        return
-    end
-
-    if ctx.cancel then
-        ctx.promise:reject("canceled")
-        return
-    end
-
-    local pos1 = ctx.current_pos
-    local pos2 = vector.add(pos1, 15)
-    pos2.x = math.min(pos2.x, ctx.pos2.x)
-    pos2.y = math.min(pos2.y, ctx.pos2.y)
-    pos2.z = math.min(pos2.z, ctx.pos2.z)
-
+function blockexchange.cleanup_area(pos1, pos2)
     -- load area
     minetest.load_area(pos1, pos2)
+
+    -- cleanup result
+    local result = {
+        meta = 0,
+        param2 = 0
+    }
 
     -- clear stray metadata
     local pos_list = minetest.find_nodes_with_meta(pos1, pos2)
@@ -42,7 +27,7 @@ function blockexchange.cleanup_worker(ctx)
         if metadata_free_nodenames[node.name] then
             -- clear metadata
             minetest.get_meta(pos):from_table(nil)
-            ctx.result.meta = ctx.result.meta + 1
+            result.meta = result.meta + 1
         end
     end
 
@@ -64,7 +49,7 @@ function blockexchange.cleanup_worker(ctx)
             -- reset param2 value
             param2[i] = 0
             dirty = true
-            ctx.result.param2 = ctx.result.param2 + 1
+            result.param2 = result.param2 + 1
         end
     end
     end
@@ -73,13 +58,8 @@ function blockexchange.cleanup_worker(ctx)
     if dirty then
         manip:set_param2_data(param2)
         manip:write_to_map()
+        blockexchange.mark_changed(pos1, pos2)
     end
 
-    -- shift coordinates
-    ctx.current_pos, ctx.rel_pos, ctx.progress = ctx.iterator()
-
-    -- increment stats
-    ctx.current_part = ctx.current_part + 1
-    ctx.progress_percent = math.floor(ctx.progress * 100 * 10) / 10
-    minetest.after(0.1, blockexchange.cleanup_worker, ctx)
+    return result
 end

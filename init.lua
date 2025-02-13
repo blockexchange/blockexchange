@@ -52,6 +52,7 @@ dofile(MP.."/util/placer_preview.lua")
 dofile(MP.."/util/remove_nodes.lua")
 dofile(MP.."/util/player_area.lua")
 dofile(MP.."/util/compare_area.lua")
+dofile(MP.."/util/cleanup_area.lua")
 dofile(MP.."/util/ignored_content_ids.lua")
 dofile(MP.."/util/serialize.lua")
 dofile(MP.."/util/deserialize.lua")
@@ -110,7 +111,6 @@ dofile(MP.."/worker/load_local_worker.lua")
 dofile(MP.."/worker/save_worker.lua")
 dofile(MP.."/worker/save_update_worker.lua")
 dofile(MP.."/worker/protectioncheck_worker.lua")
-dofile(MP.."/worker/cleanup_worker.lua")
 
 -- compat
 if minetest.get_modpath("advtrains") then
