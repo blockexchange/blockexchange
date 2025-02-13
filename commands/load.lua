@@ -146,7 +146,7 @@ Promise.register_chatcommand("bx_load", {
     end
 })
 
-minetest.register_chatcommand("bx_load_update", {
+Promise.register_chatcommand("bx_load_update", {
     params = "[area_id?]",
     description = "downloads changes",
     privs = {blockexchange = true},
