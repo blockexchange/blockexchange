@@ -1,5 +1,7 @@
 
 function blockexchange.save_local(playername, pos1, pos2, schemaname)
+  pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
+
   local ctx = {
     type = "upload_local",
     schemaname = schemaname,
@@ -107,7 +109,6 @@ Promise.register_chatcommand("bx_save_local", {
 
     local pos1 = blockexchange.get_pos(1, name)
     local pos2 = blockexchange.get_pos(2, name)
-    pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
 
     if not pos1 or not pos2 then
       return true, "you need to set /bx_pos1 and /bx_pos2 first!"

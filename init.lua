@@ -82,8 +82,8 @@ if blockexchange.is_online then
 	dofile(MP.."/commands/license.lua")
 	dofile(MP.."/commands/user.lua")
 	dofile(MP.."/commands/placer.lua")
-	dofile(MP.."/commands/save_chat.lua")
 	dofile(MP.."/commands/save_update_chat.lua")
+	dofile(MP.."/commands/save.lua")
 	dofile(MP.."/commands/autosave.lua")
 	dofile(MP.."/commands/media.lua")
 	dofile(MP.."/commands/media_chat.lua")
@@ -95,7 +95,6 @@ dofile(MP.."/commands/area.lua")
 dofile(MP.."/commands/cancel_chat.lua")
 dofile(MP.."/commands/allocate.lua")
 dofile(MP.."/commands/load_local.lua")
-dofile(MP.."/commands/save.lua")
 dofile(MP.."/commands/save_update.lua")
 dofile(MP.."/commands/save_local.lua")
 dofile(MP.."/commands/emerge.lua")
@@ -103,7 +102,6 @@ dofile(MP.."/commands/protectioncheck.lua")
 dofile(MP.."/commands/cleanup.lua")
 
 -- worker functions
-dofile(MP.."/worker/save_worker.lua")
 dofile(MP.."/worker/save_update_worker.lua")
 
 -- compat

@@ -6,8 +6,7 @@ function blockexchange.protectioncheck(playername, pos1, pos2)
     playername = playername,
     current_part = 0,
     progress_percent = 0,
-    total_parts = blockexchange.count_schemaparts(pos1, pos2),
-    promise = Promise.new()
+    total_parts = blockexchange.count_schemaparts(pos1, pos2)
   }
 
   local promise = Promise.async(function(await)
@@ -45,5 +44,5 @@ function blockexchange.protectioncheck(playername, pos1, pos2)
   end)
 
   blockexchange.set_job_context(playername, ctx, promise)
-  return promise, ctx
+  return promise
 end
