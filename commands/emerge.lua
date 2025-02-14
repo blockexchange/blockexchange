@@ -49,9 +49,6 @@ Promise.register_chatcommand("bx_emerge", {
 	description = "Emerges the selected region",
   privs = { blockexchange = true },
 	func = function(name)
-    -- force-enable the hud
-    blockexchange.set_player_hud(name, true)
-
     if blockexchange.get_job_context(name) then
       return true, "There is a job already running"
     end

@@ -9,6 +9,9 @@ local job_context_map = {}
 -- @param promise the job's promise, for cleanup/removal of the job-data
 -- @return the payload in json format
 function blockexchange.set_job_context(playername, ctx, promise)
+    -- force-enable the hud for the player
+    blockexchange.set_player_hud(playername, true)
+
     job_context_map[playername] = ctx
     if promise then
         promise:finally(function()

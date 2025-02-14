@@ -181,9 +181,6 @@ Promise.register_chatcommand("bx_save", {
 			return true, "axis size limit of " .. blockexchange.max_size .. " nodes exceeded"
 		end
 
-		-- force-enable player-hud
-		blockexchange.set_player_hud(name, true)
-
 		return Promise.async(function(await)
 			local err, result
 			if not has_blockexchange_priv and has_protected_upload_priv and not has_protection_bypass_priv then

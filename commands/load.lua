@@ -137,9 +137,6 @@ Promise.register_chatcommand("bx_load", {
 
         if not pos1 then return false, "you need to set /bx_pos1 first!" end
 
-        -- force-enable player-hud
-        blockexchange.set_player_hud(name, true)
-
         return blockexchange.load(name, pos1, username, schemaname):next(function(result)
             return "Download complete with " .. result.schema.total_parts .. " parts"
         end)
@@ -151,9 +148,6 @@ Promise.register_chatcommand("bx_load_update", {
     description = "downloads changes",
     privs = {blockexchange = true},
     func = function(name, area_id)
-        -- force-enable the hud
-        blockexchange.set_player_hud(name, true)
-
         local area, err_msg = blockexchange.select_player_area(name, area_id)
         if err_msg then
             return false, err_msg
