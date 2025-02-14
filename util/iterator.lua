@@ -1,9 +1,10 @@
 
-local part_length = 16
+local default_part_length = 16
 
 
-function blockexchange.iterator(origin, pos1, pos2)
+function blockexchange.iterator(origin, pos1, pos2, part_length)
     pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
+    part_length = part_length or default_part_length
 
     local base_pos1 = blockexchange.get_base_pos(origin, pos1)
     local base_pos2 = blockexchange.get_base_pos(origin, pos2)
