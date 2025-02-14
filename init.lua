@@ -83,9 +83,12 @@ if blockexchange.is_online then
 	dofile(MP.."/commands/user.lua")
 	dofile(MP.."/commands/placer.lua")
 	dofile(MP.."/commands/save.lua")
+	dofile(MP.."/commands/save_update.lua")
 	dofile(MP.."/commands/autosave.lua")
 	dofile(MP.."/commands/media.lua")
 	dofile(MP.."/commands/load.lua")
+else
+	dofile(MP.."/commands/offline_info.lua")
 end
 -- commands
 dofile(MP.."/commands/pos.lua")
@@ -93,7 +96,6 @@ dofile(MP.."/commands/area.lua")
 dofile(MP.."/commands/cancel_chat.lua")
 dofile(MP.."/commands/allocate.lua")
 dofile(MP.."/commands/load_local.lua")
-dofile(MP.."/commands/save_update.lua")
 dofile(MP.."/commands/save_local.lua")
 dofile(MP.."/commands/emerge.lua")
 dofile(MP.."/commands/protectioncheck.lua")

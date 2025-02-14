@@ -65,11 +65,18 @@ local function worker()
     minetest.after(5, worker)
 end
 
-minetest.after(1, worker)
+if blockexchange.is_online then
+    minetest.after(1, worker)
+end
 
 -- change tracking code below
 
 function blockexchange.mark_changed(pos1, pos2)
+    if not blockexchange.is_online then
+        -- can't save online
+        return
+    end
+
     pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
 
     local mapblock_pos1 = blockexchange.get_mapblock(pos1)
