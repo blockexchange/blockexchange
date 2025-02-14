@@ -34,44 +34,9 @@ local function update_player_hud(player)
 	local text = ""
 	local color = 0x00ff00
 
-	if ctx then
-		if ctx.type == "emerge" then
-			icon_name = "blockexchange_emerge.png"
-			text = "Emerging, progress: " .. ctx.progress_percent .. " %"
-
-		elseif ctx.type == "protectioncheck" then
-			icon_name = "blockexchange_protectioncheck.png"
-			text = "Protection-check, progress: " .. ctx.progress_percent .. " %"
-
-		elseif ctx.type == "download" then
-			icon_name = "blockexchange_download.png"
-			text = "Downloading '" .. ctx.username .. "/" .. ctx.schemaname ..
-				"', progress: " .. ctx.progress_percent .. " %"
-
-		elseif ctx.type == "download_local" then
-			icon_name = "blockexchange_download.png"
-			text = "Loading '" .. ctx.schemaname ..
-				"', progress: " .. ctx.progress_percent .. " %"
-
-		elseif ctx.type == "upload" then
-			icon_name = "blockexchange_upload.png"
-			text = "Uploading '" .. ctx.username .. "/" .. ctx.schemaname ..
-				"', progress: " .. ctx.progress_percent .. " %"
-
-		elseif ctx.type == "upload_local" then
-			icon_name = "blockexchange_upload.png"
-			text = "Uploading '" .. ctx.schemaname ..
-				"', progress: " .. ctx.progress_percent .. " %"
-
-		elseif ctx.type == "upload_update" then
-			icon_name = "blockexchange_upload.png"
-			text = "Updating upload, progress: " .. ctx.progress_percent .. " %"
-
-		elseif ctx.type == "cleanup" then
-			icon_name = "blockexchange_cleanup.png"
-			text = "Cleanup, progress: " .. ctx.progress_percent .. " %"
-
-		end
+	if ctx and ctx.hud_icon then
+		icon_name = ctx.hud_icon
+		text = ctx.hud_text
 
 	elseif area then
 		icon_name = "blockexchange_info.png"

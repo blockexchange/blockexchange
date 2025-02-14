@@ -2,15 +2,14 @@
 function blockexchange.protectioncheck(playername, pos1, pos2)
 
   local ctx = {
-    type = "protectioncheck",
-    playername = playername,
-    current_part = 0,
-    progress_percent = 0,
-    total_parts = blockexchange.count_schemaparts(pos1, pos2)
+    hud_icon = "blockexchange_protectioncheck.png",
+    hud_text = "Protection-check, starting..."
   }
 
+  local total_parts = 0
+
   local promise = Promise.async(function(await)
-    for current_pos in blockexchange.iterator(pos1, pos1, pos2) do
+    for current_pos, _, progress in blockexchange.iterator(pos1, pos1, pos2) do
       local current_pos2 = vector.add(current_pos, 15)
       current_pos2.x = math.min(current_pos2.x, pos2.x)
       current_pos2.y = math.min(current_pos2.y, pos2.y)
@@ -20,8 +19,8 @@ function blockexchange.protectioncheck(playername, pos1, pos2)
 
       if not protected then
         -- increment stats
-        ctx.current_part = ctx.current_part + 1
-        ctx.progress_percent = math.floor(ctx.current_part / ctx.total_parts * 100 * 10) / 10
+        total_parts = total_parts + 1
+        ctx.hud_text = "Protection-check, progress: " .. math.floor(progress * 100 * 10) / 10 .. " %"
       else
         return {
           success = false,
@@ -39,7 +38,7 @@ function blockexchange.protectioncheck(playername, pos1, pos2)
 
     return {
       success = true,
-      total_parts = ctx.total_parts
+      total_parts = total_parts
     }
   end)
 

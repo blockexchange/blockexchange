@@ -8,14 +8,12 @@
 -- @return a promise that resolves if the operation is complete
 function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 	local ctx = {
-		type = "download",
-		retries = 0,
-		playername = playername,
-		username = username,
-		schemaname = schemaname,
-		current_part = 0,
-		progress_percent = 0
+		hud_icon = "blockexchange_download.png",
+		hud_text = "Download '" .. username .. "/" .. schemaname .. "' starting"
 	}
+
+	local retries = 0
+	local current_part = 0
 
 	local promise = Promise.async(function(await)
 		local schema, err = await(blockexchange.api.get_schema_by_name(username, schemaname, true))
@@ -44,11 +42,11 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 				schemapart, err = await(blockexchange.api.get_next_schemapart_by_mtime(schema.uid,  mtime))
 				if err then
 					-- retry later
-					ctx.retries = ctx.retries + 1
+					retries = retries + 1
 					await(Promise.after(5))
 				elseif schemapart then
 					-- success
-					ctx.current_part = ctx.current_part + 1
+					current_part = current_part + 1
 					mtime = schemapart.mtime
 					blockexchange.place_schemapart(schemapart, pos1)
 				else
@@ -62,13 +60,13 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 					schemapart, err = await(blockexchange.api.get_first_schemapart(schema.uid))
 					if err then
 						-- retry later
-						ctx.retries = ctx.retries + 1
+						retries = retries + 1
 						await(Promise.after(5))
 					elseif not schemapart then
 						-- empty schema
 						break
 					else
-						ctx.current_part = ctx.current_part + 1
+						current_part = current_part + 1
 						blockexchange.place_schemapart(schemapart, pos1)
 					end
 				else
@@ -80,20 +78,22 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 					}
 					schemapart, err = await(blockexchange.api.get_next_schemapart(schema.uid, pos))
 					if err then
-						ctx.retries = ctx.retries + 1
+						retries = retries + 1
 						await(Promise.after(5))
 					elseif not schemapart then
 						-- done
 						break
 					else
-						ctx.current_part = ctx.current_part + 1
+						current_part = current_part + 1
 						blockexchange.place_schemapart(schemapart, pos1)
 					end
 				end
 			end
 
 			-- compute stats
-			ctx.progress_percent = math.floor(ctx.current_part / total_parts * 100 * 10) / 10
+			local progress_percent = math.floor(current_part / total_parts * 100 * 10) / 10
+			ctx.hud_text = "Downloading '" .. username .. "/" .. schemaname ..
+				"', progress: " .. progress_percent .. " %"
 
 			await(Promise.after(blockexchange.min_delay))
 

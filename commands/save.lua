@@ -21,12 +21,8 @@ function blockexchange.save(playername, pos1, pos2, schemaname)
 	end
 
 	local ctx = {
-		type = "upload",
-		playername = playername,
-		username = claims.username,
-		schemaname = schemaname,
-		progress_percent = 0,
-		retries = 0
+		hud_icon = "blockexchange_upload.png",
+		hud_text = "Saving '" .. claims.username .. "/" .. schemaname .. "'"
 	}
 
 	local schema = {
@@ -39,6 +35,7 @@ function blockexchange.save(playername, pos1, pos2, schemaname)
 	}
 
 	local total_size = 0
+	local retries = 0
 	local mod_names = {}
 	local total_parts = 0
 
@@ -55,7 +52,9 @@ function blockexchange.save(playername, pos1, pos2, schemaname)
 			current_pos2.y = math.min(current_pos2.y, pos2.y)
 			current_pos2.z = math.min(current_pos2.z, pos2.z)
 
-			ctx.progress_percent = math.floor(progress * 100 * 10) / 10
+			local progress_percent = math.floor(progress * 100 * 10) / 10
+			ctx.hud_text = "Saving '" .. claims.username .. "/" .. schemaname ..
+				"', progress: " .. progress_percent .. " %"
 
 			local data, node_count, air_only = blockexchange.serialize_part(current_pos, current_pos2)
 			blockexchange.collect_node_count(node_count, mod_names)
@@ -77,12 +76,12 @@ function blockexchange.save(playername, pos1, pos2, schemaname)
 					-- retry loop
 					_, err = await(blockexchange.api.create_schemapart(token, schemapart))
 					if err then
-						if ctx.retries > 12 then
-							error("create schemapart failed after " .. ctx.retries .. " retries: " .. err, 0)
+						if retries > 12 then
+							error("create schemapart failed after " .. retries .. " retries: " .. err, 0)
 						end
 						-- retry again later
 						await(Promise.after(5))
-						ctx.retries = ctx.retries + 1
+						retries = retries + 1
 					else
 						-- saved successfully
 						if has_monitoring then

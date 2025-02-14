@@ -1,15 +1,12 @@
 -- update a region
-function blockexchange.save_update(playername, origin, pos1, pos2, username, schema_uid)
+function blockexchange.save_update(playername, origin, pos1, pos2, _, schema_uid)
 	pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
 
 	local token = blockexchange.get_token(playername)
 
 	local ctx = {
-		type = "upload_update",
-		playername = playername,
-		username = username,
-		schema_uid = schema_uid,
-		progress_percent = 0
+		hud_icon = "blockexchange_upload.png",
+		hud_text = "Saving changes"
 	}
 
 	local mod_names = {}
@@ -21,7 +18,8 @@ function blockexchange.save_update(playername, origin, pos1, pos2, username, sch
 			current_pos2.y = math.min(current_pos2.y, pos2.y)
 			current_pos2.z = math.min(current_pos2.z, pos2.z)
 
-			ctx.progress_percent = math.floor(progress * 100 * 10) / 10
+			local progress_percent = math.floor(progress * 100 * 10) / 10
+			ctx.hud_text = "Saving changes, progress: " .. progress_percent .. " %"
 
 			local data, node_count = blockexchange.serialize_part(current_pos, current_pos2)
 			blockexchange.collect_node_count(node_count, mod_names)

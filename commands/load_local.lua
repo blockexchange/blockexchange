@@ -1,59 +1,60 @@
 
 function blockexchange.load_local(playername, origin, schemaname)
     local ctx = {
-		type = "download_local",
-		schemaname = schemaname,
-		current_part = 0,
-		progress_percent = 0
+        hud_icon = "blockexchange_download.png",
+		hud_text = "Local download '" .. schemaname .. "' starting"
 	}
 
-	local promise = Promise.async(function(await)
+    local current_part = 0
+    local zip
 
+    local promise = Promise.async(function(await)
+
+        local err
         local filename = blockexchange.get_local_filename(schemaname)
-        ctx.zipfile = io.open(filename, "rb")
-        if not ctx.zipfile then
+        local zipfile = io.open(filename, "rb")
+        if not zipfile then
             error("file not found: " .. filename, 0)
         end
-        local z, err_msg = mtzip.unzip(ctx.zipfile)
-        if err_msg then
-            error("unzip error: " .. err_msg, 0)
+        zip, err = mtzip.unzip(zipfile)
+        if err then
+            error("unzip error: " .. err, 0)
         end
-        ctx.zip = z
 
         local schema_str
-        schema_str, err_msg = ctx.zip:get("schema.json", true)
-        if err_msg then
-            error("schema.json error: " .. err_msg, 0)
+        schema_str, err = zip:get("schema.json", true)
+        if err then
+            error("schema.json error: " .. err, 0)
         end
         local schema = minetest.parse_json(schema_str)
 
         local pos2 = vector.add(origin, blockexchange.get_schema_size(schema))
         pos2 = vector.subtract(pos2, 1)
         blockexchange.set_pos(2, playername, pos2)
-        ctx.total_parts = blockexchange.count_schemaparts(origin, pos2)
+        local total_parts = blockexchange.count_schemaparts(origin, pos2)
 
 		for current_pos in blockexchange.iterator(origin, origin, pos2) do
             -- TODO: maybe iterate over files instead of map-parts
 			local relative_pos = vector.subtract(current_pos, origin)
 			local entry_filename = "schemapart_" .. relative_pos.x .. "_" .. relative_pos.y .. "_" .. relative_pos.z .. ".json"
-			local entry = ctx.zip:get_entry(entry_filename)
+			local entry = zip:get_entry(entry_filename)
 			if entry then
 				-- non-air part
                 local schemapart_str
-				schemapart_str, err_msg = ctx.zip:get(entry_filename, true)
-				if err_msg then
-					error("schemapart error: " .. err_msg, 0)
+				schemapart_str, err = zip:get(entry_filename, true)
+				if err then
+					error("schemapart error: " .. err, 0)
 				end
 				local schemapart = minetest.parse_json(schemapart_str)
 
 				-- increment stats
-				ctx.current_part = ctx.current_part + 1
-				ctx.progress_percent = math.floor(ctx.current_part / ctx.total_parts * 100 * 10) / 10
+				current_part = current_part + 1
+				local progress_percent = math.floor(current_part / total_parts * 100 * 10) / 10
+                ctx.hud_text = "Local download '" .. schemaname ..
+				    "', progress: " .. progress_percent .. " %"
 
 				blockexchange.place_schemapart(schemapart, origin)
 				minetest.log("action", "[blockexchange] Extraction of part " .. minetest.pos_to_string(current_pos) .. " completed")
-
-				ctx.last_schemapart = schemapart
 			end
 
 			if ctx.cancel then
@@ -63,7 +64,7 @@ function blockexchange.load_local(playername, origin, schemaname)
 		end
 
 		return {
-            total_parts = ctx.total_parts
+            total_parts = total_parts
         }
 	end)
 

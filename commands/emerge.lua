@@ -11,9 +11,8 @@
 function blockexchange.emerge(playername, pos1, pos2)
 
   local ctx = {
-    type = "emerge",
-    playername = playername,
-    progress_percent = 0
+    hud_icon = "blockexchange_emerge.png",
+    hud_text = "Emerging, starting..."
   }
 
   local promise = Promise.async(function(await)
@@ -22,11 +21,12 @@ function blockexchange.emerge(playername, pos1, pos2)
     for current_pos, _, progress in blockexchange.iterator(pos1, pos1, pos2) do
       -- TODO: chunk-granular iterator
       local current_pos2 = vector.add(current_pos, 15)
+      local progress_percent = math.floor(progress * 100 * 10) / 10
+      ctx.hud_text = "Emerging, progress: " .. progress_percent .. " %"
 
-      ctx.progress_percent = math.floor(progress * 100 * 10) / 10
       blockexchange.log(
         "action",
-        "emerging area at " .. minetest.pos_to_string(current_pos) .. " progress: " .. ctx.progress_percent
+        "emerging area at " .. minetest.pos_to_string(current_pos) .. " progress: " .. progress_percent
       )
       await(Promise.emerge_area(current_pos, current_pos2))
       total_parts = total_parts + 1
@@ -41,7 +41,8 @@ function blockexchange.emerge(playername, pos1, pos2)
     return total_parts
   end)
 
-  return promise, ctx
+  blockexchange.set_job_context(playername, ctx, promise)
+  return promise
 end
 
 Promise.register_chatcommand("bx_emerge", {
@@ -63,14 +64,7 @@ Promise.register_chatcommand("bx_emerge", {
       return false, "you need to set /bx_pos1 and /bx_pos2 first!"
     end
 
-    local promise, ctx = blockexchange.emerge(name, pos1, pos2)
-    blockexchange.set_job_context(ctx.playername, ctx)
-
-    promise:finally(function()
-      blockexchange.set_job_context(ctx.playername, nil)
-    end)
-
-    return promise:next(function(total_parts)
+    return blockexchange.emerge(name, pos1, pos2):next(function(total_parts)
       return "emerged " .. total_parts .. " parts"
     end)
   end

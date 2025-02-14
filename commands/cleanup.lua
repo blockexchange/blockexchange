@@ -13,15 +13,12 @@ function blockexchange.cleanup(playername, pos1, pos2)
   }
 
   local ctx = {
-    type = "cleanup",
-    playername = playername,
-    current_part = 0,
-    progress_percent = 0,
-    total_parts = blockexchange.count_schemaparts(pos1, pos2)
+    hud_icon = "blockexchange_cleanup.png",
+    hud_text = "Cleanup, starting..."
   }
 
   local promise = Promise.async(function(await)
-    for current_pos in blockexchange.iterator(pos1, pos1, pos2) do
+    for current_pos, _, progress in blockexchange.iterator(pos1, pos1, pos2) do
       local current_pos2 = vector.add(current_pos, 15)
       current_pos2.x = math.min(current_pos2.x, pos2.x)
       current_pos2.y = math.min(current_pos2.y, pos2.y)
@@ -31,9 +28,7 @@ function blockexchange.cleanup(playername, pos1, pos2)
       result.meta = result.meta + area_result.meta
       result.param2 = result.param2 + area_result.param2
 
-      -- increment stats
-      ctx.current_part = ctx.current_part + 1
-      ctx.progress_percent = math.floor(ctx.current_part / ctx.total_parts * 100 * 10) / 10
+      ctx.hud_text = "Cleanup, progress: " .. math.floor(progress * 100 * 10) / 10 .. " %"
 
       await(Promise.after(blockexchange.min_delay))
 
@@ -45,7 +40,7 @@ function blockexchange.cleanup(playername, pos1, pos2)
     return result
   end)
 
-  blockexchange.set_job_context(ctx.playername, ctx, promise)
+  blockexchange.set_job_context(playername, ctx, promise)
   return promise
 end
 
