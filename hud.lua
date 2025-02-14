@@ -58,6 +58,11 @@ local function update_player_hud(player)
 			text = "Uploading '" .. (ctx.username or "<local>") .. "/" .. ctx.schemaname ..
 				"', progress: " .. ctx.progress_percent .. " %"
 
+		elseif ctx.type == "upload_local" then
+			icon_name = "blockexchange_upload.png"
+			text = "Uploading '" .. ctx.schemaname ..
+				"', progress: " .. ctx.progress_percent .. " %"
+
 		elseif ctx.type == "upload-update" then
 			icon_name = "blockexchange_upload.png"
 			text = "Updating upload, progress: " .. ctx.progress_percent .. " %"

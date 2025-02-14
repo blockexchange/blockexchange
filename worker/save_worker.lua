@@ -33,41 +33,25 @@ function blockexchange.save_worker(ctx)
 			table.insert(mod_names, k)
 		end
 
-		if ctx.local_save then
-			-- local save
-			ctx.create_schema.total_parts = ctx.current_part
-			ctx.create_schema.total_size = ctx.total_size
-			ctx.zip:add("mods.json", minetest.write_json(mod_names))
-			ctx.zip:add("schema.json", minetest.write_json(ctx.create_schema))
-			ctx.zip:close()
-			ctx.zipfile:close()
-
-			local msg = "[blockexchange] Local save complete with " .. ctx.total_parts .. " parts"
+		blockexchange.api.create_schemamods(ctx.token, ctx.schema.uid, mod_names):next(function()
+			return blockexchange.api.update_schema_stats(ctx.token, ctx.schema.uid)
+		end):next(function()
+			local msg = "[blockexchange] Save complete with " .. ctx.total_parts .. " parts"
 			minetest.log("action", msg)
 			minetest.chat_send_player(ctx.playername, msg)
 			ctx.promise:resolve({ total_parts = ctx.total_parts})
-		else
-			-- online save
-			blockexchange.api.create_schemamods(ctx.token, ctx.schema.uid, mod_names):next(function()
-				return blockexchange.api.update_schema_stats(ctx.token, ctx.schema.uid)
-			end):next(function()
-				local msg = "[blockexchange] Save complete with " .. ctx.total_parts .. " parts"
-				minetest.log("action", msg)
-				minetest.chat_send_player(ctx.playername, msg)
-				ctx.promise:resolve({ total_parts = ctx.total_parts})
-				-- fetch updated schema
-				return blockexchange.api.get_schema_by_name(ctx.username, ctx.schemaname)
-			end):next(function(schema)
-				-- register for later future updates
-				blockexchange.register_area(ctx.pos1, ctx.pos2, ctx.playername, ctx.username, schema)
-			end):catch(function(err)
-				local msg = "[blockexchange] finalize schema failed: " .. (err or "unkown") ..
-				" retry manual on the web-ui please"
-				minetest.log("error", msg)
-				minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
-				ctx.promise:resolve({ total_parts = ctx.total_parts})
-			end)
-		end
+			-- fetch updated schema
+			return blockexchange.api.get_schema_by_name(ctx.username, ctx.schemaname)
+		end):next(function(schema)
+			-- register for later future updates
+			blockexchange.register_area(ctx.pos1, ctx.pos2, ctx.playername, ctx.username, schema)
+		end):catch(function(err)
+			local msg = "[blockexchange] finalize schema failed: " .. (err or "unkown") ..
+			" retry manual on the web-ui please"
+			minetest.log("error", msg)
+			minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
+			ctx.promise:resolve({ total_parts = ctx.total_parts})
+		end)
 
 		return
 	end
@@ -107,37 +91,24 @@ function blockexchange.save_worker(ctx)
 
 		ctx.total_size = ctx.total_size + #schemapart.data + #schemapart.metadata
 
-		if ctx.local_save then
-			-- save locally
-			minetest.log("action", "[blockexchange] Saving local schemapart " .. minetest.pos_to_string(relative_pos))
-			local filename = "schemapart_" .. schemapart.offset_x ..
-				"_" .. schemapart.offset_y ..
-				"_" .. schemapart.offset_z ..
-				".json"
-			ctx.zip:add(filename, minetest.write_json(schemapart))
+		blockexchange.api.create_schemapart(ctx.token, schemapart):next(function()
+			minetest.log("action", "[blockexchange] Save of part " .. minetest.pos_to_string(ctx.current_pos) ..
+			" completed (processing took " .. diff .. " micros)")
+
+			if has_monitoring then
+				uploaded_blocks.inc(1)
+			end
+
 			shift(ctx)
 			minetest.after(blockexchange.min_delay, blockexchange.save_worker, ctx)
-		else
-			-- upload part online
-			blockexchange.api.create_schemapart(ctx.token, schemapart):next(function()
-				minetest.log("action", "[blockexchange] Save of part " .. minetest.pos_to_string(ctx.current_pos) ..
-				" completed (processing took " .. diff .. " micros)")
-
-				if has_monitoring then
-					uploaded_blocks.inc(1)
-				end
-
-				shift(ctx)
-				minetest.after(blockexchange.min_delay, blockexchange.save_worker, ctx)
-			end):catch(function(err)
-				local msg = "[blockexchange] create schemapart failed: " .. (err or "unkown") ..
-				" retrying..."
-				minetest.log("error", msg)
-				minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
-				-- wait a couple seconds
-				minetest.after(5, blockexchange.save_worker, ctx)
-			end)
-		end
+		end):catch(function(err)
+			local msg = "[blockexchange] create schemapart failed: " .. (err or "unkown") ..
+			" retrying..."
+			minetest.log("error", msg)
+			minetest.chat_send_player(ctx.playername, minetest.colorize("#ff0000", msg))
+			-- wait a couple seconds
+			minetest.after(5, blockexchange.save_worker, ctx)
+		end)
 	end
 
 end
