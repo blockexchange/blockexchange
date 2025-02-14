@@ -24,7 +24,7 @@ mtt.register("remote save test", function(callback)
             callback("loaded area does not match: " .. msg)
         end
     end):next(function()
-        return blockexchange.save(playername, pos1, pos2, schemaname, true)
+        return blockexchange.save_local(playername, pos1, pos2, schemaname)
     end):next(function()
         return blockexchange.load_local(playername, pos1_load, schemaname)
     end):next(function()
