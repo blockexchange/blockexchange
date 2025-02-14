@@ -37,13 +37,7 @@ function blockexchange.save_local(playername, pos1, pos2, schemaname)
       blockexchange.collect_node_count(node_count, mod_names)
 
       if not air_only then
-        local schemapart = {
-          offset_x = relative_pos.x,
-          offset_y = relative_pos.y,
-          offset_z = relative_pos.z,
-          data = minetest.encode_base64(blockexchange.compress_data(data)),
-          metadata = minetest.encode_base64(blockexchange.compress_metadata(data))
-        }
+        local schemapart = blockexchange.create_schemapart(data, relative_pos)
 
         total_size = total_size + #schemapart.data + #schemapart.metadata
         total_parts = total_parts + 1

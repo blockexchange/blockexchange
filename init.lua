@@ -75,6 +75,7 @@ dofile(MP.."/util/unpack_schemapart.lua")
 dofile(MP.."/util/place_schemapart.lua")
 dofile(MP.."/util/validate_name.lua")
 dofile(MP.."/util/is_player_in_area.lua")
+dofile(MP.."/util/create_schemapart.lua")
 
 if blockexchange.is_online then
 	-- online commands
