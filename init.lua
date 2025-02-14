@@ -11,11 +11,21 @@ blockexchange = {
 	api = {},
 	api_version_major = 1,
 	url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.ch",
-	min_delay = tonumber(minetest.settings:get("blockexchange.min_delay") or "0.1"),
+	min_delay = 0.1,
 	pos1 = {}, -- name -> pos
 	pos2 = {}, -- name -> pos
 	max_size = 1000
 }
+
+-- min-delay for async operations
+local min_delay_setting = tonumber(minetest.settings:get("blockexchange.min_delay"))
+if min_delay_setting and min_delay_setting > 0 then
+	-- use setting
+	blockexchange.min_delay = min_delay_setting
+elseif minetest.is_singleplayer() then
+	-- default to 0 in singleplayer
+	blockexchange.min_delay = 0
+end
 
 assert(mtzip.api_version == 1, "mtzip api compatibility")
 assert(Promise.api_version == 1, "Promise api compatibility")
