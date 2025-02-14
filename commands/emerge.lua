@@ -20,6 +20,7 @@ function blockexchange.emerge(playername, pos1, pos2)
     local total_parts = 0
 
     for current_pos, _, progress in blockexchange.iterator(pos1, pos1, pos2) do
+      -- TODO: chunk-granular iterator
       local current_pos2 = vector.add(current_pos, 15)
 
       ctx.progress_percent = math.floor(progress * 100 * 10) / 10
@@ -42,3 +43,35 @@ function blockexchange.emerge(playername, pos1, pos2)
 
   return promise, ctx
 end
+
+Promise.register_chatcommand("bx_emerge", {
+	description = "Emerges the selected region",
+  privs = { blockexchange = true },
+	func = function(name)
+    -- force-enable the hud
+    blockexchange.set_player_hud(name, true)
+
+    if blockexchange.get_job_context(name) then
+      return true, "There is a job already running"
+    end
+
+    local pos1 = blockexchange.get_pos(1, name)
+    local pos2 = blockexchange.get_pos(2, name)
+    pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
+
+    if not pos1 or not pos2 then
+      return false, "you need to set /bx_pos1 and /bx_pos2 first!"
+    end
+
+    local promise, ctx = blockexchange.emerge(name, pos1, pos2)
+    blockexchange.set_job_context(ctx.playername, ctx)
+
+    promise:finally(function()
+      blockexchange.set_job_context(ctx.playername, nil)
+    end)
+
+    return promise:next(function(total_parts)
+      return "emerged " .. total_parts .. " parts"
+    end)
+  end
+})

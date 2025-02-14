@@ -45,15 +45,25 @@ local function update_player_hud(player)
 
 		elseif ctx.type == "download" then
 			icon_name = "blockexchange_download.png"
-			text = "Downloading '" .. (ctx.username or "<local>") .. "/" .. ctx.schemaname ..
+			text = "Downloading '" .. ctx.username .. "/" .. ctx.schemaname ..
+				"', progress: " .. ctx.progress_percent .. " %"
+
+		elseif ctx.type == "download_local" then
+			icon_name = "blockexchange_download.png"
+			text = "Loading '" .. ctx.schemaname ..
 				"', progress: " .. ctx.progress_percent .. " %"
 
 		elseif ctx.type == "upload" then
 			icon_name = "blockexchange_upload.png"
-			text = "Uploading '" .. (ctx.username or "<local>") .. "/" .. ctx.schemaname ..
+			text = "Uploading '" .. ctx.username .. "/" .. ctx.schemaname ..
 				"', progress: " .. ctx.progress_percent .. " %"
 
-		elseif ctx.type == "upload-update" then
+		elseif ctx.type == "upload_local" then
+			icon_name = "blockexchange_upload.png"
+			text = "Uploading '" .. ctx.schemaname ..
+				"', progress: " .. ctx.progress_percent .. " %"
+
+		elseif ctx.type == "upload_update" then
 			icon_name = "blockexchange_upload.png"
 			text = "Updating upload, progress: " .. ctx.progress_percent .. " %"
 

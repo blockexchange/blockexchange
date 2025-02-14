@@ -52,6 +52,7 @@ dofile(MP.."/util/placer_preview.lua")
 dofile(MP.."/util/remove_nodes.lua")
 dofile(MP.."/util/player_area.lua")
 dofile(MP.."/util/compare_area.lua")
+dofile(MP.."/util/cleanup_area.lua")
 dofile(MP.."/util/ignored_content_ids.lua")
 dofile(MP.."/util/serialize.lua")
 dofile(MP.."/util/deserialize.lua")
@@ -75,47 +76,28 @@ dofile(MP.."/util/place_schemapart.lua")
 dofile(MP.."/util/validate_name.lua")
 dofile(MP.."/util/is_player_in_area.lua")
 
--- commands
 if blockexchange.is_online then
 	-- online commands
-	dofile(MP.."/commands/api_check_wrapper.lua")
 	dofile(MP.."/commands/info.lua")
 	dofile(MP.."/commands/license.lua")
 	dofile(MP.."/commands/user.lua")
-	dofile(MP.."/commands/allocate_chat.lua")
 	dofile(MP.."/commands/placer.lua")
-	dofile(MP.."/commands/save_chat.lua")
-	dofile(MP.."/commands/save_update_chat.lua")
-	dofile(MP.."/commands/load_update_chat.lua")
-	dofile(MP.."/commands/load_chat.lua")
+	dofile(MP.."/commands/save.lua")
 	dofile(MP.."/commands/autosave.lua")
 	dofile(MP.."/commands/media.lua")
-	dofile(MP.."/commands/media_chat.lua")
+	dofile(MP.."/commands/load.lua")
 end
--- commands that are available offline
+-- commands
 dofile(MP.."/commands/pos.lua")
 dofile(MP.."/commands/area.lua")
 dofile(MP.."/commands/cancel_chat.lua")
 dofile(MP.."/commands/allocate.lua")
-dofile(MP.."/commands/allocate_local_chat.lua")
-dofile(MP.."/commands/load.lua")
-dofile(MP.."/commands/load_local_chat.lua")
-dofile(MP.."/commands/save.lua")
+dofile(MP.."/commands/load_local.lua")
 dofile(MP.."/commands/save_update.lua")
-dofile(MP.."/commands/save_local_chat.lua")
+dofile(MP.."/commands/save_local.lua")
 dofile(MP.."/commands/emerge.lua")
-dofile(MP.."/commands/emerge_chat.lua")
 dofile(MP.."/commands/protectioncheck.lua")
 dofile(MP.."/commands/cleanup.lua")
-dofile(MP.."/commands/cleanup_chat.lua")
-
--- worker functions
-dofile(MP.."/worker/load_worker.lua")
-dofile(MP.."/worker/load_local_worker.lua")
-dofile(MP.."/worker/save_worker.lua")
-dofile(MP.."/worker/save_update_worker.lua")
-dofile(MP.."/worker/protectioncheck_worker.lua")
-dofile(MP.."/worker/cleanup_worker.lua")
 
 -- compat
 if minetest.get_modpath("advtrains") then
