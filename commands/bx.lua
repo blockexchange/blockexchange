@@ -84,6 +84,19 @@ function blockexchange.show_form_settings(playername)
 	end)
 end
 
+-- user profile / logout
+function blockexchange.show_form_profile(playername)
+	local fs = [[
+		size[10,10];
+		button_exit[back];
+	]]
+	Promise.formspec(playername, fs):next(function(fields)
+		if fields.back then
+			blockexchange.show_form_main(playername)
+		end
+	end)
+end
+
 -- main entry
 function blockexchange.show_form_main(playername)
 	local ctx = get_context(playername)
@@ -91,10 +104,13 @@ function blockexchange.show_form_main(playername)
 	local fs = [[
 		size[10,10];
 		button_exit[show_settings];
+		button_exit[show_profile];
 	]]
 	Promise.formspec(playername, fs):next(function(fields)
 		if fields.show_settings then
 			blockexchange.show_form_settings(playername)
+		elseif fields.show_profile then
+			blockexchange.show_form_profile(playername)
 		end
 	end)
 end
