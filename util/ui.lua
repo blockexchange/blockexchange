@@ -12,7 +12,7 @@ function ui.formspec(w, h)
     ]]
 end
 
-function ui.button(x,y,w,h,name,label)
+function ui.button_exit(x,y,w,h,name,label)
     return "image_button_exit[" ..
         x..","..y..";"..w..","..h..";" ..
         "blockexchange_button_rectangle_depth_border.png;" ..
