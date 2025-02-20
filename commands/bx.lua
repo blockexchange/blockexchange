@@ -1,3 +1,4 @@
+local ui = blockexchange.ui
 
 -- playername -> context
 local context_data = {}
@@ -101,11 +102,10 @@ end
 function blockexchange.show_form_main(playername)
 	local ctx = get_context(playername)
 	ctx.form = "main"
-	local fs = [[
-		size[10,10];
-		button_exit[show_settings];
-		button_exit[show_profile];
-	]]
+	local fs = ui.formspec(10,10) ..
+		ui.button(0, -1, 2.8, 0.8, "show_settings", "Settings") ..
+		ui.button(3, -1, 2.8, 0.8, "show_profile", "Profile")
+
 	Promise.formspec(playername, fs):next(function(fields)
 		if fields.show_settings then
 			blockexchange.show_form_settings(playername)
