@@ -6,9 +6,10 @@ blockexchange.ui = ui
 function ui.formspec(w, h)
     return [[
         formspec_version[3]
-		size[]] .. w .. [[,]] .. h .. [[]
-		no_prepend[]
-		background9[0,0;0,0;blockexchange_button_square_flat.png;true;8]
+        size[]] .. w .. [[,]] .. h .. [[]
+        no_prepend[]
+        bgcolor[;neither;]
+        background9[0,0;0,0;blockexchange_button_square_flat.png;true;8]
     ]]
 end
 
