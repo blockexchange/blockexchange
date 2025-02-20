@@ -55,6 +55,7 @@ dofile(MP.."/areas.lua")
 dofile(MP.."/autosave.lua")
 
 -- utils
+dofile(MP.."/util/ui.lua")
 dofile(MP.."/util/pointed.lua")
 dofile(MP.."/util/placer_tool.lua")
 dofile(MP.."/util/placer_entity.lua")
@@ -102,6 +103,7 @@ else
 	dofile(MP.."/commands/offline_info.lua")
 end
 -- commands
+dofile(MP.."/commands/bx.lua")
 dofile(MP.."/commands/pos.lua")
 dofile(MP.."/commands/area.lua")
 dofile(MP.."/commands/cancel_chat.lua")
