@@ -42,6 +42,8 @@ function blockexchange.show_form_settings(playername)
 	ctx.form = "settings"
 
 	local fs = main_fs("Settings")
+	fs = fs .. "label[1,2;Nothing to see here (yet)]"
+
 	Promise.formspec(playername, fs):next(function(fields)
 		if handle_top_nav(fields, playername) then
 			return
@@ -54,11 +56,35 @@ function blockexchange.show_form_info(playername)
 	local ctx = get_context(playername)
 	ctx.form = "info"
 
-	-- TODO: profile info if logged in / web link to blockexchange page
-	-- TODO: logout button
-	local fs = main_fs("Info")
-	Promise.formspec(playername, fs):next(function(fields)
+	return Promise.async(function(await)
+		local fs = main_fs("Info")
+
+		-- fetch remote info
+		local info, err = await(blockexchange.api.get_info())
+		if err then
+			error("remote info fetch failed: " .. err, 0)
+		end
+
+		local secondary_color = "#BBBBBB"
+		fs = fs .. "label[1,2;Connected Blockexchange:]"
+		fs = fs .. "label[1.2,2.5;Name: " .. minetest.colorize(secondary_color, info.name) .. "]"
+		fs = fs .. "label[1.2,3;URL: " .. minetest.colorize(secondary_color, info.base_url)  .. "]"
+		fs = fs .. "label[1.2,3.5;Users: " .. minetest.colorize(secondary_color, info.stats.user_count)  .. "]"
+		fs = fs .. "label[1.2,4;Schematics: " .. minetest.colorize(secondary_color, info.stats.schema_count)  .. "]"
+
+		local claims = blockexchange.get_claims(playername)
+		if claims then
+			fs = fs .. "label[1,5;" .. "Logged in:]"
+			fs = fs .. "label[1.2,5.5;Name: " .. minetest.colorize(secondary_color, claims.username) .. "]"
+			fs = fs .. "label[1.2,6;Type: " .. minetest.colorize(secondary_color, claims.type) .. "]"
+			fs = fs .. "label[1.2,6.5;ID: " .. minetest.colorize(secondary_color, claims.user_uid) .. "]"
+		else
+			fs = fs .. "label[1,5;" .. minetest.colorize("#ffff00", "Not logged in") .. "]"
+		end
+
+		local fields = await(Promise.formspec(playername, fs))
 		if handle_top_nav(fields, playername) then
+			-- top nav change, return early
 			return
 		end
 	end)
@@ -68,15 +94,16 @@ function blockexchange.show_form(playername)
 	local ctx = get_context(playername)
 	if ctx.form == "settings" then
 		-- settings page
-		blockexchange.show_form_settings(playername)
+		return blockexchange.show_form_settings(playername)
 	else
 		-- default to info form
-		blockexchange.show_form_info(playername)
+		return blockexchange.show_form_info(playername)
 	end
 end
 
 
-minetest.register_chatcommand("bx", {
+Promise.register_chatcommand("bx", {
 	description = "Shows the main blockexchange menu",
-	func = blockexchange.show_form
+	func = blockexchange.show_form,
+	handle_success = false
 })

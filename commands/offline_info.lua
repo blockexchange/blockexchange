@@ -8,6 +8,7 @@ local offline_info_cmd = {
 }
 
 local online_commands = {
+    "bx",
     "bx_login",
     "bx_logout",
     "bx_load",
