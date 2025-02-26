@@ -55,6 +55,7 @@ dofile(MP.."/areas.lua")
 dofile(MP.."/autosave.lua")
 
 -- utils
+dofile(MP.."/util/ui.lua")
 dofile(MP.."/util/pointed.lua")
 dofile(MP.."/util/placer_tool.lua")
 dofile(MP.."/util/placer_entity.lua")
@@ -98,6 +99,7 @@ if blockexchange.is_online then
 	dofile(MP.."/commands/autosave.lua")
 	dofile(MP.."/commands/media.lua")
 	dofile(MP.."/commands/load.lua")
+	dofile(MP.."/commands/bx.lua")
 else
 	dofile(MP.."/commands/offline_info.lua")
 end
