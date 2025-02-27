@@ -67,6 +67,7 @@ Online commands, they call the remote-server with the http api
 
 ### Read-only
 
+* **/bx** shows the info and settings menu
 * **/bx_info** shows infos about the connected blockexchange server
 * **/bx_license** sets or displays the license of your uploaded schematics (defaults to CC0)
 * **/bx_load [username] [schematic-name]** load a schematic by name onto pos1
@@ -108,4 +109,5 @@ See: https://blockexchange.github.io/blockexchange/
 
 * Textures
     * `textures/blockexchange_button*png` CC0 https://opengameart.org/content/ui-pack
+    * `textures/blockexchange_check*png` CC0 https://opengameart.org/content/ui-pack
     * Everything else: CC-BY-SA 3.0 (http://www.small-icons.com/packs/16x16-free-application-icons.htm)

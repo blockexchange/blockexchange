@@ -77,12 +77,12 @@ minetest.register_chatcommand("bx_upload_media", {
             return true, "mod '" .. modname .. "' not found"
         end
 
-        local token = blockexchange.get_token(name)
-        if not token then
+        local player_settings = blockexchange.get_player_settings(name)
+        if not player_settings.token then
             return true, "please login first to upload media"
         end
 
-        blockexchange.upload_mod_media(token, modname, license):next(function(stats)
+        blockexchange.upload_mod_media(player_settings.token, modname, license):next(function(stats)
             minetest.chat_send_player(name, "[blockexchange] uploaded " .. stats.nodedefs .. " node-definitions and " ..
                 stats.mediafiles .. " mediafiles with " .. stats.size .. " bytes")
         end):catch(function(e)

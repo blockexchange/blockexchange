@@ -7,9 +7,10 @@ local token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9" ..
 
 mtt.register("token", function(callback)
     local playername = "singleplayer"
-    blockexchange.set_token(playername, token)
+    local player_settings = blockexchange.get_player_settings(playername)
+    player_settings.token = token
+    blockexchange.set_player_settings(playername, player_settings)
 
-    assert(blockexchange.get_token(playername))
     local claims = assert(blockexchange.get_claims(playername))
 
     assert(claims.username == "Testuser")

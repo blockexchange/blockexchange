@@ -10,14 +10,14 @@ minetest.register_chatcommand("bx_login", {
 
 		local _, _, username, access_token = string.find(param, "^([^%s]+)%s+([^%s]+)%s*$")
 		if not username or not access_token then
-			local token = blockexchange.get_token(name)
-			if not token then
+			local player_settings = blockexchange.get_player_settings(name)
+			if not player_settings.token then
 				-- not logged in
 				return false, "Not logged in, usage: /bx_login <username> <access_token>"
 			end
 
 			-- logged in, show status
-			local payload = blockexchange.parse_token(token)
+			local payload = blockexchange.parse_token(player_settings.token)
 			if not payload or not payload.user_uid then
 				-- invalid or old token
 				-- TODO: check validity
@@ -28,7 +28,10 @@ minetest.register_chatcommand("bx_login", {
 		end
 
 		blockexchange.api.get_token(username, access_token):next(function(token)
-			blockexchange.set_token(name, token)
+			local player_settings = blockexchange.get_player_settings(name)
+			player_settings.token = token
+			blockexchange.set_player_settings(name, player_settings)
+
 			local payload = blockexchange.parse_token(token)
 			minetest.chat_send_player(name, "Logged in as '" .. payload.username .. "' with user_uid: " .. payload.user_uid)
 		end):catch(function(err)
@@ -41,7 +44,9 @@ minetest.register_chatcommand("bx_login", {
 minetest.register_chatcommand("bx_logout", {
 	description = "Logs the current user out",
 	func = function(name)
-		blockexchange.set_token(name)
+		local player_settings = blockexchange.get_player_settings(name)
+		player_settings.token = nil
+		blockexchange.set_player_settings(name, player_settings)
 		minetest.chat_send_player(name, "Logged out successfully")
   end
 })

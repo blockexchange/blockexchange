@@ -100,8 +100,8 @@ end
 -- state tracking
 
 local function create_hud(player)
-	local meta = player:get_meta()
-	if meta:get_int("bx_hud") ~= 1 then
+	local player_settings = blockexchange.get_player_settings(player:get_player_name())
+	if not player_settings.hud then
 		-- not enabled
 		return
 	end
@@ -166,13 +166,14 @@ function blockexchange.set_player_hud(playername, enabled)
 		return
 	end
 
-	local meta = player:get_meta()
+	local player_settings = blockexchange.get_player_settings(playername)
+	player_settings.hud = enabled
+	blockexchange.set_player_settings(playername, player_settings)
+
 	if enabled then
-		meta:set_int("bx_hud", 1)
 		create_hud(player)
 		return true, "Hud enabled"
 	else
-		meta:set_int("bx_hud", 0)
 		remove_hud(player)
 		return true, "Hud disabled"
 	end

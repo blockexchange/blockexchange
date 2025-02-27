@@ -2,7 +2,7 @@
 function blockexchange.save_update(playername, origin, pos1, pos2, _, schema_uid)
 	pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
 
-	local token = blockexchange.get_token(playername)
+	local player_settings = blockexchange.get_player_settings(playername)
 
 	local job = {
 		hud_icon = "blockexchange_upload.png",
@@ -28,7 +28,7 @@ function blockexchange.save_update(playername, origin, pos1, pos2, _, schema_uid
 			local schemapart = blockexchange.create_schemapart(data, relative_pos, schema_uid)
 
 			-- upload part online
-			local _, err = await(blockexchange.api.create_schemapart(token, schemapart))
+			local _, err = await(blockexchange.api.create_schemapart(player_settings.token, schemapart))
 			if err then
 				error("create error at " .. minetest.pos_to_string(relative_pos) .. ": " .. err, 0)
 			end
@@ -39,7 +39,7 @@ function blockexchange.save_update(playername, origin, pos1, pos2, _, schema_uid
 				table.insert(mod_names_list, k)
 			end
 
-			_, err = await(blockexchange.api.create_schemamods(token, schema_uid, mod_names_list))
+			_, err = await(blockexchange.api.create_schemamods(player_settings.token, schema_uid, mod_names_list))
 			if err then
 				error("error creating mod-list: " .. err, 0)
 			end

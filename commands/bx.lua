@@ -38,16 +38,44 @@ end
 
 -- user settings
 function blockexchange.show_form_settings(playername)
+	local player_settings = blockexchange.get_player_settings(playername)
 	local ctx = get_context(playername)
 	ctx.form = "settings"
 
 	local fs = main_fs("Settings")
-	fs = fs .. "label[1,2;Nothing to see here (yet)]"
+
+	-- Hud setting
+	if player_settings.hud then
+		fs = fs .. ui.checkbox_on(1,3,"toggle_hud")
+	else
+		fs = fs .. ui.checkbox_off(1,3,"toggle_hud")
+	end
+	fs = fs .. "label[2,3.3;Enable Hud]"
+
+	-- Area tracking
+	if player_settings.area_tracking then
+		fs = fs .. ui.checkbox_on(1,4,"toggle_area_tracking")
+	else
+		fs = fs .. ui.checkbox_off(1,4,"toggle_area_tracking")
+	end
+	fs = fs .. "label[2,4.3;Enable Area tracking (for schematic updates)]"
 
 	Promise.formspec(playername, fs):next(function(fields)
 		if handle_top_nav(fields, playername) then
 			return
 		end
+
+		if fields.toggle_hud then
+			player_settings.hud = not player_settings.hud
+			blockexchange.set_player_settings(playername, player_settings)
+			blockexchange.set_player_hud(playername, player_settings.hud)
+			blockexchange.show_form_settings(playername)
+		elseif fields.toggle_area_tracking then
+			player_settings.area_tracking = not player_settings.area_tracking
+			blockexchange.set_player_settings(playername, player_settings)
+			blockexchange.show_form_settings(playername)
+		end
+
 	end)
 end
 

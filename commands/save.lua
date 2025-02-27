@@ -12,11 +12,10 @@ end
 function blockexchange.save(playername, pos1, pos2, schemaname)
 	pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
 
-	local token = blockexchange.get_token(playername)
 	local claims = blockexchange.get_claims(playername)
-	local license = blockexchange.get_license(playername)
+	local player_settings = blockexchange.get_player_settings(playername)
 
-	if not token or not claims then
+	if not player_settings.token or not claims then
 		return Promise.rejected("not logged in")
 	end
 
@@ -30,7 +29,7 @@ function blockexchange.save(playername, pos1, pos2, schemaname)
 		size_y = pos2.y - pos1.y + 1,
 		size_z = pos2.z - pos1.z + 1,
 		description = "",
-		license = license,
+		license = player_settings.license,
 		name = schemaname
 	}
 
@@ -41,7 +40,7 @@ function blockexchange.save(playername, pos1, pos2, schemaname)
 
 	job.promise = Promise.async(function(await)
 		local _, err
-		schema, err = await(blockexchange.api.create_schema(token, schema))
+		schema, err = await(blockexchange.api.create_schema(player_settings.token, schema))
 		if err then
 			error("error creating schema: " .. err, 0)
 		end
@@ -67,7 +66,7 @@ function blockexchange.save(playername, pos1, pos2, schemaname)
 
 				while true do
 					-- retry loop
-					_, err = await(blockexchange.api.create_schemapart(token, schemapart))
+					_, err = await(blockexchange.api.create_schemapart(player_settings.token, schemapart))
 					if err then
 						if retries > 12 then
 							error("create schemapart failed after " .. retries .. " retries: " .. err, 0)
@@ -98,12 +97,12 @@ function blockexchange.save(playername, pos1, pos2, schemaname)
 			table.insert(mod_names_list, k)
 		end
 
-		_, err = await(blockexchange.api.create_schemamods(token, schema.uid, mod_names_list))
+		_, err = await(blockexchange.api.create_schemamods(player_settings.token, schema.uid, mod_names_list))
 		if err then
 			error("error creating mod-list: " .. err, 0)
 		end
 
-		_, err = await(blockexchange.api.update_schema_stats(token, schema.uid))
+		_, err = await(blockexchange.api.update_schema_stats(player_settings.token, schema.uid))
 		if err then
 			error("error updating stats: " .. err, 0)
 		end
@@ -117,7 +116,9 @@ function blockexchange.save(playername, pos1, pos2, schemaname)
 		end
 
 		-- register area
-		blockexchange.register_area(pos1, pos2, playername, claims.username, schema)
+		if player_settings.area_tracking then
+			blockexchange.register_area(pos1, pos2, playername, claims.username, schema)
+		end
 
 		return {
 			total_parts = total_parts,
@@ -151,8 +152,8 @@ Promise.register_chatcommand("bx_save", {
 			return true, "schema name can only contain letters, numbers and a handful of special chars: - _ ."
 		end
 
-		local token = blockexchange.get_token(name)
-		if not token then
+		local player_settings = blockexchange.get_player_settings(name)
+		if not player_settings.token then
 			-- TODO check validity
 			return true, "Please login first to upload a schematic"
 		end

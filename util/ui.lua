@@ -22,3 +22,21 @@ function ui.button_exit(x,y,w,h,name,label)
         "blockexchange_button_rectangle_border.png" ..
         "]"
 end
+
+function ui.checkbox_on(x,y,name)
+    return "image_button_exit[" ..
+        x..","..y..";0.6,0.6;" ..
+        "blockexchange_check_square_grey_checkmark.png;" ..
+        name..";;" ..
+        "true;false;" ..
+        "]"
+end
+
+function ui.checkbox_off(x,y,name)
+    return "image_button_exit[" ..
+        x..","..y..";0.6,0.6;" ..
+        "blockexchange_check_square_grey.png;" ..
+        name..";;" ..
+        "true;false;" ..
+        "]"
+end

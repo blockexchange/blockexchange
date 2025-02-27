@@ -13,7 +13,9 @@ mtt.register("remote save test", {
     timeout = 300,
     func = function(callback)
         blockexchange.api.get_token(username, "default"):next(function(token)
-            blockexchange.set_token(playername, token)
+            local player_settings = blockexchange.get_player_settings(playername)
+			player_settings.token = token
+			blockexchange.set_player_settings(playername, player_settings)
             return blockexchange.emerge(playername, pos1, pos2_load)
         end):next(function()
             return blockexchange.save(playername, pos1, pos2, schemaname)

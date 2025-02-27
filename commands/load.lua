@@ -102,7 +102,10 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 			end
 		end
 
-		blockexchange.register_area(pos1, pos2, playername, username, schema)
+		local player_settings = blockexchange.get_player_settings(playername)
+		if player_settings.area_tracking then
+			blockexchange.register_area(pos1, pos2, playername, username, schema)
+		end
 
 		return {
 			total_parts = total_parts,

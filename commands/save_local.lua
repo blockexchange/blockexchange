@@ -1,6 +1,7 @@
 
 function blockexchange.save_local(playername, pos1, pos2, schemaname)
   pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
+	local player_settings = blockexchange.get_player_settings(playername)
 
   local job = {
     hud_icon = "blockexchange_upload.png",
@@ -12,7 +13,7 @@ function blockexchange.save_local(playername, pos1, pos2, schemaname)
 		size_y = pos2.y - pos1.y + 1,
 		size_z = pos2.z - pos1.z + 1,
 		description = "",
-		license = blockexchange.get_license(playername),
+		license = player_settings.license,
 		name = schemaname
 	}
 
