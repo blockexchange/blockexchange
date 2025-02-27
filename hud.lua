@@ -55,12 +55,6 @@ local function update_player_hud(player)
 			hud_data.used_slots[slot] = true
 			local y_offset = slot * 20
 
-			print(dump({
-				fn = "job hud setup",
-				y_offset = y_offset,
-				slot = slot
-			}))
-
 			job[HUD_ICON_KEY] = player:hud_add({
 				[minetest.features.hud_def_type_field and "type" or "hud_elem_type"] = "image",
 				position = HUD_POSITION,
