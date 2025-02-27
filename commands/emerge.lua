@@ -11,19 +11,19 @@ local chunk_length = 80
 -- @return the job context
 function blockexchange.emerge(playername, pos1, pos2)
 
-  local ctx = {
+  local job = {
     hud_icon = "blockexchange_emerge.png",
     hud_text = "Emerging, starting..."
   }
 
-  local promise = Promise.async(function(await)
+  job.promise = Promise.async(function(await)
     local chunks = 0
 
     for current_pos, _, progress in blockexchange.iterator(pos1, pos1, pos2, chunk_length) do
       -- TODO: chunk-granular iterator
       local current_pos2 = vector.add(current_pos, chunk_length)
       local progress_percent = math.floor(progress * 100 * 10) / 10
-      ctx.hud_text = "Emerging, progress: " .. progress_percent .. " %"
+      job.hud_text = "Emerging, progress: " .. progress_percent .. " %"
 
       blockexchange.log(
         "action",
@@ -32,7 +32,7 @@ function blockexchange.emerge(playername, pos1, pos2)
       await(Promise.emerge_area(current_pos, current_pos2))
       chunks = chunks + 1
 
-      if ctx.cancel then
+      if job.cancel then
         error("canceled", 0)
       end
 
@@ -42,18 +42,14 @@ function blockexchange.emerge(playername, pos1, pos2)
     return chunks
   end)
 
-  blockexchange.set_job_context(playername, ctx, promise)
-  return promise
+  blockexchange.add_job(playername, job)
+  return job.promise
 end
 
 Promise.register_chatcommand("bx_emerge", {
 	description = "Emerges the selected region",
   privs = { blockexchange = true },
 	func = function(name)
-    if blockexchange.get_job_context(name) then
-      return true, "There is a job already running"
-    end
-
     local pos1 = blockexchange.get_pos(1, name)
     local pos2 = blockexchange.get_pos(2, name)
     pos1, pos2 = blockexchange.sort_pos(pos1, pos2)

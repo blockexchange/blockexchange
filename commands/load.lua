@@ -7,7 +7,7 @@
 -- @param[opt] from_mtime start with block mtime
 -- @return a promise that resolves if the operation is complete
 function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
-	local ctx = {
+	local job = {
 		hud_icon = "blockexchange_download.png",
 		hud_text = "Download '" .. username .. "/" .. schemaname .. "' starting"
 	}
@@ -15,7 +15,7 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 	local retries = 0
 	local current_part = 0
 
-	local promise = Promise.async(function(await)
+	job.promise = Promise.async(function(await)
 		local schema, err = await(blockexchange.api.get_schema_by_name(username, schemaname, true))
 		if err then
 			error("error fetching schema: " .. err, 0)
@@ -92,12 +92,12 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 
 			-- compute stats
 			local progress_percent = math.floor(current_part / total_parts * 100 * 10) / 10
-			ctx.hud_text = "Downloading '" .. username .. "/" .. schemaname ..
+			job.hud_text = "Downloading '" .. username .. "/" .. schemaname ..
 				"', progress: " .. progress_percent .. " %"
 
 			await(Promise.after(blockexchange.min_delay))
 
-			if ctx.cancel then
+			if job.cancel then
 				error("canceled", 0)
 			end
 		end
@@ -111,8 +111,8 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 		}
 	end)
 
-	blockexchange.set_job_context(playername, ctx, promise)
-	return promise
+	blockexchange.add_job(playername, job)
+	return job.promise
 end
 
 
@@ -122,11 +122,6 @@ Promise.register_chatcommand("bx_load", {
     description = "Downloads a schema from the blockexchange to the selected pos1",
     privs = {blockexchange = true},
     func = function(name, param)
-
-        if blockexchange.get_job_context(name) then
-            return true, "There is a job already running"
-        end
-
         local _, _, username, schemaname = string.find(param, "^([^%s]+)%s+(.*)$")
 
         if not username or not schemaname then

@@ -1,8 +1,8 @@
 local HUD_POSITION = { x = 0.1, y = 0.8 }
 local HUD_ALIGNMENT = { x = 1, y = 0 }
 
-local HUD_ICON_KEY = "icon"
-local HUD_TEXT_KEY = "text"
+local HUD_ICON_KEY = "hud_icon_key"
+local HUD_TEXT_KEY = "hud_text_key"
 
 -- playername -> data
 local hud = {}
@@ -15,47 +15,91 @@ local function update_player_hud(player)
 		return
 	end
 
-	local ctx = blockexchange.get_job_context(playername)
+	-- area hud
 	local pos = player:get_pos()
 	local area = blockexchange.get_area(pos)
-	local hud_info_available = ctx or area
+	local area_icon = ""
+	local area_text = ""
 
-	if hud_info_available and not hud_data.active then
-		-- enable
-		hud_data.active = true
-	elseif not hud_info_available and hud_data.active then
-		-- disable
-		hud_data.active = false
-		player:hud_change(hud_data[HUD_ICON_KEY], "text", "")
-		player:hud_change(hud_data[HUD_TEXT_KEY], "text", "")
-	end
-
-	local icon_name = ""
-	local text = ""
-	local color = 0x00ff00
-
-	if ctx and ctx.hud_icon then
-		icon_name = ctx.hud_icon
-		text = ctx.hud_text
-
-	elseif area then
-		icon_name = "blockexchange_info.png"
-		text = string.format("BX-Area: '%s' Schema: %s/%s", area.id, area.username, area.name)
+	if area then
+		-- player is in an area
+		area_icon = "blockexchange_info.png"
+		area_text = string.format("BX-Area: '%s' Schema: %s/%s", area.id, area.username, area.name)
 		if area.autosave then
-			text = text .. " [Autosave]"
+			area_text = area_text .. " [Autosave]"
 		end
 		if blockexchange.is_area_autosaving(area.id) then
-			icon_name = "blockexchange_upload.png"
+			area_icon = "blockexchange_upload.png"
 		end
 	end
 
-	if icon_name ~= "" and text ~= "" then
-		-- apply changes
-		player:hud_change(hud_data[HUD_ICON_KEY], "text", icon_name)
-		player:hud_change(hud_data[HUD_TEXT_KEY], "text", text)
-		player:hud_change(hud_data[HUD_TEXT_KEY], "number", color)
+	-- update hud area state if changed
+	local area_state = area_icon .. "/" .. area_text
+	if hud_data.area_state ~= area_state then
+		player:hud_change(hud_data[HUD_ICON_KEY], "text", area_icon)
+		player:hud_change(hud_data[HUD_TEXT_KEY], "text", area_text)
+		hud_data.area_state = area_state
 	end
 
+	-- job hud info
+	hud_data.used_slots = hud_data.used_slots or {} -- {true, nil, true, ...}
+	local jobs = blockexchange.get_jobs(playername)
+	for i, job in ipairs(jobs) do
+		if not job.hud_setup then
+			-- initialize hud
+			-- get next free hud slot
+			local slot = 1
+			while hud_data.used_slots[slot] do
+				slot = slot + 1
+			end
+			hud_data.used_slots[slot] = true
+			local y_offset = slot * 20
+
+			print(dump({
+				fn = "job hud setup",
+				y_offset = y_offset,
+				slot = slot
+			}))
+
+			job[HUD_ICON_KEY] = player:hud_add({
+				[minetest.features.hud_def_type_field and "type" or "hud_elem_type"] = "image",
+				position = HUD_POSITION,
+				offset = {x=0, y=y_offset},
+				text = "",
+				alignment = HUD_ALIGNMENT,
+				scale = { x = 1, y = 1 },
+			})
+
+			job[HUD_TEXT_KEY] = player:hud_add({
+				[minetest.features.hud_def_type_field and "type" or "hud_elem_type"] = "text",
+				position = HUD_POSITION,
+				offset = {x=20, y=y_offset},
+				text = "",
+				alignment = HUD_ALIGNMENT,
+				scale = { x = 100, y = 100 },
+				number = 0x00FF00
+			})
+
+			job.promise:finally(function()
+				-- remove hud
+				player:hud_remove(job[HUD_ICON_KEY])
+				player:hud_remove(job[HUD_TEXT_KEY])
+				hud_data.used_slots[slot] = nil
+			end)
+
+			job.hud_setup = true
+		end
+
+		-- update hud
+		local job_hud_state = job.hud_icon .. "/" .. i .. "/" .. job.hud_text
+		if job.hud_state ~= job_hud_state then
+			-- hud state updated
+			player:hud_change(job[HUD_ICON_KEY], "text", job.hud_icon)
+			player:hud_change(job[HUD_TEXT_KEY], "text", "[" .. i .. "] " .. job.hud_text)
+
+			job.hud_state = job_hud_state
+		end
+	end
 end
 
 

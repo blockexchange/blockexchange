@@ -15,11 +15,6 @@ minetest.register_tool("blockexchange:place", {
         local playername = player:get_player_name()
         local controls = player:get_player_control()
 
-        if blockexchange.get_job_context(playername) then
-            minetest.chat_send_player(playername, "There is a job already running")
-            return
-        end
-
         local meta = itemstack:get_meta()
         local username = meta:get_string("username")
         local schemaname = meta:get_string("schemaname")

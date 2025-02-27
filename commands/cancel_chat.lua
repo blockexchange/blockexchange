@@ -1,14 +1,18 @@
 
 minetest.register_chatcommand("bx_cancel", {
   description = "Cancels the current blockexchange job",
-  func = function(name)
-    local ctx = blockexchange.get_job_context(name)
-    if not ctx then
+  func = function(name, param)
+    local jobs = blockexchange.get_jobs(name)
+    if #jobs == 0 then
       return true, "No job running, nothing canceled"
     end
 
-    ctx.cancel = true
+    local job = jobs[tonumber(param)]
+    if not job then
+      return true, "Job with number '" .. param .. "' not found"
+    end
 
-    return true, "canceled job of type: " .. ctx.type
+    job.cancel = true
+    return true, "canceled job #" .. param
   end
 })

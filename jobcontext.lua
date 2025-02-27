@@ -1,34 +1,36 @@
----------
--- job context utilities
 
-local job_context_map = {}
+local job_map = {} -- playername -> {job, job, ...}
 
---- sets the current job context for the player
--- @param playername the name of the player
--- @param ctx the job context for the worker
--- @param promise the job's promise, for cleanup/removal of the job-data
--- @return the payload in json format
-function blockexchange.set_job_context(playername, ctx, promise)
+--- adds a job for the player
+function blockexchange.add_job(playername, job)
+    assert(type(job.hud_icon) == "string", "job.hud_icon is a string")
+    assert(type(job.hud_text) == "string", "job.hud_text is a string")
+    assert(Promise.is_promise(job.promise), "job.promise is a promise object")
+
     -- force-enable the hud for the player
     blockexchange.set_player_hud(playername, true)
 
-    job_context_map[playername] = ctx
-    if promise then
-        promise:finally(function()
-            job_context_map[playername] = nil
-        end)
+    local jobs = job_map[playername]
+    if not jobs then
+        jobs = {}
+        job_map[playername] = jobs
     end
+
+    -- remove job when done
+    job.promise:finally(function()
+        for i, j in ipairs(jobs) do
+            if j == job then
+                -- job found, remove from table
+                table.remove(jobs, i)
+                break
+            end
+        end
+    end)
+
+    table.insert(jobs, job)
 end
 
---- returns the current job context for the player, nil if no job active
--- @param playername the name of the player
--- @return the current job contect
-function blockexchange.get_job_context(playername)
-    return job_context_map[playername]
-end
-
---- returns all job contexts
--- @return the job context map with playername as key
-function blockexchange.get_job_contexts()
-    return job_context_map
+--- returns all jobs for the player
+function blockexchange.get_jobs(playername)
+    return job_map[playername] or {}
 end

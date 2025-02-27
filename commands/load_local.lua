@@ -1,6 +1,6 @@
 
 function blockexchange.load_local(playername, origin, schemaname)
-    local ctx = {
+    local job = {
         hud_icon = "blockexchange_download.png",
 		hud_text = "Local download '" .. schemaname .. "' starting"
 	}
@@ -8,7 +8,7 @@ function blockexchange.load_local(playername, origin, schemaname)
     local current_part = 0
     local zip
 
-    local promise = Promise.async(function(await)
+    job.promise = Promise.async(function(await)
 
         local err
         local filename = blockexchange.get_local_filename(schemaname)
@@ -50,14 +50,14 @@ function blockexchange.load_local(playername, origin, schemaname)
 				-- increment stats
 				current_part = current_part + 1
 				local progress_percent = math.floor(current_part / total_parts * 100 * 10) / 10
-                ctx.hud_text = "Local download '" .. schemaname ..
+                job.hud_text = "Local download '" .. schemaname ..
 				    "', progress: " .. progress_percent .. " %"
 
 				blockexchange.place_schemapart(schemapart, origin)
 				minetest.log("action", "[blockexchange] Extraction of part " .. minetest.pos_to_string(current_pos) .. " completed")
 			end
 
-			if ctx.cancel then
+			if job.cancel then
 				error("canceled", 0)
 			end
 			await(Promise.after(blockexchange.min_delay))
@@ -68,8 +68,8 @@ function blockexchange.load_local(playername, origin, schemaname)
         }
 	end)
 
-    blockexchange.set_job_context(playername, ctx, promise)
-    return promise
+    blockexchange.add_job(playername, job)
+    return job.promise
 end
 
 
@@ -78,10 +78,6 @@ Promise.register_chatcommand("bx_load_local", {
     description = "loads a local schema to the selected pos1",
     privs = {blockexchange = true},
     func = function(name, schemaname)
-        if blockexchange.get_job_context(name) then
-            return true, "There is a job already running"
-        end
-
         if not schemaname or schemaname == "" then
             return false, "Usage: /bx_load <username> <schemaname>"
         end

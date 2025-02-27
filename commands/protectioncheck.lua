@@ -1,14 +1,14 @@
 
 function blockexchange.protectioncheck(playername, pos1, pos2)
 
-  local ctx = {
+  local job = {
     hud_icon = "blockexchange_protectioncheck.png",
     hud_text = "Protection-check, starting..."
   }
 
   local total_parts = 0
 
-  local promise = Promise.async(function(await)
+  job.promise = Promise.async(function(await)
     for current_pos, _, progress in blockexchange.iterator(pos1, pos1, pos2) do
       local current_pos2 = vector.add(current_pos, 15)
       current_pos2.x = math.min(current_pos2.x, pos2.x)
@@ -20,7 +20,7 @@ function blockexchange.protectioncheck(playername, pos1, pos2)
       if not protected then
         -- increment stats
         total_parts = total_parts + 1
-        ctx.hud_text = "Protection-check, progress: " .. math.floor(progress * 100 * 10) / 10 .. " %"
+        job.hud_text = "Protection-check, progress: " .. math.floor(progress * 100 * 10) / 10 .. " %"
       else
         return {
           success = false,
@@ -31,7 +31,7 @@ function blockexchange.protectioncheck(playername, pos1, pos2)
 
       await(Promise.after(blockexchange.min_delay))
 
-      if ctx.cancel then
+      if job.cancel then
 				error("canceled", 0)
 			end
     end
@@ -42,6 +42,6 @@ function blockexchange.protectioncheck(playername, pos1, pos2)
     }
   end)
 
-  blockexchange.set_job_context(playername, ctx, promise)
-  return promise
+  blockexchange.add_job(playername, job)
+  return job.promise
 end

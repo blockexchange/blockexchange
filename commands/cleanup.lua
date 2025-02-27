@@ -12,12 +12,12 @@ function blockexchange.cleanup(playername, pos1, pos2)
     param2 = 0
   }
 
-  local ctx = {
+  local job = {
     hud_icon = "blockexchange_cleanup.png",
     hud_text = "Cleanup, starting..."
   }
 
-  local promise = Promise.async(function(await)
+  job.promise = Promise.async(function(await)
     for current_pos, _, progress in blockexchange.iterator(pos1, pos1, pos2) do
       local current_pos2 = vector.add(current_pos, 15)
       current_pos2.x = math.min(current_pos2.x, pos2.x)
@@ -28,11 +28,11 @@ function blockexchange.cleanup(playername, pos1, pos2)
       result.meta = result.meta + area_result.meta
       result.param2 = result.param2 + area_result.param2
 
-      ctx.hud_text = "Cleanup, progress: " .. math.floor(progress * 100 * 10) / 10 .. " %"
+      job.hud_text = "Cleanup, progress: " .. math.floor(progress * 100 * 10) / 10 .. " %"
 
       await(Promise.after(blockexchange.min_delay))
 
-      if ctx.cancel then
+      if job.cancel then
         error("canceled", 0)
       end
     end
@@ -40,18 +40,14 @@ function blockexchange.cleanup(playername, pos1, pos2)
     return result
   end)
 
-  blockexchange.set_job_context(playername, ctx, promise)
-  return promise
+  blockexchange.add_job(playername, job)
+  return job.promise
 end
 
 Promise.register_chatcommand("bx_cleanup", {
   description = "Cleans up the selected region (stray metadata, invalid param2 values)",
   privs = { blockexchange = true },
   func = function(name)
-    if blockexchange.get_job_context(name) then
-      return true, "There is a job already running"
-    end
-
     local pos1 = blockexchange.get_pos(1, name)
     local pos2 = blockexchange.get_pos(2, name)
     pos1, pos2 = blockexchange.sort_pos(pos1, pos2)

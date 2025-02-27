@@ -2,7 +2,7 @@
 function blockexchange.save_local(playername, pos1, pos2, schemaname)
   pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
 
-  local ctx = {
+  local job = {
     hud_icon = "blockexchange_upload.png",
     hud_text = "Saving local '" .. schemaname .. "'"
   }
@@ -23,7 +23,7 @@ function blockexchange.save_local(playername, pos1, pos2, schemaname)
   local total_size = 0
   local total_parts = 0
 
-  local promise = Promise.async(function(await)
+  job.promise = Promise.async(function(await)
     for current_pos, relative_pos, progress in blockexchange.iterator(pos1, pos1, pos2) do
       local current_pos2 = vector.add(current_pos, 15)
       current_pos2.x = math.min(current_pos2.x, pos2.x)
@@ -31,7 +31,7 @@ function blockexchange.save_local(playername, pos1, pos2, schemaname)
       current_pos2.z = math.min(current_pos2.z, pos2.z)
 
       local progress_percent = math.floor(progress * 100 * 10) / 10
-      ctx.hud_text = "Saving local '" .. schemaname .. "', progress: " .. progress_percent .. " %"
+      job.hud_text = "Saving local '" .. schemaname .. "', progress: " .. progress_percent .. " %"
 
       local data, node_count, air_only = blockexchange.serialize_part(current_pos, current_pos2)
       blockexchange.collect_node_count(node_count, mod_names)
@@ -50,7 +50,7 @@ function blockexchange.save_local(playername, pos1, pos2, schemaname)
         zip:add(filename, minetest.write_json(schemapart))
       end
 
-      if ctx.cancel then
+      if job.cancel then
         error("canceled", 0)
       end
 
@@ -75,14 +75,14 @@ function blockexchange.save_local(playername, pos1, pos2, schemaname)
     }
   end)
 
-  promise:finally(function()
+  job.promise:finally(function()
     -- cleanup
     zip:close()
 		zipfile:close()
   end)
 
-  blockexchange.set_job_context(playername, ctx, promise)
-  return promise
+  blockexchange.add_job(playername, job)
+  return job.promise
 end
 
 Promise.register_chatcommand("bx_save_local", {
@@ -90,10 +90,6 @@ Promise.register_chatcommand("bx_save_local", {
   privs = { blockexchange = true },
   description = "Saves the selected region to the disk",
   func = function(name, schemaname)
-    if blockexchange.get_job_context(name) then
-      return true, "There is a job already running"
-    end
-
     if not schemaname or schemaname == "" then
       return true, "Usage: /bx_save_local <schemaname>"
     end

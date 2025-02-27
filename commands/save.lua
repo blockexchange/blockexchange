@@ -20,7 +20,7 @@ function blockexchange.save(playername, pos1, pos2, schemaname)
 		return Promise.rejected("not logged in")
 	end
 
-	local ctx = {
+	local job = {
 		hud_icon = "blockexchange_upload.png",
 		hud_text = "Saving '" .. claims.username .. "/" .. schemaname .. "'"
 	}
@@ -39,7 +39,7 @@ function blockexchange.save(playername, pos1, pos2, schemaname)
 	local mod_names = {}
 	local total_parts = 0
 
-	local promise = Promise.async(function(await)
+	job.promise = Promise.async(function(await)
 		local _, err
 		schema, err = await(blockexchange.api.create_schema(token, schema))
 		if err then
@@ -53,7 +53,7 @@ function blockexchange.save(playername, pos1, pos2, schemaname)
 			current_pos2.z = math.min(current_pos2.z, pos2.z)
 
 			local progress_percent = math.floor(progress * 100 * 10) / 10
-			ctx.hud_text = "Saving '" .. claims.username .. "/" .. schemaname ..
+			job.hud_text = "Saving '" .. claims.username .. "/" .. schemaname ..
 				"', progress: " .. progress_percent .. " %"
 
 			local data, node_count, air_only = blockexchange.serialize_part(current_pos, current_pos2)
@@ -83,11 +83,9 @@ function blockexchange.save(playername, pos1, pos2, schemaname)
 						break
 					end
 				end
-
-				-- TODO
 			end
 
-			if ctx.cancel then
+			if job.cancel then
 				error("canceled", 0)
 			end
 
@@ -128,8 +126,8 @@ function blockexchange.save(playername, pos1, pos2, schemaname)
 		}
 	end)
 
-	blockexchange.set_job_context(playername, ctx, promise)
-	return promise
+	blockexchange.add_job(playername, job)
+	return job.promise
 end
 
 
@@ -137,10 +135,6 @@ Promise.register_chatcommand("bx_save", {
 	params = "<name>",
 	description = "Uploads the selected region to the blockexchange server",
 	func = function(name, schemaname)
-		if blockexchange.get_job_context(name) then
-			return true, "There is a job already running"
-		end
-
 		local has_protected_upload_priv = minetest.check_player_privs(name, { blockexchange_protected_upload = true })
 		local has_blockexchange_priv = minetest.check_player_privs(name, { blockexchange = true })
 		local has_protection_bypass_priv = minetest.check_player_privs(name, { protection_bypass = true })
