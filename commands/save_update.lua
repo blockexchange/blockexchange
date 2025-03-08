@@ -3,6 +3,10 @@ function blockexchange.save_update(playername, origin, pos1, pos2, _, schema_uid
 	pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
 
 	local player_settings = blockexchange.get_player_settings(playername)
+	local token = player_settings.token
+	if not token then
+		return Promise.reject("not logged in")
+	end
 
 	local job = {
 		hud_icon = "blockexchange_upload.png",
