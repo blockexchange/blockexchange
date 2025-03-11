@@ -9,8 +9,10 @@ if has_monitoring then
 	)
 end
 
-function blockexchange.save(playername, pos1, pos2, schemaname)
+function blockexchange.save(playername, pos1, pos2, schemaname, options)
 	pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
+	options = options or {}
+	options.progress_callback = options.progress_callback or function() end
 
 	local claims = blockexchange.get_claims(playername)
 	local player_settings = blockexchange.get_player_settings(playername)
@@ -52,6 +54,7 @@ function blockexchange.save(playername, pos1, pos2, schemaname)
 			current_pos2.z = math.min(current_pos2.z, pos2.z)
 
 			local progress_percent = math.floor(progress * 100 * 10) / 10
+			options.progress_callback(progress_percent)
 			job.hud_text = "Saving '" .. claims.username .. "/" .. schemaname ..
 				"', progress: " .. progress_percent .. " %"
 

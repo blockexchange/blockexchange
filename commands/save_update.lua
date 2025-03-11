@@ -1,6 +1,8 @@
 -- update a region
-function blockexchange.save_update(playername, origin, pos1, pos2, _, schema_uid)
+function blockexchange.save_update(playername, origin, pos1, pos2, _, schema_uid, options)
 	pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
+	options = options or {}
+	options.progress_callback = options.progress_callback or function() end
 
 	local player_settings = blockexchange.get_player_settings(playername)
 	local token = player_settings.token
@@ -23,6 +25,7 @@ function blockexchange.save_update(playername, origin, pos1, pos2, _, schema_uid
 			current_pos2.z = math.min(current_pos2.z, pos2.z)
 
 			local progress_percent = math.floor(progress * 100 * 10) / 10
+			options.progress_callback(progress_percent)
 			job.hud_text = "Saving changes, progress: " .. progress_percent .. " %"
 
 			local data, node_count = blockexchange.serialize_part(current_pos, current_pos2)
