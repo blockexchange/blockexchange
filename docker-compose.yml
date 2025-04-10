@@ -9,15 +9,10 @@ services:
   volumes:
    - "postgres:/var/lib/postgresql/data"
 
- redis:
-  image: redis:6.2.0-alpine
-  restart: always
-
  bx:
   image: blockexchange/blockexchange
   depends_on:
    - postgres
-   - redis
   environment:
    - PGUSER=postgres
    - PGPASSWORD=enter
@@ -25,8 +20,6 @@ services:
    - PGDATABASE=postgres
    - PGPORT=5432
    - LOGLEVEL=debug
-   - REDIS_HOST=redis
-   - REDIS_PORT=6379
    - BLOCKEXCHANGE_NAME=My-Blockexchange
    - BLOCKEXCHANGE_OWNER=yourname
    - BLOCKEXCHANGE_KEY=abcdefSecretKey
