@@ -79,6 +79,9 @@ function blockexchange.show_form_settings(playername)
 	end)
 end
 
+-- cache remote info for an hour
+local cached_get_info = Promise.cache(3600, blockexchange.api.get_info)
+
 -- generic info form
 function blockexchange.show_form_info(playername)
 	local ctx = get_context(playername)
@@ -88,7 +91,7 @@ function blockexchange.show_form_info(playername)
 		local fs = main_fs("Info")
 
 		-- fetch remote info
-		local info, err = await(blockexchange.api.get_info())
+		local info, err = await(cached_get_info)
 		if err then
 			error("remote info fetch failed: " .. err, 0)
 		end
