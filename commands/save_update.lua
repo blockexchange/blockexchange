@@ -32,7 +32,7 @@ function blockexchange.save_update(playername, origin, pos1, pos2, _, schema_uid
 			blockexchange.collect_node_count(node_count, mod_names)
 
 			-- package data properly over the wire
-			local schemapart = blockexchange.create_schemapart(data, relative_pos, schema_uid)
+			local schemapart = await(blockexchange.create_schemapart(data, relative_pos, schema_uid))
 
 			-- upload part online
 			local _, err = await(blockexchange.api.create_schemapart(player_settings.token, schemapart))

@@ -2,7 +2,6 @@ local has_mapsync = minetest.get_modpath("mapsync")
 
 -- places a schemapart in the world with respect to the origin point
 -- returns the placed pos1, pos2 as well as the data and metadata
--- TODO: alignment
 function blockexchange.place_schemapart(schemapart, origin, update_light)
 	local data, metadata = blockexchange.unpack_schemapart(schemapart)
 

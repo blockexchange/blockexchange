@@ -15,8 +15,7 @@ mtt.benchmark("blockexchange.serialize_part", function(callback, iterations)
     callback()
 end)
 
-mtt.register("serialize and modify", function(callback)
-
+mtt.register("serialize and modify", Promise.asyncify(function(await)
     -- serialize
     local data, node_count = blockexchange.serialize_part(pos1, pos2)
     assert(data)
@@ -29,8 +28,8 @@ mtt.register("serialize and modify", function(callback)
     data.node_mapping["default:mese"] = mese_id
 
     -- compress
-    local compressed_data = blockexchange.compress_data(data)
-    local compressed_metadata = blockexchange.compress_metadata(data)
+    local compressed_data = await(blockexchange.compress_data(data))
+    local compressed_metadata = await(blockexchange.compress_metadata(data))
 
     -- decompress and parse
     local data2 = minetest.decompress(compressed_data, "deflate")
@@ -42,11 +41,9 @@ mtt.register("serialize and modify", function(callback)
     -- verify
     local node = minetest.get_node(pos1)
     assert(node.name == "default:mese")
+end))
 
-    callback()
-end)
-
-mtt.register("serialize unknown node (placeholder placement)", function(callback)
+mtt.register("serialize unknown node (placeholder placement)", Promise.asyncify(function(await)
 
     -- serialize
     local data, node_count = blockexchange.serialize_part(pos1, pos2)
@@ -60,8 +57,8 @@ mtt.register("serialize unknown node (placeholder placement)", function(callback
     data.node_mapping["unknown:node"] = unknown_id
 
     -- compress
-    local compressed_data = blockexchange.compress_data(data)
-    local compressed_metadata = blockexchange.compress_metadata(data)
+    local compressed_data = await(blockexchange.compress_data(data))
+    local compressed_metadata = await(blockexchange.compress_metadata(data))
 
     -- decompress and parse
     local data2 = minetest.decompress(compressed_data, "deflate")
@@ -77,10 +74,9 @@ mtt.register("serialize unknown node (placeholder placement)", function(callback
     local meta = minetest.get_meta(pos1)
     assert(meta:get_string("original_nodename") == "unknown:node")
 
-    callback()
-end)
+end))
 
-mtt.register("serialize placeholder to proper node", function(callback)
+mtt.register("serialize placeholder to proper node", Promise.asyncify(function(await)
 
     -- set placeholder
     placeholder.place(pos1, {name="default:mese"}, {
@@ -98,8 +94,8 @@ mtt.register("serialize placeholder to proper node", function(callback)
     assert(not data.node_mapping["placeholder:placeholder"])
 
     -- compress
-    local compressed_data = blockexchange.compress_data(data)
-    local compressed_metadata = blockexchange.compress_metadata(data)
+    local compressed_data = await(blockexchange.compress_data(data))
+    local compressed_metadata = await(blockexchange.compress_metadata(data))
 
     -- decompress and parse
     local data2 = minetest.decompress(compressed_data, "deflate")
@@ -114,6 +110,4 @@ mtt.register("serialize placeholder to proper node", function(callback)
 
     local meta = minetest.get_meta(pos1)
     assert(meta:get_string("x") == "y")
-
-    callback()
-end)
+end))

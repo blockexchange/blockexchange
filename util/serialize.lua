@@ -1,7 +1,6 @@
 ---------
 -- serialization functions
 
-local string_char, math_floor = string.char, math.floor
 local table_insert = table.insert
 
 -- collect nodes with on_timer attributes
@@ -31,14 +30,6 @@ local function is_empty(tbl)
 	end
 	return true
 end
-
-local function int_to_bytes(i)
-	local x =i + 32768
-	local h = math_floor(x/256) % 256;
-	local l = math_floor(x % 256);
-	return(string_char(h, l));
-end
-
 
 function blockexchange.serialize_part(pos1, pos2, node_count)
 	local manip = minetest.get_voxel_manip()
@@ -184,7 +175,14 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 	return data, node_count, air_only
 end
 
-function blockexchange.compress_data(data)
+blockexchange.compress_data = Promise.handle_asyncify(function(data)
+	local function int_to_bytes(i)
+		local x =i + 32768
+		local h = math.floor(x/256) % 256;
+		local l = math.floor(x % 256);
+		return(string.char(h, l));
+	end
+
 	-- write node-data in serialized form
 	local serialized_data = ""
 	local size = #data.node_ids
@@ -193,16 +191,16 @@ function blockexchange.compress_data(data)
 		serialized_data = serialized_data .. int_to_bytes(data.node_ids[i])
 	end
 	for i=1,size do
-		serialized_data = serialized_data .. string_char(data.param1[i])
+		serialized_data = serialized_data .. string.char(data.param1[i])
 	end
 	for i=1,size do
-		serialized_data = serialized_data .. string_char(data.param2[i])
+		serialized_data = serialized_data .. string.char(data.param2[i])
 	end
 
 	return minetest.compress(serialized_data, "deflate")
-end
+end)
 
-function blockexchange.compress_metadata(data)
+blockexchange.compress_metadata = Promise.handle_asyncify(function(data)
 	local metadata = minetest.write_json({
 		node_mapping = data.node_mapping,
 		size = data.size,
@@ -210,4 +208,4 @@ function blockexchange.compress_metadata(data)
 	})
 
 	return minetest.compress(metadata, "deflate")
-end
+end)
