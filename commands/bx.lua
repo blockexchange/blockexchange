@@ -15,11 +15,20 @@ end
 
 -- main formspec dimensions
 local width, height = 10, 10
-local function main_fs(title)
-	return ui.formspec(width, height) ..
+local function main_fs(title, playername)
+	local area = blockexchange.select_player_area(playername)
+
+	local fs = ui.formspec(width, height) ..
 		ui.button_exit(0,-1, 2.8,0.8, "show_main", "Info") ..
-		ui.button_exit(3,-1, 2.8,0.8, "show_settings", "Settings") ..
-		"label[1,1;" .. title .. "]"
+		ui.button_exit(3,-1, 2.8,0.8, "show_settings", "Settings")
+
+	if area then
+		fs = fs .. ui.button_exit(6,-1, 2.8,0.8, "show_area", "Area")
+	end
+
+	fs = fs .. "label[1,1;" .. title .. "]"
+
+	return fs
 end
 
 -- handle navigation
@@ -30,10 +39,60 @@ local function handle_top_nav(fields, playername)
 	elseif fields.show_settings then
 		blockexchange.show_form_settings(playername)
 		return true
+	elseif fields.show_area then
+		blockexchange.show_form_area(playername)
+		return true
 	else
 		-- not a nav thing
 		return false
 	end
+end
+
+local function format_timestamp(ts)
+	return os.date(nil, ts / 1000)
+end
+
+-- area specifics
+function blockexchange.show_form_area(playername)
+	local ctx = get_context(playername)
+	ctx.form = "area"
+
+	local area = blockexchange.select_player_area(playername)
+	if not area then
+		-- nothing to show
+		return
+	end
+
+	return Promise.async(function(await)
+		local schema, schema_err = await(blockexchange.api.get_schema_by_uid(area.schema_uid))
+		local fs = main_fs("Area", playername)
+
+		local secondary_color = "#BBBBBB"
+		fs = fs .. "label[1,2;Local area info:]"
+		fs = fs .. "label[1.2,2.5;Local ID: " .. minetest.colorize(secondary_color, area.id) .. "]"
+		fs = fs .. "label[1.2,3;Name: " .. minetest.colorize(secondary_color, area.name)  .. "]"
+		fs = fs .. "label[1.2,3.5;Modification time: " ..
+			minetest.colorize(secondary_color, format_timestamp(area.mtime))  .. "]"
+
+		if schema then
+			fs = fs .. "label[1,5;" .. "Remote schematic:]"
+			fs = fs .. "label[1.2,5.5;Remote ID: " .. minetest.colorize(secondary_color, schema.uid) .. "]"
+			fs = fs .. "label[1.2,6;Name: " .. minetest.colorize(secondary_color, schema.name) .. "]"
+			fs = fs .. "label[1.2,6.5;Modification time: " ..
+				minetest.colorize(secondary_color, format_timestamp(schema.mtime)) .. "]"
+		else
+			fs = fs .. "label[1,5;" ..
+				minetest.colorize("#ffff00", "could not fetch remote schematic: " .. (schema_err or "<unknown error>")) ..
+				"]"
+		end
+
+		local fields = await(Promise.formspec(playername, fs))
+		if handle_top_nav(fields, playername) then
+			return
+		end
+
+		-- TODO: action-buttons, pull, push, remove, etc
+	end)
 end
 
 -- user settings
@@ -42,7 +101,7 @@ function blockexchange.show_form_settings(playername)
 	local ctx = get_context(playername)
 	ctx.form = "settings"
 
-	local fs = main_fs("Settings")
+	local fs = main_fs("Settings", playername)
 
 	-- Hud setting
 	if player_settings.hud then
@@ -88,10 +147,10 @@ function blockexchange.show_form_info(playername)
 	ctx.form = "info"
 
 	return Promise.async(function(await)
-		local fs = main_fs("Info")
+		local fs = main_fs("Info", playername)
 
 		-- fetch remote info
-		local info, err = await(cached_get_info)
+		local info, err = await(cached_get_info())
 		if err then
 			error("remote info fetch failed: " .. err, 0)
 		end
@@ -123,9 +182,14 @@ end
 
 function blockexchange.show_form(playername)
 	local ctx = get_context(playername)
+	local area = blockexchange.select_player_area(playername)
+
 	if ctx.form == "settings" then
 		-- settings page
 		return blockexchange.show_form_settings(playername)
+	elseif ctx.form == "area" and area then
+		-- area page
+		return blockexchange.show_form_area(playername)
 	else
 		-- default to info form
 		return blockexchange.show_form_info(playername)
