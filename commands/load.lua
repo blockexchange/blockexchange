@@ -14,6 +14,7 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 
 	local retries = 0
 	local current_part = 0
+	local initial_load = not from_mtime
 
 	job.promise = Promise.async(function(await)
 		local schema, err = await(blockexchange.api.get_schema_by_name(username, schemaname, true))
@@ -103,9 +104,22 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 		end
 
 		local player_settings = blockexchange.get_player_settings(playername)
-		if player_settings.area_tracking then
+		if player_settings.area_tracking and initial_load then
 			blockexchange.register_area(pos1, pos2, playername, username, schema)
 		end
+
+		-- update mtime
+		local area = blockexchange.get_area(pos1)
+		if area then
+			-- update area mtime
+			schema, err = await(blockexchange.api.get_schema_by_uid(schema.uid))
+			if err then
+				error("schema get error: " .. err, 0)
+			end
+			area.mtime = schema.mtime
+			blockexchange.save_areas()
+		end
+
 
 		return {
 			total_parts = total_parts,
@@ -154,9 +168,6 @@ Promise.register_chatcommand("bx_load_update", {
 		return blockexchange.load(name, area.pos1, area.username, area.name, area.mtime):next(function(stat)
 			if stat.last_schemapart then
 				-- some parts have been updated
-				-- save last mtime
-				area.mtime = stat.last_schemapart.mtime
-				blockexchange.save_areas()
 				return "Load-update complete with " .. stat.total_parts .. " parts"
 			else
 				-- nothing has been updated

@@ -50,13 +50,24 @@ function blockexchange.save_update(playername, origin, pos1, pos2, _, schema_uid
 			if err then
 				error("error creating mod-list: " .. err, 0)
 			end
+
+			if job.cancel then
+				error("canceled", 0)
+			end
+
+			await(Promise.after(blockexchange.min_delay))
 		end
 
-		if job.cancel then
-			error("canceled", 0)
+		local area = blockexchange.get_area(pos1)
+		if area then
+			-- update area mtime
+			local schema, err = await(blockexchange.api.get_schema_by_uid(schema_uid))
+			if err then
+				error("schema get error: " .. err, 0)
+			end
+			area.mtime = schema.mtime
+			blockexchange.save_areas()
 		end
-
-		await(Promise.after(blockexchange.min_delay))
 	end)
 
 	blockexchange.add_job(playername, job)
