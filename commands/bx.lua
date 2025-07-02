@@ -80,6 +80,12 @@ function blockexchange.show_form_area(playername)
 			fs = fs .. "label[1.2,6;Name: " .. minetest.colorize(secondary_color, schema.name) .. "]"
 			fs = fs .. "label[1.2,6.5;Modification time: " ..
 				minetest.colorize(secondary_color, format_timestamp(schema.mtime)) .. "]"
+
+			if schema.mtime == area.mtime then
+				fs = fs .. "label[1.2,7;" ..
+					minetest.colorize("#00ff00", "Schematic up-to-date") ..
+					"]"
+			end
 		else
 			fs = fs .. "label[1,5;" ..
 				minetest.colorize("#ffff00", "could not fetch remote schematic: " .. (schema_err or "<unknown error>")) ..
