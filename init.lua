@@ -40,6 +40,7 @@ if blockexchange.is_online then
 	loadfile(MP.."/api/schema.lua")(http, blockexchange.url)
 	loadfile(MP.."/api/schemapart.lua")(http, blockexchange.url)
 	loadfile(MP.."/api/schemamods.lua")(http, blockexchange.url)
+	loadfile(MP.."/api/login.lua")(http, blockexchange.url)
 	loadfile(MP.."/api/token.lua")(http, blockexchange.url)
 	loadfile(MP.."/api/media.lua")(http, blockexchange.url)
 end

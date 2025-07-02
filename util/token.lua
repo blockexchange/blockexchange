@@ -28,3 +28,24 @@ function blockexchange.get_claims(playername)
 	local claims = blockexchange.parse_token(player_settings.token)
 	return claims
 end
+
+if blockexchange.is_online then
+	-- check player token on every login
+	minetest.register_on_joinplayer(function(player)
+		local playername = player:get_player_name()
+		local player_settings = blockexchange.get_player_settings(playername)
+		if player_settings.token then
+			blockexchange.api.get_claims(player_settings.token):next(function(claims)
+				if not claims then
+					-- token invalid, remove it
+					blockexchange.log("warn", "Invalid token found for player '" .. playername .. "', removing it")
+					player_settings = blockexchange.get_player_settings(playername)
+					player_settings.token = nil
+					blockexchange.set_player_settings(playername, player_settings)
+				end
+			end):catch(function(err)
+				blockexchange.log("warn", "could not check token validity: " .. err)
+			end)
+		end
+	end)
+end
