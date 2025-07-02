@@ -1,5 +1,5 @@
 -- update a region
-function blockexchange.save_update(playername, origin, pos1, pos2, _, schema_uid, options)
+function blockexchange.save_update(playername, origin, pos1, pos2, schema_uid, options)
 	pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
 	options = options or {}
 	options.progress_callback = options.progress_callback or function() end
@@ -75,7 +75,7 @@ function blockexchange.save_update(playername, origin, pos1, pos2, _, schema_uid
 end
 
 -- update a region of a schema
-function blockexchange.save_update_area(playername, pos1, pos2, save_pos1, save_pos2, username, schema_uid)
+function blockexchange.save_update_area(playername, pos1, pos2, save_pos1, save_pos2, schema_uid)
 	-- clip to schema area
 	save_pos1, save_pos2 = blockexchange.clip_area(pos1, pos2, save_pos1, save_pos2)
 
@@ -90,17 +90,17 @@ function blockexchange.save_update_area(playername, pos1, pos2, save_pos1, save_
 	abs_pos1, abs_pos2 = blockexchange.clip_area(pos1, pos2, abs_pos1, abs_pos2)
 	abs_pos1, abs_pos2 = blockexchange.sort_pos(abs_pos1, abs_pos2)
 
-	return blockexchange.save_update(playername, pos1, abs_pos1, abs_pos2, username, schema_uid)
+	return blockexchange.save_update(playername, pos1, abs_pos1, abs_pos2, schema_uid)
 end
 
 -- update a region on a single position
-function blockexchange.save_update_pos(playername, pos1, pos2, pos, username, schema_uid)
+function blockexchange.save_update_pos(playername, pos1, pos2, pos, schema_uid)
 	local offset_pos1, offset_pos2 = blockexchange.get_schemapart_offset(pos1, pos)
 	local abs_pos1 = vector.add(pos1, offset_pos1)
 	local abs_pos2 = vector.add(pos1, offset_pos2)
 
 	abs_pos1, abs_pos2 = blockexchange.clip_area(pos1, pos2, abs_pos1, abs_pos2)
-	return blockexchange.save_update(playername, pos1, abs_pos1, abs_pos2, username, schema_uid)
+	return blockexchange.save_update(playername, pos1, abs_pos1, abs_pos2, schema_uid)
 end
 
 Promise.register_chatcommand("bx_save_update", {
@@ -135,7 +135,7 @@ Promise.register_chatcommand("bx_save_update", {
 
 		return Promise.async(function(await)
 			local _, err = await(
-				blockexchange.save_update_area(name, area.pos1, area.pos2, pos1, pos2, claims.username, area.schema_uid)
+				blockexchange.save_update_area(name, area.pos1, area.pos2, pos1, pos2, area.schema_uid)
 			)
 			if err then
 				error("save error: " .. err, 0)

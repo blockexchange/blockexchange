@@ -9,15 +9,20 @@ function blockexchange.is_area_autosaving(area_id)
     return busy_areas[area_id]
 end
 
-local function worker()
+-- worker promise
+local worker
+worker = Promise.asyncify(function(await)
     local pending_entries = {} -- area.id => { pos1, pos2, area }
 
+    local areas_changed = false
     for mapblock_pos_str in pairs(mapblocks) do
         local mapblock_pos = minetest.string_to_pos(mapblock_pos_str)
         local pos1, pos2 = blockexchange.get_mapblock_bounds_from_mapblock(mapblock_pos)
 
         local list = blockexchange.get_areas_in_area(pos1, pos2)
         for _, area in ipairs(list) do
+            area.dirty = true
+            areas_changed = true
             if area.autosave and area.playername then
                 if pending_entries[area.id] then
                     -- update existing border
@@ -35,35 +40,41 @@ local function worker()
         end
     end
 
+    if areas_changed then
+        blockexchange.save_areas()
+    end
+
     for _, entry in pairs(pending_entries) do
         local area = entry.area
-        minetest.log("action",
-            "[blockexchange] autosaving area " .. area.id ..
+        blockexchange.log("action",
+            "autosaving area " .. area.id ..
             " playername: " .. area.playername ..
             " username: " .. area.username ..
             " pos1: " .. minetest.pos_to_string(entry.pos1) ..
             " pos2: " .. minetest.pos_to_string(entry.pos2)
         )
         busy_areas[area.id] = true
-        local promise = blockexchange.save_update_area(area.playername,
+        local _, err = await(blockexchange.save_update_area(area.playername,
             area.pos1, area.pos2,
             entry.pos1, entry.pos2,
-            area.username, area.schema_uid
-        )
-        promise:next(function()
-            busy_areas[area.id] = nil
-        end):catch(function(e)
-            busy_areas[area.id] = nil
-            minetest.log("error",
-                "[blockexchange] autosave failed for area: " .. area.id ..
-                " reason: " .. (e or "<unkown>")
+            area.schema_uid
+        ))
+        busy_areas[area.id] = nil
+        -- remove dirty / local changes flag
+        area.dirty = false
+        blockexchange.save_areas()
+
+        if err then
+            blockexchange.log("error",
+                "autosave failed for area: " .. area.id ..
+                " reason: " .. (err or "<unkown>")
             )
-        end)
+        end
     end
 
     mapblocks = {}
     minetest.after(5, worker)
-end
+end)
 
 if blockexchange.is_online then
     minetest.after(1, worker)

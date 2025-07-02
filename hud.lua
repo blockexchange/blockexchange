@@ -28,6 +28,9 @@ local function update_player_hud(player)
 		if area.autosave then
 			area_text = area_text .. " [Autosave]"
 		end
+		if area.dirty then
+			area_text = area_text .. " [Local changes]"
+		end
 		if blockexchange.is_area_autosaving(area.id) then
 			area_icon = "blockexchange_upload.png"
 		end

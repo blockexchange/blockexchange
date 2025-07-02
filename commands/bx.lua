@@ -81,13 +81,17 @@ function blockexchange.show_form_area(playername)
 			fs = fs .. "label[1.2,6.5;Modification time: " ..
 				minetest.colorize(secondary_color, format_timestamp(schema.mtime)) .. "]"
 
-			if schema.mtime == area.mtime then
+			if not area.dirty and schema.mtime == area.mtime then
+				-- no local changes and up to date
 				fs = fs .. "label[1.2,7;" ..
 					minetest.colorize("#00ff00", "Schematic up-to-date") ..
 					"]"
 			elseif schema.mtime > area.mtime then
 				-- remote schematic is newer, show update button
-				fs = fs .. ui.button_exit(1,7, 4,0.8, "area_update", "Pull updates from remote")
+				fs = fs .. ui.button_exit(1,7, 4,0.8, "area_download", "Download updates")
+			elseif area.dirty then
+				-- local changes
+				fs = fs .. ui.button_exit(1,7, 4,0.8, "area_upload", "Upload schematic")
 			end
 
 			-- autosave
@@ -115,12 +119,19 @@ function blockexchange.show_form_area(playername)
 			blockexchange.save_areas()
 
 			blockexchange.show_form_area(playername)
-		elseif fields.area_update then
+		elseif fields.area_download then
 			await(blockexchange.load_update_area(playername, area))
 			blockexchange.show_form_area(playername)
+		elseif fields.area_upload then
+			await(blockexchange.save_update_area(playername,
+				area.pos1, area.pos2,
+				area.pos1, area.pos2,
+				area.schema_uid
+			))
+			area.dirty = false
+			blockexchange.save_areas()
+			blockexchange.show_form_area(playername)
 		end
-
-		-- TODO: action-buttons, pull, push, remove, etc
 	end)
 end
 
