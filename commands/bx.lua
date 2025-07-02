@@ -20,7 +20,7 @@ local function main_fs(title, playername)
 
 	local fs = ui.formspec(width, height) ..
 		ui.button_exit(0,-1, 2.8,0.8, "show_main", "Info") ..
-		ui.button_exit(3,-1, 2.8,0.8, "show_settings", "Settings")
+		ui.button_exit(3,-1, 2.8,0.8, "show_settings", "Player settings")
 
 	if area then
 		fs = fs .. ui.button_exit(6,-1, 2.8,0.8, "show_area", "Area")
@@ -63,6 +63,10 @@ function blockexchange.show_form_area(playername)
 		return
 	end
 
+	local claims = blockexchange.get_claims(playername)
+	local can_upload = claims and area.username == claims.username
+	local is_owner = playername == area.playername
+
 	return Promise.async(function(await)
 		local schema, schema_err = await(blockexchange.api.get_schema_by_uid(area.schema_uid))
 		local fs = main_fs("Area", playername)
@@ -71,7 +75,8 @@ function blockexchange.show_form_area(playername)
 		fs = fs .. "label[1,2;Local area info:]"
 		fs = fs .. "label[1.2,2.5;Local ID: " .. minetest.colorize(secondary_color, area.id) .. "]"
 		fs = fs .. "label[1.2,3;Name: " .. minetest.colorize(secondary_color, area.name)  .. "]"
-		fs = fs .. "label[1.2,3.5;Modification time: " ..
+		fs = fs .. "label[1.2,3.5;Owner: " .. minetest.colorize(secondary_color, area.playername)  .. "]"
+		fs = fs .. "label[1.2,4;Modification time: " ..
 			minetest.colorize(secondary_color, format_timestamp(area.mtime))  .. "]"
 
 		if schema then
@@ -86,22 +91,23 @@ function blockexchange.show_form_area(playername)
 				fs = fs .. "label[1.2,7;" ..
 					minetest.colorize("#00ff00", "Schematic up-to-date") ..
 					"]"
-			elseif schema.mtime > area.mtime then
+			elseif is_owner and schema.mtime > area.mtime then
 				-- remote schematic is newer, show update button
 				fs = fs .. ui.button_exit(1,7, 4,0.8, "area_download", "Download updates")
-			elseif area.dirty then
+			elseif is_owner and can_upload and area.dirty then
 				-- local changes
 				fs = fs .. ui.button_exit(1,7, 4,0.8, "area_upload", "Upload schematic")
 			end
 
-			-- autosave
-			if area.autosave then
-				fs = fs .. ui.checkbox_on(1,8,"toggle_autosave")
-			else
-				fs = fs .. ui.checkbox_off(1,8,"toggle_autosave")
+			if can_upload and is_owner then
+				-- we could upload, show autosave option
+				if area.autosave then
+					fs = fs .. ui.checkbox_on(1,8,"toggle_autosave")
+				else
+					fs = fs .. ui.checkbox_off(1,8,"toggle_autosave")
+				end
+				fs = fs .. "label[2,8.3;Enable autosave on changes]"
 			end
-			fs = fs .. "label[2,8.3;Enable autosave on changes]"
-
 
 		else
 			fs = fs .. "label[1,5;" ..
@@ -119,10 +125,10 @@ function blockexchange.show_form_area(playername)
 			blockexchange.save_areas()
 
 			blockexchange.show_form_area(playername)
-		elseif fields.area_download then
+		elseif is_owner and fields.area_download then
 			await(blockexchange.load_update_area(playername, area))
 			blockexchange.show_form_area(playername)
-		elseif fields.area_upload then
+		elseif is_owner and can_upload and fields.area_upload then
 			await(blockexchange.save_update_area(playername,
 				area.pos1, area.pos2,
 				area.pos1, area.pos2,
@@ -141,7 +147,7 @@ function blockexchange.show_form_settings(playername)
 	local ctx = get_context(playername)
 	ctx.form = "settings"
 
-	local fs = main_fs("Settings", playername)
+	local fs = main_fs("Player settings", playername)
 
 	-- Hud setting
 	if player_settings.hud then
