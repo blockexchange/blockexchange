@@ -155,6 +155,18 @@ Promise.register_chatcommand("bx_load", {
     end
 })
 
+function blockexchange.load_update_area(playername, area)
+	return blockexchange.load(playername, area.pos1, area.username, area.name, area.mtime):next(function(stat)
+		if stat.last_schemapart then
+			-- some parts have been updated
+			return "Load-update complete with " .. stat.total_parts .. " parts"
+		else
+			-- nothing has been updated
+			return "No updates available"
+		end
+	end)
+end
+
 Promise.register_chatcommand("bx_load_update", {
     params = "[area_id?]",
     description = "downloads changes",
@@ -165,14 +177,6 @@ Promise.register_chatcommand("bx_load_update", {
             return false, err_msg
         end
 
-		return blockexchange.load(name, area.pos1, area.username, area.name, area.mtime):next(function(stat)
-			if stat.last_schemapart then
-				-- some parts have been updated
-				return "Load-update complete with " .. stat.total_parts .. " parts"
-			else
-				-- nothing has been updated
-				return "No updates available"
-			end
-		end)
+		return blockexchange.load_update_area(name, area)
     end
 })

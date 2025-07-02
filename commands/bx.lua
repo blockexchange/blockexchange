@@ -85,7 +85,20 @@ function blockexchange.show_form_area(playername)
 				fs = fs .. "label[1.2,7;" ..
 					minetest.colorize("#00ff00", "Schematic up-to-date") ..
 					"]"
+			elseif schema.mtime > area.mtime then
+				-- remote schematic is newer, show update button
+				fs = fs .. ui.button_exit(1,7, 4,0.8, "area_update", "Pull updates from remote")
 			end
+
+			-- autosave
+			if area.autosave then
+				fs = fs .. ui.checkbox_on(1,8,"toggle_autosave")
+			else
+				fs = fs .. ui.checkbox_off(1,8,"toggle_autosave")
+			end
+			fs = fs .. "label[2,8.3;Enable autosave on changes]"
+
+
 		else
 			fs = fs .. "label[1,5;" ..
 				minetest.colorize("#ffff00", "could not fetch remote schematic: " .. (schema_err or "<unknown error>")) ..
@@ -95,6 +108,16 @@ function blockexchange.show_form_area(playername)
 		local fields = await(Promise.formspec(playername, fs))
 		if handle_top_nav(fields, playername) then
 			return
+		end
+
+		if fields.toggle_autosave then
+			area.autosave = not area.autosave
+			blockexchange.save_areas()
+
+			blockexchange.show_form_area(playername)
+		elseif fields.area_update then
+			await(blockexchange.load_update_area(playername, area))
+			blockexchange.show_form_area(playername)
 		end
 
 		-- TODO: action-buttons, pull, push, remove, etc
