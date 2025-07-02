@@ -94,9 +94,9 @@ end
 
 -- NOTE: there are too many changes reporting, we are basically saving the whole time
 -- disabled until there is a solution or alternative
-local enable_builting_mapblock_change_detection = false
+local enable_builtin_mapblock_change_detection = false
 
-if type(minetest.register_on_mapblocks_changed) == "function" and enable_builting_mapblock_change_detection then
+if type(minetest.register_on_mapblocks_changed) == "function" and enable_builtin_mapblock_change_detection then
     -- builtin change detection
     minetest.register_on_mapblocks_changed(function(modified_blocks)
         for mapblock_hash in pairs(modified_blocks) do
