@@ -111,11 +111,11 @@ function blockexchange.save(playername, pos1, pos2, schemaname, options)
 		end
 
 		-- get updated schema
-		schema, err = await(blockexchange.api.get_schema_by_name(claims.username, schemaname))
+		schema, err = await(blockexchange.api.get_schema_by_uid(schema.uid))
 		if err then
 			error("error fetching updated schema: " .. err, 0)
 		elseif not schema then
-			error("saved schema not found: " .. claims.username .. "/" .. schemaname, 0)
+			error("saved schema not found: " .. schema.uid, 0)
 		end
 
 		-- register area

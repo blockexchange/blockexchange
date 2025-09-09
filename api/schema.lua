@@ -62,7 +62,8 @@ function blockexchange.api.get_schema_by_name(user_name, schema_name, download)
       method = "POST",
       data = {
         user_name = user_name,
-        schema_name = schema_name
+        schema_name = schema_name,
+        complete = true
       }
     }))
 
@@ -70,7 +71,7 @@ function blockexchange.api.get_schema_by_name(user_name, schema_name, download)
       error("search failed: " .. err, 0)
     end
 
-    if not search_result or #search_result ~= 1 then
+    if not search_result or #search_result == 0 then
       -- no results, resolve with nil-promise
       return nil
     else
