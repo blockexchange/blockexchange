@@ -120,6 +120,10 @@ if minetest.get_modpath("advtrains") then
 	dofile(MP.."/compat/advtrains.lua")
 end
 
+if minetest.get_modpath("nc_api_storebox") then
+	dofile(MP.."/compat/nodecore.lua")
+end
+
 -- testing
 if minetest.get_modpath("mtt") then
 	dofile(MP .. "/mtt/serialize_spec.lua")

@@ -1,7 +1,8 @@
 globals = {
 	"blockexchange",
 	"worldedit",
-	"minetest"
+	"minetest",
+	"nc"
 }
 
 max_cyclomatic_complexity = 30

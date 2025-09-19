@@ -83,6 +83,9 @@ end
 -- change tracking code below
 
 function blockexchange.mark_changed(pos1, pos2)
+    assert(pos1, "pos1 is not nil")
+    pos2 = pos2 or pos1
+
     if not blockexchange.is_online then
         -- can't save online
         return
