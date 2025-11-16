@@ -40,10 +40,14 @@ worker = Promise.asyncify(function(await)
         end
     end
 
+    -- reset mapblock list after collecting the changed areas
+    mapblocks = {}
+
     if areas_changed then
         blockexchange.save_areas()
     end
 
+    -- start saving all changed area parts
     for _, entry in pairs(pending_entries) do
         local area = entry.area
         blockexchange.log("action",
@@ -72,8 +76,7 @@ worker = Promise.asyncify(function(await)
         end
     end
 
-    mapblocks = {}
-    minetest.after(5, worker)
+    minetest.after(1, worker)
 end)
 
 if blockexchange.is_online then
