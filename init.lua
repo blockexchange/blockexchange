@@ -14,7 +14,8 @@ blockexchange = {
 	min_delay = 0.1,
 	pos1 = {}, -- name -> pos
 	pos2 = {}, -- name -> pos
-	max_size = 1000
+	max_size = 1000,
+	batch_size = tonumber(minetest.settings:get("blockexchange.batch_size")) or 20
 }
 
 -- min-delay for async operations

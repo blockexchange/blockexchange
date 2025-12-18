@@ -31,15 +31,24 @@ function blockexchange.load_local(playername, origin, schemaname)
         local pos2 = vector.add(origin, blockexchange.get_schema_size(schema))
         pos2 = vector.subtract(pos2, 1)
         blockexchange.set_pos(2, playername, pos2)
-        local total_parts = blockexchange.count_schemaparts(origin, pos2)
+
+        local total_parts = 0
+        for current_pos in blockexchange.iterator(origin, origin, pos2) do
+			local relative_pos = vector.subtract(current_pos, origin)
+			local entry_filename = "schemapart_" .. relative_pos.x .. "_" .. relative_pos.y .. "_" .. relative_pos.z .. ".json"
+			if zip:get_entry(entry_filename) then
+				total_parts = total_parts + 1
+			end
+		end
+
+		local batch = blockexchange.create_batch_placer(origin)
 
 		for current_pos in blockexchange.iterator(origin, origin, pos2) do
-            -- TODO: maybe iterate over files instead of map-parts
 			local relative_pos = vector.subtract(current_pos, origin)
 			local entry_filename = "schemapart_" .. relative_pos.x .. "_" .. relative_pos.y .. "_" .. relative_pos.z .. ".json"
 			local entry = zip:get_entry(entry_filename)
 			if entry then
-				-- non-air part
+                -- non-air part
                 local schemapart_str
 				schemapart_str, err = zip:get(entry_filename, true)
 				if err then
@@ -47,21 +56,29 @@ function blockexchange.load_local(playername, origin, schemaname)
 				end
 				local schemapart = minetest.parse_json(schemapart_str)
 
-				-- increment stats
+                -- increment stats
 				current_part = current_part + 1
-				local progress_percent = math.floor(current_part / total_parts * 100 * 10) / 10
-                job.hud_text = "Local download '" .. schemaname ..
-				    "', progress: " .. progress_percent .. " %"
+				batch:add(schemapart)
 
-				blockexchange.place_schemapart(schemapart, origin)
+				local progress_percent = math.floor(current_part / total_parts * 100 * 10) / 10
+				job.hud_text = "Local download '" .. schemaname ..
+					"', progress: " .. progress_percent .. " %"
+
+				if #batch.parts >= blockexchange.batch_size then
+					batch:flush()
+					await(Promise.after(blockexchange.min_delay))
+				end
+
 				minetest.log("action", "[blockexchange] Extraction of part " .. minetest.pos_to_string(current_pos) .. " completed")
 			end
 
 			if job.cancel then
 				error("canceled", 0)
 			end
-			await(Promise.after(blockexchange.min_delay))
 		end
+
+		batch:flush()
+		job.hud_text = "Local download '" .. schemaname .. "', complete!"
 
 		return {
             total_parts = total_parts

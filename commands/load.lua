@@ -36,6 +36,7 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 
 		-- current schemapart
 		local schemapart
+		local batch = blockexchange.create_batch_placer(pos1)
 
 		while true do
 			if mtime > 0 then
@@ -49,7 +50,17 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 					-- success
 					current_part = current_part + 1
 					mtime = schemapart.mtime
-					blockexchange.place_schemapart(schemapart, pos1)
+					batch:add(schemapart)
+
+					if #batch.parts >= blockexchange.batch_size then
+						batch:flush()
+
+						local progress_percent = math.floor(current_part / total_parts * 100 * 10) / 10
+						job.hud_text = "Downloading '" .. username .. "/" .. schemaname ..
+							"', progress: " .. progress_percent .. " %"
+
+						await(Promise.after(blockexchange.min_delay))
+					end
 				else
 					-- no more schemaparts
 					break
@@ -66,42 +77,43 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 					elseif not schemapart then
 						-- empty schema
 						break
-					else
-						current_part = current_part + 1
-						blockexchange.place_schemapart(schemapart, pos1)
-					end
-				else
-					-- other parts
-					local pos = {
-						x = schemapart.offset_x,
-						y = schemapart.offset_y,
-						z = schemapart.offset_z
-					}
-					schemapart, err = await(blockexchange.api.get_next_schemapart(schema.uid, pos))
-					if err then
-						retries = retries + 1
-						await(Promise.after(5))
-					elseif not schemapart then
-						-- done
-						break
-					else
-						current_part = current_part + 1
-						blockexchange.place_schemapart(schemapart, pos1)
 					end
 				end
+
+				current_part = current_part + 1
+				batch:add(schemapart)
+
+				if #batch.parts >= blockexchange.batch_size then
+					batch:flush()
+
+					local progress_percent = math.floor(current_part / total_parts * 100 * 10) / 10
+					job.hud_text = "Downloading '" .. username .. "/" .. schemaname ..
+						"', progress: " .. progress_percent .. " %"
+
+					await(Promise.after(blockexchange.min_delay))
+				end
+
+				local pos = {
+					x = schemapart.offset_x,
+					y = schemapart.offset_y,
+					z = schemapart.offset_z
+				}
+				schemapart, err = await(blockexchange.api.get_next_schemapart(schema.uid, pos))
+				if err then
+					retries = retries + 1
+					await(Promise.after(5))
+				elseif not schemapart then
+					break
+				end
 			end
-
-			-- compute stats
-			local progress_percent = math.floor(current_part / total_parts * 100 * 10) / 10
-			job.hud_text = "Downloading '" .. username .. "/" .. schemaname ..
-				"', progress: " .. progress_percent .. " %"
-
-			await(Promise.after(blockexchange.min_delay))
 
 			if job.cancel then
 				error("canceled", 0)
 			end
 		end
+
+		batch:flush()
+		job.hud_text = "Downloading '" .. username .. "/" .. schemaname .. "', complete!"
 
 		local player_settings = blockexchange.get_player_settings(playername)
 		if player_settings.area_tracking and initial_load then

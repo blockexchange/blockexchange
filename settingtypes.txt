@@ -3,3 +3,6 @@ blockexchange.url (blockexchange server url) string https://blockexchange.minete
 
 # the min-delay for http calls
 blockexchange.min_delay (min delay between http calls) float 0.1
+
+# number of schemaparts to batch before writing to map (higher = faster but more memory and longer stutters)
+blockexchange.batch_size (schemapart batch size) int 20 1 100

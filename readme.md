@@ -93,6 +93,7 @@ Online commands, they call the remote-server with the http api
 # Settings
 
 * **blockexchange.url** URL to the central server
+* **blockexchange.batch_size** (default: 20) Number of schemaparts to place in one batch (performance tuning)
 
 The mod also needs the http api:
 ```
