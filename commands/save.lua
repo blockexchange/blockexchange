@@ -94,12 +94,7 @@ function blockexchange.save(playername, pos1, pos2, schemaname, options)
 			await(Promise.after(blockexchange.min_delay))
 		end
 
-		-- create an array with mod names
-		local mod_names_list = {}
-		for k in pairs(mod_names) do
-			table.insert(mod_names_list, k)
-		end
-
+		local mod_names_list = blockexchange.get_mod_name_list(mod_names)
 		_, err = await(blockexchange.api.create_schemamods(player_settings.token, schema.uid, mod_names_list))
 		if err then
 			error("error creating mod-list: " .. err, 0)

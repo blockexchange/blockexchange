@@ -28,8 +28,7 @@ function blockexchange.load_local(playername, origin, schemaname)
         end
         local schema = minetest.parse_json(schema_str)
 
-        local pos2 = vector.add(origin, blockexchange.get_schema_size(schema))
-        pos2 = vector.subtract(pos2, 1)
+        local pos2 = blockexchange.get_schema_pos2(origin, schema)
         blockexchange.set_pos(2, playername, pos2)
         local total_parts = blockexchange.count_schemaparts(origin, pos2)
 

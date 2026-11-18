@@ -40,17 +40,6 @@ function blockexchange.save_update(playername, origin, pos1, pos2, schema_uid, o
 				error("create error at " .. minetest.pos_to_string(relative_pos) .. ": " .. err, 0)
 			end
 
-			-- create an array with mod names
-			local mod_names_list = {}
-			for k in pairs(mod_names) do
-				table.insert(mod_names_list, k)
-			end
-
-			_, err = await(blockexchange.api.create_schemamods(player_settings.token, schema_uid, mod_names_list))
-			if err then
-				error("error creating mod-list: " .. err, 0)
-			end
-
 			if job.cancel then
 				error("canceled", 0)
 			end
@@ -58,10 +47,18 @@ function blockexchange.save_update(playername, origin, pos1, pos2, schema_uid, o
 			await(Promise.after(blockexchange.min_delay))
 		end
 
+		-- upload the collected mod-list once all parts are saved
+		local mod_names_list = blockexchange.get_mod_name_list(mod_names)
+		local _, err = await(blockexchange.api.create_schemamods(player_settings.token, schema_uid, mod_names_list))
+		if err then
+			error("error creating mod-list: " .. err, 0)
+		end
+
 		local area = blockexchange.get_area(pos1)
 		if area then
 			-- update area mtime
-			local schema, err = await(blockexchange.api.get_schema_by_uid(schema_uid))
+			local schema
+			schema, err = await(blockexchange.api.get_schema_by_uid(schema_uid))
 			if err then
 				error("schema get error: " .. err, 0)
 			end

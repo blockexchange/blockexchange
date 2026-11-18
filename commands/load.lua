@@ -13,6 +13,7 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 	}
 
 	local retries = 0
+	local max_retries = 12
 	local current_part = 0
 	local initial_load = not from_mtime
 
@@ -23,7 +24,7 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 		elseif not schema then
 			error("schema not found: '" .. username .. "/" .. schemaname .. "'", 0)
 		end
-		local pos2 = vector.add(pos1, blockexchange.get_schema_size(schema))
+		local pos2 = blockexchange.get_schema_pos2(pos1, schema)
 
 		-- current mtime, if set
 		local mtime = from_mtime or 0
@@ -34,61 +35,45 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 			error("error fetching total parts: " .. err, 0)
 		end
 
-		-- current schemapart
+		-- last successfully placed schemapart
 		local schemapart
 
 		while true do
+			local fetch_promise
 			if mtime > 0 then
 				-- incremental download by mtime
-				schemapart, err = await(blockexchange.api.get_next_schemapart_by_mtime(schema.uid,  mtime))
-				if err then
-					-- retry later
-					retries = retries + 1
-					await(Promise.after(5))
-				elseif schemapart then
-					-- success
-					current_part = current_part + 1
-					mtime = schemapart.mtime
-					blockexchange.place_schemapart(schemapart, pos1)
-				else
-					-- no more schemaparts
-					break
-				end
+				fetch_promise = blockexchange.api.get_next_schemapart_by_mtime(schema.uid, mtime)
+			elseif not schemapart then
+				-- full download, first part
+				fetch_promise = blockexchange.api.get_first_schemapart(schema.uid)
 			else
-				-- full download
-				if not schemapart then
-					-- first part
-					schemapart, err = await(blockexchange.api.get_first_schemapart(schema.uid))
-					if err then
-						-- retry later
-						retries = retries + 1
-						await(Promise.after(5))
-					elseif not schemapart then
-						-- empty schema
-						break
-					else
-						current_part = current_part + 1
-						blockexchange.place_schemapart(schemapart, pos1)
-					end
-				else
-					-- other parts
-					local pos = {
-						x = schemapart.offset_x,
-						y = schemapart.offset_y,
-						z = schemapart.offset_z
-					}
-					schemapart, err = await(blockexchange.api.get_next_schemapart(schema.uid, pos))
-					if err then
-						retries = retries + 1
-						await(Promise.after(5))
-					elseif not schemapart then
-						-- done
-						break
-					else
-						current_part = current_part + 1
-						blockexchange.place_schemapart(schemapart, pos1)
-					end
+				-- full download, next part
+				fetch_promise = blockexchange.api.get_next_schemapart(schema.uid, {
+					x = schemapart.offset_x,
+					y = schemapart.offset_y,
+					z = schemapart.offset_z
+				})
+			end
+
+			local next_part
+			next_part, err = await(fetch_promise)
+			if err then
+				-- retry later
+				retries = retries + 1
+				if retries > max_retries then
+					error("download failed after " .. retries .. " retries: " .. err, 0)
 				end
+				await(Promise.after(5))
+			elseif not next_part then
+				-- no more schemaparts
+				break
+			else
+				schemapart = next_part
+				if mtime > 0 then
+					mtime = next_part.mtime
+				end
+				current_part = current_part + 1
+				blockexchange.place_schemapart(next_part, pos1)
 			end
 
 			-- compute stats

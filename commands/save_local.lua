@@ -58,15 +58,9 @@ function blockexchange.save_local(playername, pos1, pos2, schemaname)
       await(Promise.after(blockexchange.min_delay))
     end
 
-    -- create an array with mod names
-		local mod_name_list = {}
-		for k in pairs(mod_names) do
-			table.insert(mod_name_list, k)
-		end
-
     schema.total_parts = total_parts
     schema.total_size = total_size
-    zip:add("mods.json", minetest.write_json(mod_names))
+    zip:add("mods.json", minetest.write_json(blockexchange.get_mod_name_list(mod_names)))
     zip:add("schema.json", minetest.write_json(schema))
 
     return {

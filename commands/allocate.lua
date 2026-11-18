@@ -5,9 +5,14 @@ local builtin_mods = {
 }
 
 local function get_missing_mods(mods)
+  if mods and #mods == 0 and next(mods) then
+    -- legacy local zips stored the mod-set (modname -> true) instead of a list
+    mods = blockexchange.get_mod_name_list(mods)
+  end
+
   -- collect missing mods in a list
   local missing_mods = ""
-  for _, modname in ipairs(mods) do
+  for _, modname in ipairs(mods or {}) do
     if not builtin_mods[modname] and not minetest.get_modpath(modname) then
       if #missing_mods > 0 then
         -- add comma separator
@@ -44,10 +49,7 @@ function blockexchange.allocate(playername, pos1, username, schemaname, local_lo
       if not schema then
         error("Schema not found: '" .. schemaname .. "'", 0)
       end
-      local pos2 = vector.add(pos1, blockexchange.get_schema_size(schema))
-      pos2 = vector.subtract(pos2, 1)
-
-      blockexchange.set_pos(2, playername, pos2)
+      blockexchange.set_pos(2, playername, blockexchange.get_schema_pos2(pos1, schema))
 
       local mods_str
       mods_str, err_msg = z:get("mods.json")
@@ -72,9 +74,7 @@ function blockexchange.allocate(playername, pos1, username, schemaname, local_lo
         error("Schema not found: '" .. username .. "/" .. schemaname .. "'", 0)
       end
 
-      local pos2 = vector.add(pos1, blockexchange.get_schema_size(schema))
-      pos2 = vector.subtract(pos2, 1)
-      blockexchange.set_pos(2, playername, pos2)
+      blockexchange.set_pos(2, playername, blockexchange.get_schema_pos2(pos1, schema))
 
       local mods
       mods, err = await(blockexchange.api.get_schemamods(schema.uid))

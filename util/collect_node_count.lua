@@ -16,3 +16,12 @@ function blockexchange.collect_node_count(node_count, mod_names)
         end
     end
 end
+
+-- converts the mod-name set (modname -> true) into a list
+function blockexchange.get_mod_name_list(mod_names)
+    local list = {}
+    for k in pairs(mod_names) do
+        table.insert(list, k)
+    end
+    return list
+end
