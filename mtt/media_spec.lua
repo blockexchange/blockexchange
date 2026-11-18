@@ -96,25 +96,26 @@ end
 mtt.register("upload_mod_media, remote upload", {
     timeout = 60,
     func = function(callback)
-        local token
-        blockexchange.api.get_token("Testuser", "default"):next(function(t)
-            token = t
-            return blockexchange.upload_mod_media(token, "blockexchange", "CC0", "https://example.com")
-        end):next(function(stats)
+        Promise.async(function(await)
+            local token, err = await(blockexchange.api.get_token("Testuser", "default"))
+            if err then error("get_token error: " .. tostring(err), 0) end
+
+            local stats
+            stats, err = await(blockexchange.upload_mod_media(token, "blockexchange", "CC0", "https://example.com"))
+
             if not has_permission(token, "MEDIA") then
-                callback("upload succeeded without MEDIA permission")
+                -- non-admin users are expected to get rejected
+                if not err then error("upload succeeded without MEDIA permission", 0) end
                 return
             end
+
+            if err then error("upload error: " .. tostring(err), 0) end
             assert(stats.nodedefs > 0)
             assert(stats.mediafiles > 0)
+        end):next(function()
             callback()
         end):catch(function(err)
-            if token and not has_permission(token, "MEDIA") then
-                -- non-admin users are expected to get rejected
-                callback()
-            else
-                callback(err)
-            end
+            callback(err)
         end)
     end
 })

@@ -12,30 +12,40 @@ local schemaname = "test_schema" .. math.random(1000)
 mtt.register("remote save test", {
     timeout = 300,
     func = function(callback)
-        blockexchange.api.get_token(username, "default"):next(function(token)
+        Promise.async(function(await)
+            local _
+            local token, err = await(blockexchange.api.get_token(username, "default"))
+            if err then error("get_token error: " .. tostring(err), 0) end
+
             local player_settings = blockexchange.get_player_settings(playername)
-			player_settings.token = token
-			blockexchange.set_player_settings(playername, player_settings)
-            return blockexchange.emerge(playername, pos1, pos2_load)
-        end):next(function()
-            return blockexchange.save(playername, pos1, pos2, schemaname)
-        end):next(function()
-            return blockexchange.load(playername, pos1_load, username, schemaname)
-        end):next(function()
+            player_settings.token = token
+            blockexchange.set_player_settings(playername, player_settings)
+
+            _, err = await(blockexchange.emerge(playername, pos1, pos2_load))
+            if err then error("emerge error: " .. tostring(err), 0) end
+
+            -- remote save/load
+            _, err = await(blockexchange.save(playername, pos1, pos2, schemaname))
+            if err then error("save error: " .. tostring(err), 0) end
+
+            _, err = await(blockexchange.load(playername, pos1_load, username, schemaname))
+            if err then error("load error: " .. tostring(err), 0) end
+
             local success, msg = blockexchange.compare_area(pos1, pos2, pos1_load, pos2_load, { check_param1 = false })
             if not success then
-                print(msg)
-                callback("loaded area does not match: " .. msg)
+                error("loaded area does not match: " .. msg, 0)
             end
-        end):next(function()
-            return blockexchange.save_local(playername, pos1, pos2, schemaname)
-        end):next(function()
-            return blockexchange.load_local(playername, pos1_load, schemaname)
-        end):next(function()
-            local success, msg = blockexchange.compare_area(pos1, pos2, pos1_load, pos2_load, { check_param1 = false })
+
+            -- local save/load
+            _, err = await(blockexchange.save_local(playername, pos1, pos2, schemaname))
+            if err then error("save_local error: " .. tostring(err), 0) end
+
+            _, err = await(blockexchange.load_local(playername, pos1_load, schemaname))
+            if err then error("load_local error: " .. tostring(err), 0) end
+
+            success, msg = blockexchange.compare_area(pos1, pos2, pos1_load, pos2_load, { check_param1 = false })
             if not success then
-                print(msg)
-                callback("local loaded area does not match: " .. msg)
+                error("local loaded area does not match: " .. msg, 0)
             end
         end):next(function()
             callback()

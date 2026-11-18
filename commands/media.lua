@@ -2,11 +2,16 @@
 function blockexchange.upload_mod_media(token, mod_name, license, source)
     local modpath = minetest.get_modpath(mod_name)
 
-    return blockexchange.api.create_media_mod(token, {
-        name = mod_name,
-        source = source or "",
-        media_license = license
-    }):next(function()
+    return Promise.async(function(await)
+        local _, err = await(blockexchange.api.create_media_mod(token, {
+            name = mod_name,
+            source = source or "",
+            media_license = license
+        }))
+        if err then
+            error("create media mod error: " .. tostring(err), 0)
+        end
+
         local stats = { nodedefs = 0, mediafiles = 0, size = 0 }
 
         local nodedefs = {}
@@ -54,9 +59,13 @@ function blockexchange.upload_mod_media(token, mod_name, license, source)
         end
         local mediafile_promise = blockexchange.api.create_media_mediafiles(token, mediafiles)
 
-        return Promise.all(nodedef_promise, mediafile_promise):next(function()
-            return stats
-        end)
+        -- both uploads run in parallel
+        _, err = await(Promise.all(nodedef_promise, mediafile_promise))
+        if err then
+            error("media upload error: " .. tostring(err), 0)
+        end
+
+        return stats
     end)
 end
 
