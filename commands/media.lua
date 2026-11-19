@@ -1,17 +1,8 @@
 
-function blockexchange.upload_mod_media(token, mod_name, license, source)
+function blockexchange.upload_mod_media(token, mod_name)
     local modpath = minetest.get_modpath(mod_name)
 
     return Promise.async(function(await)
-        local _, err = await(blockexchange.api.create_media_mod(token, {
-            name = mod_name,
-            source = source or "",
-            media_license = license
-        }))
-        if err then
-            error("create media mod error: " .. tostring(err), 0)
-        end
-
         local stats = { nodedefs = 0, mediafiles = 0, size = 0 }
 
         local nodedefs = {}
@@ -19,21 +10,38 @@ function blockexchange.upload_mod_media(token, mod_name, license, source)
             local mn = string.gmatch(nodename, "([^:]+)")()
             if mn == mod_name then
                 stats.nodedefs = stats.nodedefs + 1
+                local exported_def = {
+                    name = nodename,
+                    drawtype = def.drawtype,
+                    paramtype = def.paramtype,
+                    paramtype2 = def.paramtype2,
+                    light_source = def.light_source,
+                    mesh = def.mesh,
+                    tiles = def.tiles,
+                    special_tiles = def.special_tiles,
+                    overlay_tiles = def.overlay_tiles,
+                    use_texture_alpha = def.use_texture_alpha,
+                    visual_scale = def.visual_scale,
+                    color = def.color,
+                    palette = def.palette,
+                    waving = def.waving,
+                    node_box = def.node_box,
+                    connects_to = def.connects_to,
+                    connect_sides = def.connect_sides,
+                    walkable = def.walkable,
+                    groups = def.groups
+                }
+                if def.drawtype == "liquid" or def.drawtype == "flowingliquid" then
+                    exported_def.post_effect_color = def.post_effect_color
+                    exported_def.liquid_alternative_source = def.liquid_alternative_source
+                    exported_def.liquid_alternative_flowing = def.liquid_alternative_flowing
+                    exported_def.liquid_range = def.liquid_range
+                end
+
                 table.insert(nodedefs, {
                     name = nodename,
                     mod_name = mod_name,
-                    definition = minetest.write_json({
-                        name = nodename,
-                        drawtype = def.drawtype,
-                        paramtype = def.paramtype,
-                        paramtype2 = def.paramtype2,
-                        light_source = def.light_source,
-                        mesh = def.mesh,
-                        tiles = def.tiles,
-                        node_box = def.node_box,
-                        connects_to = def.connects_to,
-                        groups = def.groups
-                    })
+                    definition = minetest.write_json(exported_def)
                 })
             end
         end
@@ -60,7 +68,7 @@ function blockexchange.upload_mod_media(token, mod_name, license, source)
         local mediafile_promise = blockexchange.api.create_media_mediafiles(token, mediafiles)
 
         -- both uploads run in parallel
-        _, err = await(Promise.all(nodedef_promise, mediafile_promise))
+        local _, err = await(Promise.all(nodedef_promise, mediafile_promise))
         if err then
             error("media upload error: " .. tostring(err), 0)
         end
@@ -71,14 +79,12 @@ end
 
 
 minetest.register_chatcommand("bx_upload_media", {
-    params = "<modname> <license>",
+    params = "<modname>",
     privs = { blockexchange = true },
-    description = "Uploads the media of the given mod and license",
-    func = function(name, param)
-        local _, _, modname, license = string.find(param, "^([^%s]+)%s+(.*)$")
-
-        if not modname or not license then
-            return true, "please specify a modname and a license"
+    description = "Uploads the media of the given mod",
+    func = function(name, modname)
+        if not modname then
+            return true, "please specify a modname"
         end
 
         local modpath = minetest.get_modpath(modname)
@@ -91,13 +97,13 @@ minetest.register_chatcommand("bx_upload_media", {
             return true, "please login first to upload media"
         end
 
-        blockexchange.upload_mod_media(player_settings.token, modname, license):next(function(stats)
+        blockexchange.upload_mod_media(player_settings.token, modname):next(function(stats)
             minetest.chat_send_player(name, "[blockexchange] uploaded " .. stats.nodedefs .. " node-definitions and " ..
                 stats.mediafiles .. " mediafiles with " .. stats.size .. " bytes")
         end):catch(function(e)
             minetest.chat_send_player(name, "[blockexchange] and error occured: " .. dump(e))
         end)
 
-        return true, "uploading media from mod '" .. modname .. "' with license '" .. license .. "'"
+        return true, "uploading media from mod '" .. modname .. "'"
     end
 })

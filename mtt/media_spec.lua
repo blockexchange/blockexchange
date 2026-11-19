@@ -7,22 +7,15 @@ minetest.register_node("blockexchange:media_test_node", {
 
 mtt.register("upload_mod_media, collects nodedefs and mediafiles", function(callback)
     local api = blockexchange.api
-    local orig_create_mod = api.create_media_mod
     local orig_create_nodedefs = api.create_media_nodedefs
     local orig_create_mediafiles = api.create_media_mediafiles
 
     local function restore()
-        api.create_media_mod = orig_create_mod
         api.create_media_nodedefs = orig_create_nodedefs
         api.create_media_mediafiles = orig_create_mediafiles
     end
 
     local captured = {}
-    api.create_media_mod = function(token, mod)
-        captured.mod_token = token
-        captured.mod = mod
-        return Promise.resolved(mod)
-    end
     api.create_media_nodedefs = function(token, nodedefs)
         captured.nodedefs_token = token
         captured.nodedefs = nodedefs
@@ -38,14 +31,8 @@ mtt.register("upload_mod_media, collects nodedefs and mediafiles", function(call
     local texture_count = #minetest.get_dir_list(modpath .. "/textures", false)
         + #minetest.get_dir_list(modpath .. "/models", false)
 
-    blockexchange.upload_mod_media("my-token", "blockexchange", "CC0"):next(function(stats)
+    blockexchange.upload_mod_media("my-token", "blockexchange"):next(function(stats)
         restore()
-
-        -- mod entry
-        assert(captured.mod_token == "my-token")
-        assert(captured.mod.name == "blockexchange")
-        assert(captured.mod.media_license == "CC0")
-        assert(captured.mod.source == "")
 
         -- nodedefs: only nodes of the given mod
         assert(captured.nodedefs_token == "my-token")
@@ -101,7 +88,7 @@ mtt.register("upload_mod_media, remote upload", {
             if err then error("get_token error: " .. tostring(err), 0) end
 
             local stats
-            stats, err = await(blockexchange.upload_mod_media(token, "blockexchange", "CC0", "https://example.com"))
+            stats, err = await(blockexchange.upload_mod_media(token, "blockexchange"))
 
             if not has_permission(token, "MEDIA") then
                 -- non-admin users are expected to get rejected

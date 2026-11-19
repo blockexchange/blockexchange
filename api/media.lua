@@ -3,18 +3,6 @@
 
 local http, url = ...
 
---- creates a new mod
--- @param token the token in string format
--- @param mod the mod to create
--- @return a promise with the result
-function blockexchange.api.create_media_mod(token, mod)
-    return Promise.json(http, url .. "/api/media/mod/" .. mod.name, {
-        method = "POST",
-        data = mod,
-        headers = { "Authorization: " .. token }
-    })
-end
-
 --- creates or updates nodedefs
 -- @param token the token in string format
 -- @param nodedefs the nodedefs to create
