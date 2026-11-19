@@ -2,7 +2,7 @@
 local offline_info_cmd = {
     description = "Blockexchange offline stub",
     func = function()
-        return true, minetest.colorize("#ffff00", "The blockexchange mod has no access to the http api, " ..
+        return true, core.colorize("#ffff00", "The blockexchange mod has no access to the http api, " ..
             "to use the online functions add the 'blockexchange' mod to the 'secure.http_mods' setting")
     end
 }
@@ -19,5 +19,5 @@ local online_commands = {
 }
 
 for _, name in ipairs(online_commands) do
-    minetest.register_chatcommand(name, offline_info_cmd)
+    core.register_chatcommand(name, offline_info_cmd)
 end

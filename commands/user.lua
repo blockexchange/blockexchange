@@ -1,10 +1,10 @@
 
-minetest.register_chatcommand("bx_login", {
+core.register_chatcommand("bx_login", {
 	params = "<username> <access_token>",
 	description = "Login with an existing user and access_token or check the current login",
 	func = function(name, param)
-		if not minetest.check_player_privs(name, { blockexchange = true }) and
-			not minetest.check_player_privs(name, { blockexchange_protected_upload = true }) then
+		if not core.check_player_privs(name, { blockexchange = true }) and
+			not core.check_player_privs(name, { blockexchange_protected_upload = true }) then
 				return false, "Required privs: 'blockexchange' or 'blockexchange_protected_upload'"
 		end
 
@@ -33,20 +33,20 @@ minetest.register_chatcommand("bx_login", {
 			blockexchange.set_player_settings(name, player_settings)
 
 			local payload = blockexchange.parse_token(token)
-			minetest.chat_send_player(name, "Logged in as '" .. payload.username .. "' with user_uid: " .. payload.user_uid)
+			core.chat_send_player(name, "Logged in as '" .. payload.username .. "' with user_uid: " .. payload.user_uid)
 		end):catch(function(err)
-			minetest.log("error", "[blockexchange] get_token failed: " .. err or "?")
-			minetest.chat_send_player(name, "Login failed: " .. err or "?")
+			core.log("error", "[blockexchange] get_token failed: " .. err or "?")
+			core.chat_send_player(name, "Login failed: " .. err or "?")
 		end)
   end
 })
 
-minetest.register_chatcommand("bx_logout", {
+core.register_chatcommand("bx_logout", {
 	description = "Logs the current user out",
 	func = function(name)
 		local player_settings = blockexchange.get_player_settings(name)
 		player_settings.token = nil
 		blockexchange.set_player_settings(name, player_settings)
-		minetest.chat_send_player(name, "Logged out successfully")
+		core.chat_send_player(name, "Logged out successfully")
   end
 })

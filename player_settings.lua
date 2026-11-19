@@ -8,10 +8,10 @@ function blockexchange.get_player_settings(playername)
         }
     else
         -- stored settings
-        return minetest.deserialize(str)
+        return core.deserialize(str)
     end
 end
 
 function blockexchange.set_player_settings(playername, settings)
-    blockexchange.mod_storage:set_string("settings_" .. playername, minetest.serialize(settings))
+    blockexchange.mod_storage:set_string("settings_" .. playername, core.serialize(settings))
 end

@@ -11,7 +11,7 @@ function blockexchange.api.get_token(name, access_token)
   return Promise.http(http, url .. "/api/token", {
     extra_headers = { "Content-Type: application/json" },
     method = "POST",
-    data = minetest.write_json({
+    data = core.write_json({
       name = name,
       access_token = access_token
     })

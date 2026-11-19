@@ -1,4 +1,4 @@
-minetest.register_chatcommand("bx_area_remove", {
+core.register_chatcommand("bx_area_remove", {
     params = "[area_id?]",
     description = "removes the area information (not the build)",
     func = function(name, area_id)
@@ -7,7 +7,7 @@ minetest.register_chatcommand("bx_area_remove", {
             return true, err_msg
         end
 
-        local is_admin = minetest.check_player_privs(name, "blockexchange")
+        local is_admin = core.check_player_privs(name, "blockexchange")
 
         if not is_admin then
             -- check login info, if available
@@ -26,7 +26,7 @@ minetest.register_chatcommand("bx_area_remove", {
     end
 })
 
-minetest.register_chatcommand("bx_area_mark", {
+core.register_chatcommand("bx_area_mark", {
     params = "[area_id?]",
     description = "marks the area",
     privs = { worldedit = true },
@@ -36,7 +36,7 @@ minetest.register_chatcommand("bx_area_mark", {
             return true, err_msg
         end
 
-        local player = minetest.get_player_by_name(name)
+        local player = core.get_player_by_name(name)
         if player then
             blockexchange.set_pos(1, name, area.pos1)
             blockexchange.set_pos(2, name, area.pos2)

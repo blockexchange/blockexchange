@@ -1,6 +1,6 @@
 
 
-minetest.register_chatcommand("bx_license", {
+core.register_chatcommand("bx_license", {
 	description = "Shows or sets your currently set license",
 	func = function(name, license)
 		local player_settings = blockexchange.get_player_settings(name)

@@ -1,16 +1,16 @@
-local MP = minetest.get_modpath("blockexchange")
+local MP = core.get_modpath("blockexchange")
 
 -- optional http instance
-local http = minetest.request_http_api and minetest.request_http_api()
+local http = core.request_http_api and core.request_http_api()
 
 -- global namespace
 blockexchange = {
 	-- online flag
 	is_online = http ~= nil,
-	mod_storage = minetest.get_mod_storage(),
+	mod_storage = core.get_mod_storage(),
 	api = {},
 	api_version_major = 1,
-	url = minetest.settings:get("blockexchange.url") or "https://blockexchange.minetest.ch",
+	url = core.settings:get("blockexchange.url") or "https://blockexchange.minetest.ch",
 	min_delay = 0.1,
 	pos1 = {}, -- name -> pos
 	pos2 = {}, -- name -> pos
@@ -18,11 +18,11 @@ blockexchange = {
 }
 
 -- min-delay for async operations
-local min_delay_setting = tonumber(minetest.settings:get("blockexchange.min_delay"))
+local min_delay_setting = tonumber(core.settings:get("blockexchange.min_delay"))
 if min_delay_setting and min_delay_setting > 0 then
 	-- use setting
 	blockexchange.min_delay = min_delay_setting
-elseif minetest.is_singleplayer() then
+elseif core.is_singleplayer() then
 	-- default to 0 in singleplayer
 	blockexchange.min_delay = 0
 end
@@ -31,7 +31,7 @@ assert(mtzip.api_version == 1, "mtzip api compatibility")
 assert(Promise.api_version == 1, "Promise api compatibility")
 
 if not blockexchange.is_online then
-	minetest.log("warning", "[blockexchange] the http api is not enabled, functionality is limited to local operations")
+	core.log("warning", "[blockexchange] the http api is not enabled, functionality is limited to local operations")
 end
 
 -- http api
@@ -116,16 +116,16 @@ dofile(MP.."/commands/protectioncheck.lua")
 dofile(MP.."/commands/cleanup.lua")
 
 -- compat
-if minetest.get_modpath("advtrains") then
+if core.get_modpath("advtrains") then
 	dofile(MP.."/compat/advtrains.lua")
 end
 
-if minetest.get_modpath("nc_api_storebox") then
+if core.get_modpath("nc_api_storebox") then
 	dofile(MP.."/compat/nodecore.lua")
 end
 
 -- testing
-if minetest.get_modpath("mtt") then
+if core.get_modpath("mtt") then
 	dofile(MP .. "/mtt/serialize_spec.lua")
 	dofile(MP .. "/mtt/token_spec.lua")
 	dofile(MP .. "/mtt/areas_spec.lua")

@@ -1,4 +1,4 @@
-minetest blockexchange mod
+Luanti blockexchange mod
 
 ![](https://github.com/blockexchange/blockexchange/workflows/luacheck/badge.svg)
 ![](https://github.com/blockexchange/blockexchange/workflows/test/badge.svg)
@@ -22,7 +22,7 @@ Schemas can be browsed and administered on the central server: https://blockexch
 
 ## Download
 
-* Start your minetest app
+* Start your Luanti app
 * Download the `blockexchange` mod in the "Content" tab from the ContentDB.
 * Add the `blockexchange` mod to the secure HTTP-Mods settings (search for "http" in the "settings" tab)
 * Create a new world and activate the mod
@@ -34,7 +34,7 @@ Schemas can be browsed and administered on the central server: https://blockexch
 
 ## Upload
 
-* Start your minetest app
+* Start your Luanti app
 * Download the `blockexchange` mod in the "Content" tab from the ContentDB.
 * Add the `blockexchange` mod to the secure HTTP-Mods settings (search for "http" in the "settings" tab)
 * Create a new world and activate the mod

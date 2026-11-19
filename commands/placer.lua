@@ -1,4 +1,4 @@
-if not minetest.get_modpath("wield_events") then
+if not core.get_modpath("wield_events") then
     -- wield-events not available
     return
 end
@@ -14,20 +14,20 @@ local function create_placer_tool(username, schemaname, schema)
 
     local tool = ItemStack("blockexchange:place 1")
     local tool_meta = tool:get_meta()
-    tool_meta:set_string("size", minetest.pos_to_string(size))
+    tool_meta:set_string("size", core.pos_to_string(size))
     tool_meta:set_string("username", username)
     tool_meta:set_string("schemaname", schemaname)
 
     local desc = string.format(
         "Placement tool for %s/%s, size: %s nodes",
-        username, schemaname, minetest.pos_to_string(size)
+        username, schemaname, core.pos_to_string(size)
     )
     tool_meta:set_string("description", desc)
 
     return tool
 end
 
-minetest.register_chatcommand("bx_placer", {
+core.register_chatcommand("bx_placer", {
     params = "<username> <schemaname>",
     description = "Creates a placement tool for the schematic",
     privs = {blockexchange = true},
@@ -41,27 +41,27 @@ minetest.register_chatcommand("bx_placer", {
             if schema.size_x > max_size or
                 schema.size_y > max_size or
                 schema.size_z > max_size then
-                    minetest.chat_send_player(name, "Max-axis size of 100 nodes exceeded!")
+                    core.chat_send_player(name, "Max-axis size of 100 nodes exceeded!")
                     return
             end
 
             local tool = create_placer_tool(username, schemaname, schema)
-            local player = minetest.get_player_by_name(name)
+            local player = core.get_player_by_name(name)
             if not player then
                 -- player not found
-                minetest.chat_send_player(name, "Player not found!")
+                core.chat_send_player(name, "Player not found!")
                 return
             end
 
             local inv = player:get_inventory()
             if inv:room_for_item("main", tool) then
                 inv:add_item("main", tool)
-                minetest.chat_send_player(name, "Placement tool added to inventory")
+                core.chat_send_player(name, "Placement tool added to inventory")
             else
-                minetest.chat_send_player(name, "Inventory is full!")
+                core.chat_send_player(name, "Inventory is full!")
             end
         end):catch(function(err)
-            minetest.chat_send_player(name, "Loading schematic metadata failed: " .. (err or "<unknown error>"))
+            core.chat_send_player(name, "Loading schematic metadata failed: " .. (err or "<unknown error>"))
         end)
 
         return true

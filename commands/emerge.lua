@@ -27,7 +27,7 @@ function blockexchange.emerge(playername, pos1, pos2)
 
       blockexchange.log(
         "action",
-        "emerging area at " .. minetest.pos_to_string(current_pos) .. " progress: " .. progress_percent
+        "emerging area at " .. core.pos_to_string(current_pos) .. " progress: " .. progress_percent
       )
       await(Promise.emerge_area(current_pos, current_pos2))
       chunks = chunks + 1

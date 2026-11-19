@@ -1,4 +1,4 @@
-minetest.register_chatcommand("bx_autosave", {
+core.register_chatcommand("bx_autosave", {
     params = "[area_id?]",
     description = "toggles the autosave feature of the area",
     privs = { blockexchange = true },

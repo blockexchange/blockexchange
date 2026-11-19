@@ -5,17 +5,17 @@ local table_insert = table.insert
 
 -- collect nodes with on_timer attributes
 local node_names_with_timer = {}
-minetest.register_on_mods_loaded(function()
-	for _,node in pairs(minetest.registered_nodes) do
+core.register_on_mods_loaded(function()
+	for _,node in pairs(core.registered_nodes) do
 		if node.on_timer then
 			table_insert(node_names_with_timer, node.name)
 		end
 	end
-	minetest.log("action", "[blockexchange] collected " .. #node_names_with_timer .. " items with node timers")
+	core.log("action", "[blockexchange] collected " .. #node_names_with_timer .. " items with node timers")
 end)
 
-local air_content_id = minetest.get_content_id("air")
-local placeholder_id = minetest.get_content_id("placeholder:placeholder")
+local air_content_id = core.get_content_id("air")
+local placeholder_id = core.get_content_id("placeholder:placeholder")
 
 -- checks if a table is empty
 local function is_empty(tbl)
@@ -32,7 +32,7 @@ local function is_empty(tbl)
 end
 
 function blockexchange.serialize_part(pos1, pos2, node_count)
-	local manip = minetest.get_voxel_manip()
+	local manip = core.get_voxel_manip()
 	local e1, e2 = manip:read_from_map(pos1, pos2)
 	local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
 
@@ -78,10 +78,10 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 				if node_id == placeholder_id then
 					-- unwrap placeholder
 					local pos = {x=x, y=y, z=z}
-					local hash = minetest.hash_node_position(pos)
+					local hash = core.hash_node_position(pos)
 
 					-- unwrap raw node-info
-					local meta = minetest.get_meta(pos)
+					local meta = core.get_meta(pos)
 					local original_node, original_metadata = placeholder.unwrap(meta)
 
 					if data.node_mapping[original_node.name] then
@@ -112,7 +112,7 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 	-- collect statistics and node_id -> name mapping
 	node_count = node_count or {}
 	for node_id, count in pairs(node_id_count) do
-		local node_name = placeholder_node_id_names[node_id] or minetest.get_name_from_content_id(node_id)
+		local node_name = placeholder_node_id_names[node_id] or core.get_name_from_content_id(node_id)
 		data.node_mapping[node_name] = node_id
 		local counter = node_count[node_name] or 0
 		node_count[node_name] = counter + count
@@ -120,22 +120,22 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 
 	-- handle unwrapped placeholder metadata
 	for hash, metadata in pairs(placeholder_meta_pos_hashes) do
-		local pos = minetest.get_position_from_hash(hash)
+		local pos = core.get_position_from_hash(hash)
 		local relative_pos = vector.subtract(pos, pos1)
 
 		data.metadata.meta = data.metadata.meta or {}
-		data.metadata.meta[minetest.pos_to_string(relative_pos)] = metadata
+		data.metadata.meta[core.pos_to_string(relative_pos)] = metadata
 	end
 
 	-- serialize metadata
-	local pos_with_meta = minetest.find_nodes_with_meta(pos1, pos2)
+	local pos_with_meta = core.find_nodes_with_meta(pos1, pos2)
 	for _, pos in ipairs(pos_with_meta) do
 		local relative_pos = vector.subtract(pos, pos1)
-		local node = minetest.get_node(pos)
+		local node = core.get_node(pos)
 		local is_placeholder = node.name == "placeholder:placeholder"
 		if not is_placeholder then
 			-- not a placeholder, serialize metadata
-			local meta = minetest.get_meta(pos):to_table()
+			local meta = core.get_meta(pos):to_table()
 
 			-- Convert metadata item stacks to item strings
 			for _, invlist in pairs(meta.inventory) do
@@ -147,10 +147,10 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 				end
 			end
 
-			-- re-check if metadata actually exists (may happen with minetest.find_nodes_with_meta)
+			-- re-check if metadata actually exists (may happen with core.find_nodes_with_meta)
 			if not is_empty(meta.fields) or not is_empty(meta.inventory) then
 				data.metadata.meta = data.metadata.meta or {}
-				data.metadata.meta[minetest.pos_to_string(relative_pos)] = meta
+				data.metadata.meta[core.pos_to_string(relative_pos)] = meta
 			end
 		end
 	end
@@ -158,12 +158,12 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 	-- serialize node timers
 	if #node_names_with_timer > 0 then
 		data.metadata.timers = {}
-		local list = minetest.find_nodes_in_area(pos1, pos2, node_names_with_timer)
+		local list = core.find_nodes_in_area(pos1, pos2, node_names_with_timer)
 		for _, pos in pairs(list) do
-			local timer = minetest.get_node_timer(pos)
+			local timer = core.get_node_timer(pos)
 			local relative_pos = vector.subtract(pos, pos1)
 			if timer:is_started() then
-				data.metadata.timers[minetest.pos_to_string(relative_pos)] = {
+				data.metadata.timers[core.pos_to_string(relative_pos)] = {
 					timeout = timer:get_timeout(),
 					elapsed = timer:get_elapsed()
 				}
@@ -197,15 +197,15 @@ blockexchange.compress_data = Promise.handle_asyncify(function(data)
 		serialized_data = serialized_data .. string.char(data.param2[i])
 	end
 
-	return minetest.compress(serialized_data, "deflate")
+	return core.compress(serialized_data, "deflate")
 end)
 
 blockexchange.compress_metadata = Promise.handle_asyncify(function(data)
-	local metadata = minetest.write_json({
+	local metadata = core.write_json({
 		node_mapping = data.node_mapping,
 		size = data.size,
 		metadata = data.metadata
 	})
 
-	return minetest.compress(metadata, "deflate")
+	return core.compress(metadata, "deflate")
 end)

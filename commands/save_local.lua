@@ -43,12 +43,12 @@ function blockexchange.save_local(playername, pos1, pos2, schemaname)
         total_size = total_size + #schemapart.data + #schemapart.metadata
         total_parts = total_parts + 1
 
-        minetest.log("action", "[blockexchange] Saving local schemapart " .. minetest.pos_to_string(relative_pos))
+        core.log("action", "[blockexchange] Saving local schemapart " .. core.pos_to_string(relative_pos))
         local filename = "schemapart_" .. schemapart.offset_x ..
           "_" .. schemapart.offset_y ..
           "_" .. schemapart.offset_z ..
           ".json"
-        zip:add(filename, minetest.write_json(schemapart))
+        zip:add(filename, core.write_json(schemapart))
       end
 
       if job.cancel then
@@ -60,8 +60,8 @@ function blockexchange.save_local(playername, pos1, pos2, schemaname)
 
     schema.total_parts = total_parts
     schema.total_size = total_size
-    zip:add("mods.json", minetest.write_json(blockexchange.get_mod_name_list(mod_names)))
-    zip:add("schema.json", minetest.write_json(schema))
+    zip:add("mods.json", core.write_json(blockexchange.get_mod_name_list(mod_names)))
+    zip:add("schema.json", core.write_json(schema))
 
     return {
       total_size = total_size,

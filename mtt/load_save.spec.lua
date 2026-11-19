@@ -25,8 +25,8 @@ mtt.register("remote save test", {
             if err then error("emerge error: " .. tostring(err), 0) end
 
             -- place some non-air nodes so the schema has actual parts and mods
-            minetest.set_node(pos1, { name = "default:stone" })
-            minetest.set_node(vector.add(pos1, 20), { name = "default:dirt" })
+            core.set_node(pos1, { name = "default:stone" })
+            core.set_node(vector.add(pos1, 20), { name = "default:dirt" })
 
             -- remote save/load
             _, err = await(blockexchange.save(playername, pos1, pos2, schemaname))
@@ -51,7 +51,7 @@ mtt.register("remote save test", {
             -- mods.json has to be a list of mod names
             local zipfile = io.open(blockexchange.get_local_filename(schemaname), "rb")
             local zip = mtzip.unzip(zipfile)
-            local mods = minetest.parse_json(zip:get("mods.json"))
+            local mods = core.parse_json(zip:get("mods.json"))
             zipfile:close()
             if type(mods) ~= "table" or mods[1] ~= "default" then
                 error("unexpected mods.json content: " .. dump(mods), 0)

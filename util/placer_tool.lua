@@ -1,9 +1,9 @@
-if not minetest.get_modpath("wield_events") then
+if not core.get_modpath("wield_events") then
     -- wield-events not available
     return
 end
 
-minetest.register_tool("blockexchange:place", {
+core.register_tool("blockexchange:place", {
     description = "Placement tool",
     inventory_image = "blockexchange_plus.png^[colorize:#0000ff",
     stack_max = 1,
@@ -18,7 +18,7 @@ minetest.register_tool("blockexchange:place", {
         local meta = itemstack:get_meta()
         local username = meta:get_string("username")
         local schemaname = meta:get_string("schemaname")
-        local size = minetest.string_to_pos(meta:get_string("size"))
+        local size = core.string_to_pos(meta:get_string("size"))
         local distance = vector.distance(vector.new(), size)
 
         local pos1 = blockexchange.get_pointed_position(player, math.max(10, distance) + 5)
@@ -33,12 +33,12 @@ minetest.register_tool("blockexchange:place", {
             blockexchange.set_player_hud(playername, true)
 
             blockexchange.load(playername, pos1, username, schemaname):next(function(result)
-                minetest.chat_send_player(
+                core.chat_send_player(
                     playername,
                     "Download complete with " .. result.schema.total_parts .. " parts"
                 )
             end):catch(function(err_msg)
-                minetest.chat_send_player(playername, minetest.colorize("#ff0000", err_msg))
+                core.chat_send_player(playername, core.colorize("#ff0000", err_msg))
             end)
         end
     end,
@@ -47,7 +47,7 @@ minetest.register_tool("blockexchange:place", {
         local controls = player:get_player_control()
 
         local meta = itemstack:get_meta()
-        local size = minetest.string_to_pos(meta:get_string("size"))
+        local size = core.string_to_pos(meta:get_string("size"))
         local distance = vector.distance(vector.new(), size)
 
         local pos1 = blockexchange.get_pointed_position(player, math.max(10, distance) + 5)

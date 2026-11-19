@@ -13,7 +13,7 @@ local function get_missing_mods(mods)
   -- collect missing mods in a list
   local missing_mods = ""
   for _, modname in ipairs(mods or {}) do
-    if not builtin_mods[modname] and not minetest.get_modpath(modname) then
+    if not builtin_mods[modname] and not core.get_modpath(modname) then
       if #missing_mods > 0 then
         -- add comma separator
         missing_mods = missing_mods .. ","
@@ -45,7 +45,7 @@ function blockexchange.allocate(playername, pos1, username, schemaname, local_lo
       if err_msg then
         error("schema.json error: " .. err_msg, 0)
       end
-      local schema = minetest.parse_json(schema_str)
+      local schema = core.parse_json(schema_str)
       if not schema then
         error("Schema not found: '" .. schemaname .. "'", 0)
       end
@@ -58,7 +58,7 @@ function blockexchange.allocate(playername, pos1, username, schemaname, local_lo
       end
       f:close()
 
-      local mods = minetest.parse_json(mods_str)
+      local mods = core.parse_json(mods_str)
       local missing_mods = get_missing_mods(mods)
 
       return {
@@ -97,7 +97,7 @@ local function allocate_reporter(result)
 
   if #result.missing_mods > 0 then
     msg = msg .. ", "
-    msg = msg .. minetest.colorize("#ff0000", "missing mods: " .. result.missing_mods)
+    msg = msg .. core.colorize("#ff0000", "missing mods: " .. result.missing_mods)
   end
 
   return msg

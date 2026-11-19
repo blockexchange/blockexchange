@@ -1,7 +1,7 @@
 
 -- returns either the area with the area_id or the area the player is currently standing in
 function blockexchange.select_player_area(name, area_id)
-    local player = minetest.get_player_by_name(name)
+    local player = core.get_player_by_name(name)
     if not player and not area_id then
         return nil, "not enough info to select area"
     end

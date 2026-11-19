@@ -1,5 +1,5 @@
 -- test node, only registered if the mtt mod is present
-minetest.register_node("blockexchange:media_test_node", {
+core.register_node("blockexchange:media_test_node", {
     description = "blockexchange media test node",
     tiles = { "blockexchange_info.png" },
     groups = { not_in_creative_inventory = 1 }
@@ -27,9 +27,9 @@ mtt.register("upload_mod_media, collects nodedefs and mediafiles", function(call
         return Promise.resolved(true)
     end
 
-    local modpath = minetest.get_modpath("blockexchange")
-    local texture_count = #minetest.get_dir_list(modpath .. "/textures", false)
-        + #minetest.get_dir_list(modpath .. "/models", false)
+    local modpath = core.get_modpath("blockexchange")
+    local texture_count = #core.get_dir_list(modpath .. "/textures", false)
+        + #core.get_dir_list(modpath .. "/models", false)
 
     blockexchange.upload_mod_media("my-token", "blockexchange"):next(function(stats)
         restore()
@@ -42,7 +42,7 @@ mtt.register("upload_mod_media, collects nodedefs and mediafiles", function(call
             assert(nd.name:sub(1, #"blockexchange:") == "blockexchange:", "foreign node: " .. nd.name)
             if nd.name == "blockexchange:media_test_node" then
                 found_test_node = true
-                local def = minetest.parse_json(nd.definition)
+                local def = core.parse_json(nd.definition)
                 assert(def.name == "blockexchange:media_test_node")
                 assert(def.tiles[1] == "blockexchange_info.png")
             end
@@ -58,7 +58,7 @@ mtt.register("upload_mod_media, collects nodedefs and mediafiles", function(call
         for _, mf in ipairs(captured.mediafiles) do
             assert(mf.mod_name == "blockexchange")
             assert(type(mf.data) == "string" and #mf.data > 0)
-            size = size + #minetest.decode_base64(mf.data)
+            size = size + #core.decode_base64(mf.data)
         end
         assert(stats.size == size)
         assert(stats.size > 0)

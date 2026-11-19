@@ -16,7 +16,7 @@ worker = Promise.asyncify(function(await)
 
     local areas_changed = false
     for mapblock_pos_str in pairs(mapblocks) do
-        local mapblock_pos = minetest.string_to_pos(mapblock_pos_str)
+        local mapblock_pos = core.string_to_pos(mapblock_pos_str)
         local pos1, pos2 = blockexchange.get_mapblock_bounds_from_mapblock(mapblock_pos)
 
         local list = blockexchange.get_areas_in_area(pos1, pos2)
@@ -54,8 +54,8 @@ worker = Promise.asyncify(function(await)
             "autosaving area " .. area.id ..
             " playername: " .. area.playername ..
             " username: " .. area.username ..
-            " pos1: " .. minetest.pos_to_string(entry.pos1) ..
-            " pos2: " .. minetest.pos_to_string(entry.pos2)
+            " pos1: " .. core.pos_to_string(entry.pos1) ..
+            " pos2: " .. core.pos_to_string(entry.pos2)
         )
         busy_areas[area.id] = true
         local _, err = await(blockexchange.save_update_area(area.playername,
@@ -76,11 +76,11 @@ worker = Promise.asyncify(function(await)
         end
     end
 
-    minetest.after(1, worker)
+    core.after(1, worker)
 end)
 
 if blockexchange.is_online then
-    minetest.after(1, worker)
+    core.after(1, worker)
 end
 
 -- change tracking code below
@@ -102,7 +102,7 @@ function blockexchange.mark_changed(pos1, pos2)
         for y=mapblock_pos1.y,mapblock_pos2.y do
             for z=mapblock_pos1.z,mapblock_pos2.z do
                 local mapblock_pos = {x=x, y=y, z=z}
-                local mapblock_pos_str = minetest.pos_to_string(mapblock_pos)
+                local mapblock_pos_str = core.pos_to_string(mapblock_pos)
                 mapblocks[mapblock_pos_str] = true
             end
         end
@@ -113,11 +113,11 @@ end
 -- disabled until there is a solution or alternative
 local enable_builtin_mapblock_change_detection = false
 
-if type(minetest.register_on_mapblocks_changed) == "function" and enable_builtin_mapblock_change_detection then
+if type(core.register_on_mapblocks_changed) == "function" and enable_builtin_mapblock_change_detection then
     -- builtin change detection
-    minetest.register_on_mapblocks_changed(function(modified_blocks)
+    core.register_on_mapblocks_changed(function(modified_blocks)
         for mapblock_hash in pairs(modified_blocks) do
-            local mapblock_pos = minetest.get_position_from_hash(mapblock_hash)
+            local mapblock_pos = core.get_position_from_hash(mapblock_hash)
             local pos1, pos2 = blockexchange.get_mapblock_bounds_from_mapblock(mapblock_pos)
             blockexchange.mark_changed(pos1, pos2)
         end
@@ -125,16 +125,16 @@ if type(minetest.register_on_mapblocks_changed) == "function" and enable_builtin
 else
     -- shim various api's to be aware of world-changes
 
-    -- autosave on minetest.set_node
-    local old_set_node = minetest.set_node
-    function minetest.set_node(pos, node)
+    -- autosave on core.set_node
+    local old_set_node = core.set_node
+    function core.set_node(pos, node)
         blockexchange.mark_changed(pos, pos)
         return old_set_node(pos, node)
     end
 
-    -- autosave on minetest.swap_node
-    local old_swap_node = minetest.swap_node
-    function minetest.swap_node(pos, node)
+    -- autosave on core.swap_node
+    local old_swap_node = core.swap_node
+    function core.swap_node(pos, node)
         blockexchange.mark_changed(pos, pos)
         return old_swap_node(pos, node)
     end
@@ -143,11 +143,11 @@ else
     local function place_dig_callback(pos)
         blockexchange.mark_changed(pos, pos)
     end
-    minetest.register_on_placenode(place_dig_callback)
-    minetest.register_on_dignode(place_dig_callback)
+    core.register_on_placenode(place_dig_callback)
+    core.register_on_dignode(place_dig_callback)
 
     -- autosave on we commands
-    if minetest.get_modpath("worldedit") then
+    if core.get_modpath("worldedit") then
         -- used by various primitives and commands
         local old_mapgenhelper_init = worldedit.manip_helpers.init
         worldedit.manip_helpers.init = function(pos1, pos2)
@@ -171,12 +171,12 @@ else
     end
 
     -- intercept various node-based events
-    minetest.register_on_mods_loaded(function()
-        for nodename, def in pairs(minetest.registered_nodes) do
+    core.register_on_mods_loaded(function()
+        for nodename, def in pairs(core.registered_nodes) do
             if type(def.on_receive_fields) == "function" then
                 -- intercept formspec events
                 local old_on_receive_fields = def.on_receive_fields
-                minetest.override_item(nodename, {
+                core.override_item(nodename, {
                     on_receive_fields = function(pos, formname, fields, sender)
                         blockexchange.mark_changed(pos, pos)
                         return old_on_receive_fields(pos, formname, fields, sender)
@@ -187,7 +187,7 @@ else
             if type(def.on_metadata_inventory_move) == "function" then
                 -- intercept inv move event
                 local old_inv_move = def.on_metadata_inventory_move
-                minetest.override_item(nodename, {
+                core.override_item(nodename, {
                     on_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
                         blockexchange.mark_changed(pos, pos)
                         return old_inv_move(pos, from_list, from_index, to_list, to_index, count, player)
@@ -198,7 +198,7 @@ else
             if type(def.on_metadata_inventory_put) == "function" then
                 -- intercept inv put event
                 local old_inv_put = def.on_metadata_inventory_put
-                minetest.override_item(nodename, {
+                core.override_item(nodename, {
                     on_metadata_inventory_put = function(pos, listname, index, stack, player)
                         blockexchange.mark_changed(pos, pos)
                         return old_inv_put(pos, listname, index, stack, player)
@@ -209,7 +209,7 @@ else
             if type(def.on_metadata_inventory_take) == "function" then
                 -- intercept inv take event
                 local old_inv_take = def.on_metadata_inventory_take
-                minetest.override_item(nodename, {
+                core.override_item(nodename, {
                     on_metadata_inventory_take = function(pos, listname, index, stack, player)
                         blockexchange.mark_changed(pos, pos)
                         return old_inv_take(pos, listname, index, stack, player)

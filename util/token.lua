@@ -11,8 +11,8 @@ function blockexchange.parse_token(token)
 		return
 	end
 	local _, _, _, payload_json = string.find(token, "^([^.]+).([^.]+).([^.]+)$")
-	local json = minetest.decode_base64(payload_json)
-	local payload = minetest.parse_json(json)
+	local json = core.decode_base64(payload_json)
+	local payload = core.parse_json(json)
 	return payload
 end
 
@@ -31,7 +31,7 @@ end
 
 if blockexchange.is_online then
 	-- check player token on every login
-	minetest.register_on_joinplayer(function(player)
+	core.register_on_joinplayer(function(player)
 		local playername = player:get_player_name()
 		local player_settings = blockexchange.get_player_settings(playername)
 		if player_settings.token then

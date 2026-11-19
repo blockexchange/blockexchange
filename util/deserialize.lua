@@ -1,10 +1,10 @@
 ---------
 -- deserialization functions
 
-local string_byte, math_floor, hash_node_position = string.byte, math.floor, minetest.hash_node_position
+local string_byte, math_floor, hash_node_position = string.byte, math.floor, core.hash_node_position
 local table_insert = table.insert
 
-local placeholder_id = minetest.get_content_id("placeholder:placeholder")
+local placeholder_id = core.get_content_id("placeholder:placeholder")
 
 -- local nodename->id cache
 local local_nodename_to_id_mapping = {} -- name -> id
@@ -53,7 +53,7 @@ function blockexchange.deserialize_part(pos1, pos2, data, metadata, update_light
 
 	local node_names = {}
 
-	local manip = minetest.get_voxel_manip()
+	local manip = core.get_voxel_manip()
 	local e1, e2 = manip:read_from_map(pos1, pos2)
 	local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
 
@@ -63,9 +63,9 @@ function blockexchange.deserialize_part(pos1, pos2, data, metadata, update_light
 
 		local local_node_id = local_nodename_to_id_mapping[node_name]
 		if not local_node_id then
-			if minetest.registered_nodes[node_name] then
+			if core.registered_nodes[node_name] then
 				-- node is locally available
-				local_node_id = minetest.get_content_id(node_name)
+				local_node_id = core.get_content_id(node_name)
 			else
 				-- node is not available here, give out negative nodeids
 				local_node_id = next_unknown_nodeid
@@ -123,9 +123,9 @@ function blockexchange.deserialize_part(pos1, pos2, data, metadata, update_light
 	-- deserialize metadata
 	if metadata.metadata and metadata.metadata.meta then
 		for pos_str, md in pairs(metadata.metadata.meta) do
-			local relative_pos = minetest.string_to_pos(pos_str)
+			local relative_pos = core.string_to_pos(pos_str)
 			local absolute_pos = vector.add(pos1, relative_pos)
-			local hash = minetest.hash_node_position(absolute_pos)
+			local hash = core.hash_node_position(absolute_pos)
 			local unknown_node_id = placeholder_pos_hashes[hash]
 			if unknown_node_id then
 				-- extract node name
@@ -136,7 +136,7 @@ function blockexchange.deserialize_part(pos1, pos2, data, metadata, update_light
 				placeholder_pos_hashes[hash] = nil
 			else
 				-- plain metadata of a known node
-				minetest.get_meta(absolute_pos):from_table(md)
+				core.get_meta(absolute_pos):from_table(md)
 			end
 		end
 	end
@@ -144,16 +144,16 @@ function blockexchange.deserialize_part(pos1, pos2, data, metadata, update_light
 	-- go over all non-replaced unknown nodes
 	for hash, nodeid in pairs(placeholder_pos_hashes) do
 		local node_name = unknown_nodes_id_to_name_mapping[nodeid]
-		local pos = minetest.get_position_from_hash(hash)
+		local pos = core.get_position_from_hash(hash)
 		placeholder.populate(pos, {name=node_name})
 	end
 
 	-- deserialize node timers
 	if metadata.metadata and metadata.metadata.timers then
 		for pos_str, timer_data in pairs(metadata.metadata.timers) do
-			local relative_pos = minetest.string_to_pos(pos_str)
+			local relative_pos = core.string_to_pos(pos_str)
 			local absolute_pos = vector.add(pos1, relative_pos)
-			minetest.get_node_timer(absolute_pos):set(timer_data.timeout, timer_data.elapsed)
+			core.get_node_timer(absolute_pos):set(timer_data.timeout, timer_data.elapsed)
 		end
 	end
 

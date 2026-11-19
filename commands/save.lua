@@ -1,4 +1,4 @@
-local has_monitoring = minetest.get_modpath("monitoring")
+local has_monitoring = core.get_modpath("monitoring")
 
 local uploaded_blocks
 
@@ -134,9 +134,9 @@ Promise.register_chatcommand("bx_save", {
 	params = "<name>",
 	description = "Uploads the selected region to the blockexchange server",
 	func = function(name, schemaname)
-		local has_protected_upload_priv = minetest.check_player_privs(name, { blockexchange_protected_upload = true })
-		local has_blockexchange_priv = minetest.check_player_privs(name, { blockexchange = true })
-		local has_protection_bypass_priv = minetest.check_player_privs(name, { protection_bypass = true })
+		local has_protected_upload_priv = core.check_player_privs(name, { blockexchange_protected_upload = true })
+		local has_blockexchange_priv = core.check_player_privs(name, { blockexchange = true })
+		local has_protection_bypass_priv = core.check_player_privs(name, { protection_bypass = true })
 
 		if not has_blockexchange_priv and not has_protected_upload_priv then
 			return true, "Required privs: 'blockexchange' or 'blockexchange_protected_upload'"
@@ -175,8 +175,8 @@ Promise.register_chatcommand("bx_save", {
 				if err then
 					error("protection check error: " .. err, 0)
 				elseif not result.success then
-					local msg = "protection check failed between pos " .. minetest.pos_to_string(result.pos1) ..
-						" and " .. minetest.pos_to_string(result.pos2)
+					local msg = "protection check failed between pos " .. core.pos_to_string(result.pos1) ..
+						" and " .. core.pos_to_string(result.pos2)
 					error(msg, 0)
 				end
 			end

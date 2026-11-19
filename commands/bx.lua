@@ -73,23 +73,23 @@ function blockexchange.show_form_area(playername)
 
 		local secondary_color = "#BBBBBB"
 		fs = fs .. "label[1,2;Local area info:]"
-		fs = fs .. "label[1.2,2.5;Local ID: " .. minetest.colorize(secondary_color, area.id) .. "]"
-		fs = fs .. "label[1.2,3;Name: " .. minetest.colorize(secondary_color, area.name)  .. "]"
-		fs = fs .. "label[1.2,3.5;Owner: " .. minetest.colorize(secondary_color, area.playername)  .. "]"
+		fs = fs .. "label[1.2,2.5;Local ID: " .. core.colorize(secondary_color, area.id) .. "]"
+		fs = fs .. "label[1.2,3;Name: " .. core.colorize(secondary_color, area.name)  .. "]"
+		fs = fs .. "label[1.2,3.5;Owner: " .. core.colorize(secondary_color, area.playername)  .. "]"
 		fs = fs .. "label[1.2,4;Modification time: " ..
-			minetest.colorize(secondary_color, format_timestamp(area.mtime))  .. "]"
+			core.colorize(secondary_color, format_timestamp(area.mtime))  .. "]"
 
 		if schema then
 			fs = fs .. "label[1,5;" .. "Remote schematic:]"
-			fs = fs .. "label[1.2,5.5;Remote ID: " .. minetest.colorize(secondary_color, schema.uid) .. "]"
-			fs = fs .. "label[1.2,6;Name: " .. minetest.colorize(secondary_color, schema.name) .. "]"
+			fs = fs .. "label[1.2,5.5;Remote ID: " .. core.colorize(secondary_color, schema.uid) .. "]"
+			fs = fs .. "label[1.2,6;Name: " .. core.colorize(secondary_color, schema.name) .. "]"
 			fs = fs .. "label[1.2,6.5;Modification time: " ..
-				minetest.colorize(secondary_color, format_timestamp(schema.mtime)) .. "]"
+				core.colorize(secondary_color, format_timestamp(schema.mtime)) .. "]"
 
 			if not area.dirty and schema.mtime == area.mtime then
 				-- no local changes and up to date
 				fs = fs .. "label[1.2,7;" ..
-					minetest.colorize("#00ff00", "Schematic up-to-date") ..
+					core.colorize("#00ff00", "Schematic up-to-date") ..
 					"]"
 			elseif is_owner and schema.mtime > area.mtime then
 				-- remote schematic is newer, show update button
@@ -111,7 +111,7 @@ function blockexchange.show_form_area(playername)
 
 		else
 			fs = fs .. "label[1,5;" ..
-				minetest.colorize("#ffff00", "could not fetch remote schematic: " .. (schema_err or "<unknown error>")) ..
+				core.colorize("#ffff00", "could not fetch remote schematic: " .. (schema_err or "<unknown error>")) ..
 				"]"
 		end
 
@@ -203,19 +203,19 @@ function blockexchange.show_form_info(playername)
 
 		local secondary_color = "#BBBBBB"
 		fs = fs .. "label[1,2;Connected Blockexchange:]"
-		fs = fs .. "label[1.2,2.5;Name: " .. minetest.colorize(secondary_color, info.name) .. "]"
-		fs = fs .. "label[1.2,3;URL: " .. minetest.colorize(secondary_color, info.base_url)  .. "]"
-		fs = fs .. "label[1.2,3.5;Users: " .. minetest.colorize(secondary_color, info.stats.user_count)  .. "]"
-		fs = fs .. "label[1.2,4;Schematics: " .. minetest.colorize(secondary_color, info.stats.schema_count)  .. "]"
+		fs = fs .. "label[1.2,2.5;Name: " .. core.colorize(secondary_color, info.name) .. "]"
+		fs = fs .. "label[1.2,3;URL: " .. core.colorize(secondary_color, info.base_url)  .. "]"
+		fs = fs .. "label[1.2,3.5;Users: " .. core.colorize(secondary_color, info.stats.user_count)  .. "]"
+		fs = fs .. "label[1.2,4;Schematics: " .. core.colorize(secondary_color, info.stats.schema_count)  .. "]"
 
 		local claims = blockexchange.get_claims(playername)
 		if claims then
 			fs = fs .. "label[1,5;" .. "Logged in:]"
-			fs = fs .. "label[1.2,5.5;Name: " .. minetest.colorize(secondary_color, claims.username) .. "]"
-			fs = fs .. "label[1.2,6;Type: " .. minetest.colorize(secondary_color, claims.type) .. "]"
-			fs = fs .. "label[1.2,6.5;ID: " .. minetest.colorize(secondary_color, claims.user_uid) .. "]"
+			fs = fs .. "label[1.2,5.5;Name: " .. core.colorize(secondary_color, claims.username) .. "]"
+			fs = fs .. "label[1.2,6;Type: " .. core.colorize(secondary_color, claims.type) .. "]"
+			fs = fs .. "label[1.2,6.5;ID: " .. core.colorize(secondary_color, claims.user_uid) .. "]"
 		else
-			fs = fs .. "label[1,5;" .. minetest.colorize("#ffff00", "Not logged in") .. "]"
+			fs = fs .. "label[1,5;" .. core.colorize("#ffff00", "Not logged in") .. "]"
 		end
 
 		local fields = await(Promise.formspec(playername, fs))

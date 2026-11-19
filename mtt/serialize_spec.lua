@@ -23,7 +23,7 @@ mtt.register("serialize and modify", Promise.asyncify(function(await)
     assert(#data.node_ids == 8)
 
     -- set pos1 to meseblock
-    local mese_id = minetest.get_content_id("default:mese")
+    local mese_id = core.get_content_id("default:mese")
     data.node_ids[1] = mese_id
     data.node_mapping["default:mese"] = mese_id
 
@@ -32,14 +32,14 @@ mtt.register("serialize and modify", Promise.asyncify(function(await)
     local compressed_metadata = await(blockexchange.compress_metadata(data))
 
     -- decompress and parse
-    local data2 = minetest.decompress(compressed_data, "deflate")
-    local metadata2 = minetest.parse_json(minetest.decompress(compressed_metadata, "deflate"))
+    local data2 = core.decompress(compressed_data, "deflate")
+    local metadata2 = core.parse_json(core.decompress(compressed_metadata, "deflate"))
 
     -- place into world
     blockexchange.deserialize_part(pos1, pos2, data2, metadata2)
 
     -- verify
-    local node = minetest.get_node(pos1)
+    local node = core.get_node(pos1)
     assert(node.name == "default:mese")
 end))
 
@@ -61,17 +61,17 @@ mtt.register("serialize unknown node (placeholder placement)", Promise.asyncify(
     local compressed_metadata = await(blockexchange.compress_metadata(data))
 
     -- decompress and parse
-    local data2 = minetest.decompress(compressed_data, "deflate")
-    local metadata2 = minetest.parse_json(minetest.decompress(compressed_metadata, "deflate"))
+    local data2 = core.decompress(compressed_data, "deflate")
+    local metadata2 = core.parse_json(core.decompress(compressed_metadata, "deflate"))
 
     -- place into world
     blockexchange.deserialize_part(pos1, pos2, data2, metadata2)
 
     -- verify
-    local node = minetest.get_node(pos1)
+    local node = core.get_node(pos1)
     assert(node.name == "placeholder:placeholder")
 
-    local meta = minetest.get_meta(pos1)
+    local meta = core.get_meta(pos1)
     assert(meta:get_string("original_nodename") == "unknown:node")
 
 end))
@@ -98,16 +98,16 @@ mtt.register("serialize placeholder to proper node", Promise.asyncify(function(a
     local compressed_metadata = await(blockexchange.compress_metadata(data))
 
     -- decompress and parse
-    local data2 = minetest.decompress(compressed_data, "deflate")
-    local metadata2 = minetest.parse_json(minetest.decompress(compressed_metadata, "deflate"))
+    local data2 = core.decompress(compressed_data, "deflate")
+    local metadata2 = core.parse_json(core.decompress(compressed_metadata, "deflate"))
 
     -- place into world
     blockexchange.deserialize_part(pos1, pos2, data2, metadata2)
 
     -- verify
-    local node = minetest.get_node(pos1)
+    local node = core.get_node(pos1)
     assert(node.name == "default:mese")
 
-    local meta = minetest.get_meta(pos1)
+    local meta = core.get_meta(pos1)
     assert(meta:get_string("x") == "y")
 end))

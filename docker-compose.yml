@@ -53,7 +53,7 @@ services:
    INPUT_MODNAME: "blockexchange"
    INPUT_TEST_MODE: "mod"
    INPUT_MAPGEN: "singlenode"
-   INPUT_GIT_GAME_REPO: "https://github.com/minetest/minetest_game"
+   INPUT_GIT_GAME_REPO: "https://github.com/luanti-org/minetest_game"
    INPUT_GIT_DEPENDENCIES: |
     https://github.com/OgelGames/fakelib
     https://github.com/BuckarooBanzay/placeholder

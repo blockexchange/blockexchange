@@ -1,5 +1,5 @@
 
-minetest.register_chatcommand("bx_cancel", {
+core.register_chatcommand("bx_cancel", {
   description = "Cancels the current blockexchange job",
   func = function(name, param)
     local jobs = blockexchange.get_jobs(name)

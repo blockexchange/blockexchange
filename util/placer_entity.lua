@@ -2,7 +2,7 @@
 -- id -> true
 local active_entities = {}
 
-minetest.register_entity("blockexchange:display", {
+core.register_entity("blockexchange:display", {
 	initial_properties = {
 		physical = false,
         static_save = false,
@@ -22,7 +22,7 @@ minetest.register_entity("blockexchange:display", {
 
 function blockexchange.add_entity(pos, id)
 	active_entities[id] = true
-	local ent = minetest.add_entity(pos, "blockexchange:display")
+	local ent = core.add_entity(pos, "blockexchange:display")
 	local luaent = ent:get_luaentity()
 	luaent.id = id
 	return ent

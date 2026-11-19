@@ -1,12 +1,12 @@
 
 function blockexchange.upload_mod_media(token, mod_name)
-    local modpath = minetest.get_modpath(mod_name)
+    local modpath = core.get_modpath(mod_name)
 
     return Promise.async(function(await)
         local stats = { nodedefs = 0, mediafiles = 0, size = 0 }
 
         local nodedefs = {}
-        for nodename, def in pairs(minetest.registered_nodes) do
+        for nodename, def in pairs(core.registered_nodes) do
             local mn = string.gmatch(nodename, "([^:]+)")()
             if mn == mod_name then
                 stats.nodedefs = stats.nodedefs + 1
@@ -41,7 +41,7 @@ function blockexchange.upload_mod_media(token, mod_name)
                 table.insert(nodedefs, {
                     name = nodename,
                     mod_name = mod_name,
-                    definition = minetest.write_json(exported_def)
+                    definition = core.write_json(exported_def)
                 })
             end
         end
@@ -50,7 +50,7 @@ function blockexchange.upload_mod_media(token, mod_name)
         local mediafiles = {}
         for _, foldername in ipairs({"textures", "models"}) do
             local texturepath = modpath .. "/" .. foldername
-            local dir_list = minetest.get_dir_list(texturepath)
+            local dir_list = core.get_dir_list(texturepath)
             for _, filename in pairs(dir_list) do
                 local infile = io.open(texturepath .. "/" .. filename, "rb")
                 local data = infile:read("*a")
@@ -61,7 +61,7 @@ function blockexchange.upload_mod_media(token, mod_name)
                 table.insert(mediafiles, {
                     name = filename,
                     mod_name = mod_name,
-                    data = minetest.encode_base64(data)
+                    data = core.encode_base64(data)
                 })
             end
         end
@@ -78,7 +78,7 @@ function blockexchange.upload_mod_media(token, mod_name)
 end
 
 
-minetest.register_chatcommand("bx_upload_media", {
+core.register_chatcommand("bx_upload_media", {
     params = "<modname>",
     privs = { blockexchange = true },
     description = "Uploads the media of the given mod",
@@ -87,7 +87,7 @@ minetest.register_chatcommand("bx_upload_media", {
             return true, "please specify a modname"
         end
 
-        local modpath = minetest.get_modpath(modname)
+        local modpath = core.get_modpath(modname)
         if not modpath then
             return true, "mod '" .. modname .. "' not found"
         end
@@ -98,10 +98,10 @@ minetest.register_chatcommand("bx_upload_media", {
         end
 
         blockexchange.upload_mod_media(player_settings.token, modname):next(function(stats)
-            minetest.chat_send_player(name, "[blockexchange] uploaded " .. stats.nodedefs .. " node-definitions and " ..
+            core.chat_send_player(name, "[blockexchange] uploaded " .. stats.nodedefs .. " node-definitions and " ..
                 stats.mediafiles .. " mediafiles with " .. stats.size .. " bytes")
         end):catch(function(e)
-            minetest.chat_send_player(name, "[blockexchange] and error occured: " .. dump(e))
+            core.chat_send_player(name, "[blockexchange] and error occured: " .. dump(e))
         end)
 
         return true, "uploading media from mod '" .. modname .. "'"

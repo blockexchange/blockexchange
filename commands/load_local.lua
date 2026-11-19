@@ -26,7 +26,7 @@ function blockexchange.load_local(playername, origin, schemaname)
         if err then
             error("schema.json error: " .. err, 0)
         end
-        local schema = minetest.parse_json(schema_str)
+        local schema = core.parse_json(schema_str)
 
         local pos2 = blockexchange.get_schema_pos2(origin, schema)
         blockexchange.set_pos(2, playername, pos2)
@@ -44,7 +44,7 @@ function blockexchange.load_local(playername, origin, schemaname)
 				if err then
 					error("schemapart error: " .. err, 0)
 				end
-				local schemapart = minetest.parse_json(schemapart_str)
+				local schemapart = core.parse_json(schemapart_str)
 
 				-- increment stats
 				current_part = current_part + 1
@@ -53,7 +53,7 @@ function blockexchange.load_local(playername, origin, schemaname)
 				    "', progress: " .. progress_percent .. " %"
 
 				blockexchange.place_schemapart(schemapart, origin)
-				minetest.log("action", "[blockexchange] Extraction of part " .. minetest.pos_to_string(current_pos) .. " completed")
+				core.log("action", "[blockexchange] Extraction of part " .. core.pos_to_string(current_pos) .. " completed")
 			end
 
 			if job.cancel then

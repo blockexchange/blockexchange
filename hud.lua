@@ -59,7 +59,7 @@ local function update_player_hud(player)
 			local y_offset = slot * 20
 
 			job[HUD_ICON_KEY] = player:hud_add({
-				[minetest.features.hud_def_type_field and "type" or "hud_elem_type"] = "image",
+				[core.features.hud_def_type_field and "type" or "hud_elem_type"] = "image",
 				position = HUD_POSITION,
 				offset = {x=0, y=y_offset},
 				text = "",
@@ -68,7 +68,7 @@ local function update_player_hud(player)
 			})
 
 			job[HUD_TEXT_KEY] = player:hud_add({
-				[minetest.features.hud_def_type_field and "type" or "hud_elem_type"] = "text",
+				[core.features.hud_def_type_field and "type" or "hud_elem_type"] = "text",
 				position = HUD_POSITION,
 				offset = {x=20, y=y_offset},
 				text = "",
@@ -120,7 +120,7 @@ local function create_hud(player)
 	hud_data = {}
 	hud[playername] = hud_data
 	hud_data[HUD_ICON_KEY] = player:hud_add({
-		[minetest.features.hud_def_type_field and "type" or "hud_elem_type"] = "image",
+		[core.features.hud_def_type_field and "type" or "hud_elem_type"] = "image",
 		position = HUD_POSITION,
 		offset = {x=0, y=0},
 		text = "",
@@ -129,7 +129,7 @@ local function create_hud(player)
 	})
 
 	hud_data[HUD_TEXT_KEY] = player:hud_add({
-		[minetest.features.hud_def_type_field and "type" or "hud_elem_type"] = "text",
+		[core.features.hud_def_type_field and "type" or "hud_elem_type"] = "text",
 		position = HUD_POSITION,
 		offset = {x=20, y=0},
 		text = "",
@@ -151,20 +151,20 @@ end
 
 -- update periodically
 local function update_hud()
-	for _, player in ipairs(minetest.get_connected_players()) do
+	for _, player in ipairs(core.get_connected_players()) do
 		update_player_hud(player)
 	end
-	minetest.after(0.5, update_hud)
+	core.after(0.5, update_hud)
 end
-minetest.after(0.5, update_hud)
+core.after(0.5, update_hud)
 
 -- remove on leave
-minetest.register_on_leaveplayer(remove_hud)
+core.register_on_leaveplayer(remove_hud)
 -- create on join
-minetest.register_on_joinplayer(create_hud)
+core.register_on_joinplayer(create_hud)
 
 function blockexchange.set_player_hud(playername, enabled)
-	local player = minetest.get_player_by_name(playername)
+	local player = core.get_player_by_name(playername)
 	if not player then
 		return
 	end
@@ -182,7 +182,7 @@ function blockexchange.set_player_hud(playername, enabled)
 	end
 end
 
-minetest.register_chatcommand("bx_hud", {
+core.register_chatcommand("bx_hud", {
 	description = "Enables or disables the blockexchange hud",
 	params = "bx_hud [on|off]",
 	func = function(name, param)

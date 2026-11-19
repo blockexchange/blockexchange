@@ -37,7 +37,7 @@ function blockexchange.save_update(playername, origin, pos1, pos2, schema_uid, o
 			-- upload part online
 			local _, err = await(blockexchange.api.create_schemapart(player_settings.token, schemapart))
 			if err then
-				error("create error at " .. minetest.pos_to_string(relative_pos) .. ": " .. err, 0)
+				error("create error at " .. core.pos_to_string(relative_pos) .. ": " .. err, 0)
 			end
 
 			if job.cancel then

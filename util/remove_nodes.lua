@@ -1,7 +1,7 @@
-local air_cid = minetest.get_content_id("air")
+local air_cid = core.get_content_id("air")
 
 function blockexchange.remove_nodes(pos1, pos2)
-    local manip = minetest.get_voxel_manip()
+    local manip = core.get_voxel_manip()
 	local e1, e2 = manip:read_from_map(pos1, pos2)
 	local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
 
@@ -23,9 +23,9 @@ function blockexchange.remove_nodes(pos1, pos2)
     manip:write_to_map()
 
     -- clear metadata
-    local nodes_with_meta = minetest.find_nodes_with_meta(pos1, pos2)
+    local nodes_with_meta = core.find_nodes_with_meta(pos1, pos2)
     for _, pos in ipairs(nodes_with_meta) do
-        local meta = minetest.get_meta(pos)
+        local meta = core.get_meta(pos)
         meta:from_table({})
     end
 

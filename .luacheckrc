@@ -1,7 +1,7 @@
 globals = {
 	"blockexchange",
 	"worldedit",
-	"minetest",
+	"core",
 	"nc"
 }
 
@@ -12,7 +12,7 @@ read_globals = {
 	string = {fields = {"split", "trim"}},
 	table = {fields = {"copy", "getn"}},
 
-	-- Minetest
+	-- Luanti
 	"vector", "ItemStack",
 	"dump", "dump2",
 	"AreaStore",

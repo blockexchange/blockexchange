@@ -9,8 +9,8 @@ function blockexchange.show_preview(playername, texture, color, pos1, pos2)
 	pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
 
 	local key =
-		minetest.pos_to_string(pos1) .. "/" ..
-		minetest.pos_to_string(pos2) .. "/" ..
+		core.pos_to_string(pos1) .. "/" ..
+		core.pos_to_string(pos2) .. "/" ..
 		texture
 
 	if active_preview[playername] == key then
@@ -46,6 +46,6 @@ function blockexchange.clear_preview(playername)
 	end
 end
 
-minetest.register_on_leaveplayer(function(player)
+core.register_on_leaveplayer(function(player)
 	blockexchange.clear_preview(player:get_player_name())
 end)

@@ -8,7 +8,7 @@ blockexchange.create_schemapart = Promise.asyncify(function(await, data, pos, sc
         offset_x = pos.x,
         offset_y = pos.y,
         offset_z = pos.z,
-        data = minetest.encode_base64(compressed_data),
-        metadata = minetest.encode_base64(compressed_metadata)
+        data = core.encode_base64(compressed_data),
+        metadata = core.encode_base64(compressed_metadata)
     }
 end)

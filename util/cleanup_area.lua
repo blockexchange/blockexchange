@@ -5,14 +5,14 @@ local metadata_free_nodenames = {
 
 -- nodeid's with zero param2 value
 local param2_zero_nodeids = {
-    [minetest.CONTENT_AIR] = true,
-    [minetest.CONTENT_UNKNOWN] = true,
-    [minetest.CONTENT_IGNORE] = true
+    [core.CONTENT_AIR] = true,
+    [core.CONTENT_UNKNOWN] = true,
+    [core.CONTENT_IGNORE] = true
 }
 
 function blockexchange.cleanup_area(pos1, pos2)
     -- load area
-    minetest.load_area(pos1, pos2)
+    core.load_area(pos1, pos2)
 
     -- cleanup result
     local result = {
@@ -21,18 +21,18 @@ function blockexchange.cleanup_area(pos1, pos2)
     }
 
     -- clear stray metadata
-    local pos_list = minetest.find_nodes_with_meta(pos1, pos2)
+    local pos_list = core.find_nodes_with_meta(pos1, pos2)
     for _, pos in ipairs(pos_list) do
-        local node = minetest.get_node(pos)
+        local node = core.get_node(pos)
         if metadata_free_nodenames[node.name] then
             -- clear metadata
-            minetest.get_meta(pos):from_table(nil)
+            core.get_meta(pos):from_table(nil)
             result.meta = result.meta + 1
         end
     end
 
     -- clear invalid param2 values
-    local manip = minetest.get_voxel_manip()
+    local manip = core.get_voxel_manip()
 	local e1, e2 = manip:read_from_map(pos1, pos2)
 	local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
 
