@@ -103,7 +103,7 @@ secure.http_mods = blockexchange
 # Provisioning
 
 If a `bx_provision.json` file exists in the world folder, the configured remote schematic is downloaded once
-to the given position on the first player join and the player is moved to the first solid part of it:
+to the given position on the first player join:
 
 ```json
 {

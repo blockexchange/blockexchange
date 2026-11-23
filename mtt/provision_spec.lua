@@ -25,16 +25,6 @@ local function provision_and_check(await, playername, schema_uid, origin, opts)
         error("provisioned area does not match: " .. msg, 0)
     end
 
-    -- player has to stand on the provisioned floor
-    local ppos = player:get_pos()
-    if not result.player_pos or not vector.equals(ppos, result.player_pos) then
-        error("player not moved, pos: " .. core.pos_to_string(ppos), 0)
-    end
-    if ppos.y ~= origin.y + 3 or ppos.x < origin.x or ppos.x > origin.x + 3
-        or ppos.z < origin.z or ppos.z > origin.z + 3 then
-        error("unexpected player pos: " .. core.pos_to_string(ppos), 0)
-    end
-
     return result
 end
 

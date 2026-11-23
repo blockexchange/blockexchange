@@ -1,7 +1,7 @@
 ---------
 -- schematic provisioning
 -- downloads the schematic configured in "<worldpath>/bx_provision.json"
--- on the first player join and moves the player into the build
+-- on the first player join
 --
 -- file structure:
 -- {
@@ -14,28 +14,6 @@
 --
 -- if authentication is provided the schematic is placed in read/write mode:
 -- the player gets logged in and the area is registered with autosave enabled
-
-local function is_walkable(pos)
-	local node = core.get_node(pos)
-	local def = core.registered_nodes[node.name]
-	return def and def.walkable
-end
-
--- returns a standing position in the given area (solid node with two free nodes above) or nil
-local function find_standing_pos(pos1, pos2)
-	for x = pos1.x, pos2.x do
-		for z = pos1.z, pos2.z do
-			for y = pos2.y, pos1.y, -1 do
-				local pos = { x = x, y = y, z = z }
-				if is_walkable(pos) and
-					not is_walkable({ x = x, y = y + 1, z = z }) and
-					not is_walkable({ x = x, y = y + 2, z = z }) then
-					return { x = x, y = y + 1, z = z }
-				end
-			end
-		end
-	end
-end
 
 -- resolves the jwt token from the auth options, returns nil if no authentication is configured
 local function resolve_token(await, opts)
@@ -50,13 +28,13 @@ local function resolve_token(await, opts)
 	end
 end
 
---- emerges the target area, downloads the schematic and moves the player to the first solid schemapart
--- @param playername the player to use for the job and to move afterwards
+--- emerges the target area and downloads the schematic
+-- @param playername the player to use for the job
 -- @param schema_uid the uid of the remote schematic
 -- @param origin the lower position to place the schematic at
 -- @param[opt] opts authentication options: token (raw jwt) or username and access_token,
 --  if provided the player gets logged in and the area is registered with autosave enabled
--- @return a promise that resolves with { total_parts = number, player_pos = pos|nil, area_id = string|nil }
+-- @return a promise that resolves with { total_parts = number, area_id = string|nil }
 function blockexchange.provision(playername, schema_uid, origin, opts)
 	opts = opts or {}
 	-- list of {pos1, pos2} of placed schemaparts in download order
@@ -122,22 +100,8 @@ function blockexchange.provision(playername, schema_uid, origin, opts)
 			blockexchange.save_areas()
 		end
 
-		-- move the player to the first solid schemapart
-		local player_pos
-		local player = core.get_player_by_name(playername)
-		if player then
-			for _, part in ipairs(placed_parts) do
-				player_pos = find_standing_pos(part[1], part[2])
-				if player_pos then
-					player:set_pos(player_pos)
-					break
-				end
-			end
-		end
-
 		return {
 			total_parts = #placed_parts,
-			player_pos = player_pos,
 			area_id = area_id
 		}
 	end)
