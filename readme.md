@@ -114,6 +114,15 @@ to the given position on the first player join and the player is moved to the fi
 
 The download is repeated if the `schema_uid` or `position` changes.
 
+Optional authentication fields:
+
+* `username` and `access_token`: login with an access token (like `/bx_login`)
+* `token`: a raw jwt token
+
+If an authentication is provided, the schematic is placed in read/write mode: the player gets logged in
+and the area is registered with autosave enabled, so changes are uploaded automatically.
+The authenticated user has to be the owner of the schematic.
+
 # Api docs
 
 See: https://blockexchange.github.io/blockexchange/

@@ -138,4 +138,5 @@ if core.get_modpath("mtt") then
 	dofile(MP .. "/mtt/validate_name_spec.lua")
 	dofile(MP .. "/mtt/load_save.spec.lua")
 	dofile(MP .. "/mtt/media_spec.lua")
+	dofile(MP .. "/mtt/provision_spec.lua")
 end

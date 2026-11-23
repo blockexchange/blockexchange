@@ -72,6 +72,7 @@ function blockexchange.register_area(pos1, pos2, playername, username, schema)
     area_map[area_id] = data
     area_store:insert_area(pos1, pos2, area_id)
     blockexchange.save_areas()
+    return area_id
 end
 
 function blockexchange.get_areas_in_area(pos1, pos2)
