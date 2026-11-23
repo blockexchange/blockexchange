@@ -93,11 +93,26 @@ Online commands, they call the remote-server with the http api
 # Settings
 
 * **blockexchange.url** URL to the central server
+* **blockexchange.min_delay** min delay between http calls
 
 The mod also needs the http api:
 ```
 secure.http_mods = blockexchange
 ```
+
+# Provisioning
+
+If a `bx_provision.json` file exists in the world folder, the configured remote schematic is downloaded once
+to the given position on the first player join and the player is moved to the first solid part of it:
+
+```json
+{
+	"schema_uid": "a681b2e3-f44a-47e5-b862-5c4714709040",
+	"position": { "x": 0, "y": 0, "z": 0 }
+}
+```
+
+The download is repeated if the `schema_uid` or `position` changes.
 
 # Api docs
 

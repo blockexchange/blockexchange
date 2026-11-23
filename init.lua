@@ -101,6 +101,7 @@ if blockexchange.is_online then
 	dofile(MP.."/commands/media.lua")
 	dofile(MP.."/commands/load.lua")
 	dofile(MP.."/commands/bx.lua")
+	dofile(MP.."/provision.lua")
 else
 	dofile(MP.."/commands/offline_info.lua")
 end

@@ -1,15 +1,17 @@
-
---- load a schematic asynchronously
+--- load a schematic asynchronously (internal)
 -- @param playername the playername to use in messages
 -- @param pos1 lower position to load
--- @param username the username/owner of the schema
--- @param schemaname the name of the schema
--- @param[opt] from_mtime start with block mtime
+-- @param label the label to show in the hud
+-- @param fetch_schema function returning a promise that resolves with the schema
+-- @param opts table with optional fields: from_mtime, username (for area tracking), on_schemapart(pos1, pos2)
 -- @return a promise that resolves if the operation is complete
-function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
+local function load_schema(playername, pos1, label, fetch_schema, opts)
+	local from_mtime = opts.from_mtime
+	local username = opts.username
+
 	local job = {
 		hud_icon = "blockexchange_download.png",
-		hud_text = "Download '" .. username .. "/" .. schemaname .. "' starting"
+		hud_text = "Download '" .. label .. "' starting"
 	}
 
 	local retries = 0
@@ -18,11 +20,11 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 	local initial_load = not from_mtime
 
 	job.promise = Promise.async(function(await)
-		local schema, err = await(blockexchange.api.get_schema_by_name(username, schemaname, true))
+		local schema, err = await(fetch_schema())
 		if err then
 			error("error fetching schema: " .. err, 0)
 		elseif not schema then
-			error("schema not found: '" .. username .. "/" .. schemaname .. "'", 0)
+			error("schema not found: '" .. label .. "'", 0)
 		end
 		local pos2 = blockexchange.get_schema_pos2(pos1, schema)
 
@@ -73,12 +75,15 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 					mtime = next_part.mtime
 				end
 				current_part = current_part + 1
-				blockexchange.place_schemapart(next_part, pos1)
+				local part_pos1, part_pos2 = blockexchange.place_schemapart(next_part, pos1)
+				if opts.on_schemapart then
+					opts.on_schemapart(part_pos1, part_pos2)
+				end
 			end
 
 			-- compute stats
 			local progress_percent = math.floor(current_part / total_parts * 100 * 10) / 10
-			job.hud_text = "Downloading '" .. username .. "/" .. schemaname ..
+			job.hud_text = "Downloading '" .. label ..
 				"', progress: " .. progress_percent .. " %"
 
 			await(Promise.after(blockexchange.min_delay))
@@ -89,7 +94,7 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 		end
 
 		local player_settings = blockexchange.get_player_settings(playername)
-		if player_settings.area_tracking and initial_load then
+		if player_settings.area_tracking and initial_load and username then
 			blockexchange.register_area(pos1, pos2, playername, username, schema)
 		end
 
@@ -115,6 +120,37 @@ function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
 
 	blockexchange.add_job(playername, job)
 	return job.promise
+end
+
+--- load a schematic by username and schemaname asynchronously
+-- @param playername the playername to use in messages
+-- @param pos1 lower position to load
+-- @param username the username/owner of the schema
+-- @param schemaname the name of the schema
+-- @param[opt] from_mtime start with block mtime
+-- @return a promise that resolves if the operation is complete
+function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
+	return load_schema(playername, pos1, username .. "/" .. schemaname, function()
+		return blockexchange.api.get_schema_by_name(username, schemaname, true)
+	end, {
+		from_mtime = from_mtime,
+		username = username
+	})
+end
+
+--- load a schematic by its uid asynchronously
+-- @param playername the playername to use in messages
+-- @param pos1 lower position to load
+-- @param schema_uid the uid of the schema
+-- @param[opt] opts optional table with the field on_schemapart(pos1, pos2)
+-- @return a promise that resolves if the operation is complete
+function blockexchange.load_by_uid(playername, pos1, schema_uid, opts)
+	opts = opts or {}
+	return load_schema(playername, pos1, schema_uid, function()
+		return blockexchange.api.get_schema_by_uid(schema_uid, true)
+	end, {
+		on_schemapart = opts.on_schemapart
+	})
 end
 
 
