@@ -14,7 +14,7 @@
 -- }
 --
 -- modes:
--- * "emerge": emerges the target area and places the whole schematic on the first player join
+-- * "emerge": places the whole schematic on the first player join, emerging each chunk right before placing it
 -- * "mapgen": places the schematic chunk by chunk while the map generates (read-only, see provision_mapgen.lua),
 --   the position has to be aligned to the mapgen chunks
 --
@@ -34,7 +34,7 @@ local function resolve_token(await, opts)
 	end
 end
 
---- emerges the target area and downloads the schematic
+--- downloads the schematic, emerges the target area chunk by chunk before placing it
 -- @param playername the player to use for the job
 -- @param schema_uid the uid of the remote schematic
 -- @param origin the lower position to place the schematic at
@@ -77,17 +77,14 @@ function blockexchange.provision(playername, schema_uid, origin, opts)
 			blockexchange.set_player_settings(playername, player_settings)
 		end
 
-		-- generate the target area first, mapgen would overwrite the placed parts otherwise
 		local pos2 = blockexchange.get_schema_pos2(origin, schema)
-		local _
-		_, err = await(blockexchange.emerge(playername, origin, pos2))
-		if err then
-			error("emerge error: " .. err, 0)
-		end
 
 		-- downloaded schemaparts, stored as baseline in read/write mode
 		local raw_parts = {}
+		local _
 		_, err = await(blockexchange.load_by_uid(playername, origin, schema_uid, {
+			-- generate each chunk right before placing it, mapgen would overwrite the placed parts otherwise
+			emerge = true,
 			on_schemapart = function(part_pos1, part_pos2)
 				table.insert(placed_parts, { part_pos1, part_pos2 })
 			end,

@@ -3,6 +3,24 @@ local max_retries = 12
 -- max time to spend placing parts in a single server step (in microseconds)
 local max_step_time_us = 25 * 1000
 
+-- margin around an emerged area: mapgen writes up to one mapblock into
+-- neighbouring chunks (decorations, dungeons), so every chunk whose shell
+-- overlaps the placed area has to be generated before placing
+local emerge_margin = 16
+
+-- emerges the given area (clamped to the schema bounds) including the margin
+local function emerge_area(ctx, minp, maxp)
+	maxp = vector.new(
+		math.min(maxp.x, ctx.pos2.x),
+		math.min(maxp.y, ctx.pos2.y),
+		math.min(maxp.z, ctx.pos2.z)
+	)
+	return Promise.emerge_area(
+		vector.subtract(minp, emerge_margin),
+		vector.add(maxp, emerge_margin)
+	)
+end
+
 local function get_offset(schemapart)
 	return { x = schemapart.offset_x, y = schemapart.offset_y, z = schemapart.offset_z }
 end
@@ -39,6 +57,10 @@ local function fetch_sequential(await, ctx, schema, place)
 			break
 		end
 		last_part = schemapart
+		if ctx.emerge then
+			local part_pos1 = vector.add(ctx.origin, get_offset(schemapart))
+			await(emerge_area(ctx, part_pos1, vector.add(part_pos1, 15)))
+		end
 		place(schemapart)
 		await(Promise.after(blockexchange.min_delay))
 	end
@@ -52,9 +74,19 @@ local function fetch_chunked(await, ctx, schema, place)
 	for z = 0, size.z - 1, chunk_size do
 	for x = 0, size.x - 1, chunk_size do
 		local chunk_offset = { x = x, y = y, z = z }
+		-- start generating the target area while the chunk downloads
+		local emerged
+		if ctx.emerge then
+			local minp = vector.add(ctx.origin, chunk_offset)
+			emerged = emerge_area(ctx, minp, vector.add(minp, chunk_size - 1))
+		end
 		local schemaparts = fetch_with_retry(await, ctx, function()
 			return blockexchange.api.get_schemapart_chunk(schema.uid, chunk_offset)
 		end)
+		if emerged then
+			await(emerged)
+			ctx.step_start = core.get_us_time()
+		end
 
 		-- empty chunks resolve with false or an empty list
 		for _, schemapart in ipairs(schemaparts or {}) do
@@ -78,7 +110,8 @@ end
 -- @param label the label to show in the hud
 -- @param fetch_schema function returning a promise that resolves with the schema
 -- @param opts table with the optional fields on_schemapart(pos1, pos2), on_schemapart_raw(schemapart)
---  and chunked (true: download in chunks, false: download part by part, nil: chunks if the server supports them)
+--  chunked (true: download in chunks, false: download part by part, nil: chunks if the server supports them)
+--  and emerge (true: generate the area of each chunk/part right before placing it)
 -- @return a promise that resolves if the operation is complete
 local function load_schema(playername, pos1, label, fetch_schema, opts)
 	local job = {
@@ -107,7 +140,11 @@ local function load_schema(playername, pos1, label, fetch_schema, opts)
 
 		local ctx = {
 			retries = 0,
-			step_start = core.get_us_time()
+			step_start = core.get_us_time(),
+			-- emerge each chunk/part before placing it
+			emerge = opts.emerge,
+			origin = pos1,
+			pos2 = blockexchange.get_schema_pos2(pos1, schema)
 		}
 		local current_part = 0
 		-- last successfully placed schemapart
@@ -175,6 +212,8 @@ end
 --  on_schemapart_raw(schemapart) (the downloaded schemapart, after placing it)
 --  and chunked (true: download in chunks of 5x5x5 parts, false: download part by part,
 --  nil (default): download in chunks if the server supports it)
+--  and emerge (true: generate the area of each chunk/part right before placing it,
+--  mapgen would overwrite the placed parts otherwise)
 -- @return a promise that resolves if the operation is complete
 function blockexchange.load_by_uid(playername, pos1, schema_uid, opts)
 	opts = opts or {}
@@ -183,7 +222,8 @@ function blockexchange.load_by_uid(playername, pos1, schema_uid, opts)
 	end, {
 		on_schemapart = opts.on_schemapart,
 		on_schemapart_raw = opts.on_schemapart_raw,
-		chunked = opts.chunked
+		chunked = opts.chunked,
+		emerge = opts.emerge
 	})
 end
 
