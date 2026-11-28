@@ -88,12 +88,11 @@ core.register_on_mods_loaded(sync.load)
 -- entries
 
 --- creates and persists a new sync entry
--- @param def table with the fields: schema (remote schema with uid, name, user_uid, mtime), owner (username),
---  pos1, pos2, playername and the optional fields autosave, pulled_mtime and state
+-- @param def table with the fields: schema (remote schema with uid, name, user_uid, mtime), pos1, pos2, playername
+--  and the optional fields owner (username), autosave, pulled_mtime and state
 -- @return the new entry
 function sync.create(def)
 	assert(def.schema and def.schema.uid, "schema with uid required")
-	assert(def.owner, "owner required")
 	assert(def.pos1 and def.pos2, "pos1 and pos2 required")
 	local pos1, pos2 = blockexchange.sort_pos(def.pos1, def.pos2)
 
@@ -177,6 +176,35 @@ function sync.clear()
 	store_ids = {}
 	area_store = AreaStore()
 	sync.save()
+end
+
+---------
+-- busy flags (not persisted), prevents concurrent push/pull operations on the same entry
+
+-- id -> description of the running operation
+local busy = {}
+
+--- returns the description of the running operation or nil
+function sync.get_busy(entry)
+	return busy[entry.id]
+end
+
+--- runs the promise-returning function exclusively for the entry
+-- @return the promise of the function or a rejected promise if the entry is busy
+function sync.run_exclusive(entry, description, fn)
+	if busy[entry.id] then
+		return Promise.rejected("sync entry is busy: " .. busy[entry.id])
+	end
+	busy[entry.id] = description
+	local ok, promise = pcall(fn)
+	if not ok then
+		busy[entry.id] = nil
+		return Promise.rejected(promise)
+	end
+	promise:finally(function()
+		busy[entry.id] = nil
+	end)
+	return promise
 end
 
 ---------

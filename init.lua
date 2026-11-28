@@ -54,6 +54,7 @@ dofile(MP.."/hud.lua")
 dofile(MP.."/areas.lua")
 dofile(MP.."/autosave.lua")
 dofile(MP.."/sync/store.lua")
+dofile(MP.."/sync/part.lua")
 
 -- utils
 dofile(MP.."/util/ui.lua")
@@ -103,6 +104,9 @@ if blockexchange.is_online then
 	dofile(MP.."/commands/load.lua")
 	dofile(MP.."/commands/bx.lua")
 	dofile(MP.."/provision.lua")
+	dofile(MP.."/sync/push.lua")
+	dofile(MP.."/sync/pull.lua")
+	dofile(MP.."/sync/transfer.lua")
 else
 	dofile(MP.."/commands/offline_info.lua")
 end
@@ -141,4 +145,6 @@ if core.get_modpath("mtt") then
 	dofile(MP .. "/mtt/media_spec.lua")
 	dofile(MP .. "/mtt/provision_spec.lua")
 	dofile(MP .. "/mtt/sync_store_spec.lua")
+	dofile(MP .. "/mtt/sync_part_spec.lua")
+	dofile(MP .. "/mtt/sync_spec.lua")
 end

@@ -9,6 +9,9 @@ if has_monitoring then
 	)
 end
 
+--- saves the area as a new remote schematic
+-- @param options optional table with the fields progress_callback(percent)
+--  and on_part(schemapart) (called for every successfully uploaded schemapart)
 function blockexchange.save(playername, pos1, pos2, schemaname, options)
 	pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
 	options = options or {}
@@ -69,7 +72,12 @@ function blockexchange.save(playername, pos1, pos2, schemaname, options)
 
 				while true do
 					-- retry loop
-					_, err = await(blockexchange.api.create_schemapart(player_settings.token, schemapart))
+					local created
+					created, err = await(blockexchange.api.create_schemapart(player_settings.token, schemapart))
+					if not err and options.on_part then
+						schemapart.mtime = created and created.mtime
+						options.on_part(schemapart)
+					end
 					if err then
 						if retries > 12 then
 							error("create schemapart failed after " .. retries .. " retries: " .. err, 0)

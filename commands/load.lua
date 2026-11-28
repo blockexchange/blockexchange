@@ -79,6 +79,9 @@ local function load_schema(playername, pos1, label, fetch_schema, opts)
 				if opts.on_schemapart then
 					opts.on_schemapart(part_pos1, part_pos2)
 				end
+				if opts.on_schemapart_raw then
+					opts.on_schemapart_raw(next_part)
+				end
 			end
 
 			-- compute stats
@@ -142,14 +145,16 @@ end
 -- @param playername the playername to use in messages
 -- @param pos1 lower position to load
 -- @param schema_uid the uid of the schema
--- @param[opt] opts optional table with the field on_schemapart(pos1, pos2)
+-- @param[opt] opts optional table with the fields on_schemapart(pos1, pos2)
+--  and on_schemapart_raw(schemapart) (the downloaded schemapart, after placing it)
 -- @return a promise that resolves if the operation is complete
 function blockexchange.load_by_uid(playername, pos1, schema_uid, opts)
 	opts = opts or {}
 	return load_schema(playername, pos1, schema_uid, function()
 		return blockexchange.api.get_schema_by_uid(schema_uid, true)
 	end, {
-		on_schemapart = opts.on_schemapart
+		on_schemapart = opts.on_schemapart,
+		on_schemapart_raw = opts.on_schemapart_raw
 	})
 end
 
