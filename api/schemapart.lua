@@ -51,10 +51,17 @@ function blockexchange.api.get_schemapart(schema_uid, pos)
   ):next(response_handler)
 end
 
+--- returns all schemaparts of a chunk (5x5x5 parts, see blockexchange.chunk_size)
+-- needs api version 1.2 (see blockexchange.api.supports_chunks)
+-- @param schema_uid the uid of the schema
+-- @param pos the offset of the chunk relative to the schema origin, has to be a multiple of blockexchange.chunk_size
+-- @return a promise resolving with a list of schemaparts, false (or an empty list) if the chunk is empty
 function blockexchange.api.get_schemapart_chunk(schema_uid, pos)
   return Promise.http(
     http,
-    url .. "/api/schemapart_chunk/" .. schema_uid .. "/" .. pos.x .. "/" .. pos.y .. "/" .. pos.z
+    url .. "/api/schemapart_chunk/" .. schema_uid .. "/" .. pos.x .. "/" .. pos.y .. "/" .. pos.z,
+    -- up to 125 parts per response
+    { timeout = 30 }
   ):next(response_handler)
 end
 
