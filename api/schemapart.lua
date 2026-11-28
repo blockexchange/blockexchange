@@ -33,22 +33,6 @@ function blockexchange.api.patch_schemapart(token, schemapart, patchfilter)
   })
 end
 
-function blockexchange.api.remove_schemapart(token, schema_uid, pos)
-  local del_url = url .. "/api/schemapart/" .. schema_uid .. "/" .. pos.x .. "/" .. pos.y .. "/" .. pos.z .. "/delete"
-  return Promise.http(http, del_url, {
-    method = "POST",
-    data = "delete",
-    headers = {
-      "Authorization: " .. token
-    }
-  }):next(function(res)
-    if res.code ~= 200 then
-      return Promise.rejected("unexpected http code: " .. res.code)
-    end
-    return true
-  end)
-end
-
 local function response_handler(res)
   if res.code == 200 then
     return res.json()
