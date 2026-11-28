@@ -14,7 +14,9 @@ blockexchange = {
 	min_delay = 0.1,
 	pos1 = {}, -- name -> pos
 	pos2 = {}, -- name -> pos
-	max_size = 1000
+	max_size = 1000,
+	-- size of a schemapart chunk in nodes (5x5x5 parts, aligned to the schema origin)
+	chunk_size = 16 * 5
 }
 
 -- min-delay for async operations
@@ -138,6 +140,7 @@ if core.get_modpath("mtt") then
 	dofile(MP .. "/mtt/sort_pos_spec.lua")
 	dofile(MP .. "/mtt/validate_name_spec.lua")
 	dofile(MP .. "/mtt/load_save.spec.lua")
+	dofile(MP .. "/mtt/load_chunked_spec.lua")
 	dofile(MP .. "/mtt/media_spec.lua")
 	dofile(MP .. "/mtt/provision_spec.lua")
 	dofile(MP .. "/mtt/sync_store_spec.lua")
