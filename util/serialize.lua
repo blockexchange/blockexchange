@@ -176,28 +176,31 @@ function blockexchange.serialize_part(pos1, pos2, node_count)
 end
 
 blockexchange.compress_data = Promise.handle_asyncify(function(data)
-	local function int_to_bytes(i)
-		local x =i + 32768
-		local h = math.floor(x/256) % 256;
-		local l = math.floor(x % 256);
-		return(string.char(h, l));
-	end
+	-- runs in the async environment: upvalues are not available, keep the locals inside the function
+	local string_char, math_floor, table_concat = string.char, math.floor, table.concat
 
 	-- write node-data in serialized form
-	local serialized_data = ""
-	local size = #data.node_ids
+	-- collect the chunks in a buffer and join them once (repeated `..` is quadratic)
+	local buf, n = {}, 0
+	local node_ids, param1, param2 = data.node_ids, data.param1, data.param2
+	local size = #node_ids
 
 	for i=1,size do
-		serialized_data = serialized_data .. int_to_bytes(data.node_ids[i])
+		-- node-id as 16 bit big-endian, offset by 32768 (allows negative ids)
+		local x = node_ids[i] + 32768
+		n = n + 1
+		buf[n] = string_char(math_floor(x/256) % 256, x % 256)
 	end
 	for i=1,size do
-		serialized_data = serialized_data .. string.char(data.param1[i])
+		n = n + 1
+		buf[n] = string_char(param1[i])
 	end
 	for i=1,size do
-		serialized_data = serialized_data .. string.char(data.param2[i])
+		n = n + 1
+		buf[n] = string_char(param2[i])
 	end
 
-	return core.compress(serialized_data, "deflate")
+	return core.compress(table_concat(buf), "deflate")
 end)
 
 blockexchange.compress_metadata = Promise.handle_asyncify(function(data)
