@@ -28,25 +28,32 @@ local function provision_and_check(await, playername, schema_uid, origin, opts)
     return result
 end
 
--- checks the read/write mode (logged in player and registered area)
+-- checks the read/write mode (logged in player and synced region with baseline)
 local function check_read_write(result, playername, schema_uid, origin)
     local claims = blockexchange.get_claims(playername)
     if not claims or claims.username ~= username then
         error("player '" .. playername .. "' not logged in", 0)
     end
 
-    local area = result.area_id and blockexchange.get_area_by_id(result.area_id)
-    if not area then
-        error("no area registered", 0)
+    local entry = result.sync_id and blockexchange.sync.get(result.sync_id)
+    if not entry then
+        error("no synced region registered", 0)
     end
-    if area.schema_uid ~= schema_uid or area.username ~= username or not vector.equals(area.pos1, origin) then
-        error("unexpected area: " .. dump(area), 0)
+    if entry.schema_uid ~= schema_uid or entry.owner ~= username or not vector.equals(entry.pos1, origin) then
+        error("unexpected synced region: " .. dump(entry), 0)
     end
-    if not area.autosave then
+    if not entry.autosave then
         error("autosave not enabled", 0)
     end
-    if blockexchange.get_area(origin) ~= area then
-        error("area not found at origin", 0)
+    if not blockexchange.sync.can_write(playername, entry) then
+        error("synced region not writable", 0)
+    end
+    if blockexchange.sync.get_at(origin) ~= entry then
+        error("synced region not found at origin", 0)
+    end
+    if #blockexchange.sync.list_baselines(entry) ~= result.total_parts then
+        error("baseline incomplete: " .. #blockexchange.sync.list_baselines(entry) ..
+            " of " .. result.total_parts .. " parts", 0)
     end
 end
 
@@ -80,8 +87,8 @@ mtt.register("provision schematic by uid", {
             -- read-only
             local origin = {x=100, y=30, z=0}
             local result = provision_and_check(await, "provision_ro", schema_uid, origin)
-            if result.area_id or blockexchange.get_area(origin) then
-                error("area registered in read-only mode", 0)
+            if result.sync_id or blockexchange.sync.get_at(origin) then
+                error("synced region registered in read-only mode", 0)
             end
             if blockexchange.get_claims("provision_ro") then
                 error("player logged in in read-only mode", 0)

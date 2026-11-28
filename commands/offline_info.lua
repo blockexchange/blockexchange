@@ -12,10 +12,9 @@ local online_commands = {
     "bx_login",
     "bx_logout",
     "bx_load",
-    "bx_load_update",
     "bx_allocate",
     "bx_save",
-    "bx_save_update"
+    "bx_sync"
 }
 
 for _, name in ipairs(online_commands) do

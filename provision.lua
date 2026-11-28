@@ -13,7 +13,7 @@
 -- }
 --
 -- if authentication is provided the schematic is placed in read/write mode:
--- the player gets logged in and the area is registered with autosave enabled
+-- the player gets logged in and the area is registered as synced region with autosave enabled
 
 -- resolves the jwt token from the auth options, returns nil if no authentication is configured
 local function resolve_token(await, opts)
@@ -33,8 +33,8 @@ end
 -- @param schema_uid the uid of the remote schematic
 -- @param origin the lower position to place the schematic at
 -- @param[opt] opts authentication options: token (raw jwt) or username and access_token,
---  if provided the player gets logged in and the area is registered with autosave enabled
--- @return a promise that resolves with { total_parts = number, area_id = string|nil }
+--  if provided the player gets logged in and the area is registered as synced region with autosave enabled
+-- @return a promise that resolves with { total_parts = number, sync_id = string|nil }
 function blockexchange.provision(playername, schema_uid, origin, opts)
 	opts = opts or {}
 	-- list of {pos1, pos2} of placed schemaparts in download order
@@ -79,30 +79,45 @@ function blockexchange.provision(playername, schema_uid, origin, opts)
 			error("emerge error: " .. err, 0)
 		end
 
-		local load_result
-		load_result, err = await(blockexchange.load_by_uid(playername, origin, schema_uid, {
+		-- downloaded schemaparts, stored as baseline in read/write mode
+		local raw_parts = {}
+		_, err = await(blockexchange.load_by_uid(playername, origin, schema_uid, {
 			on_schemapart = function(part_pos1, part_pos2)
 				table.insert(placed_parts, { part_pos1, part_pos2 })
+			end,
+			on_schemapart_raw = function(schemapart)
+				table.insert(raw_parts, schemapart)
 			end
 		}))
 		if err then
 			error("load error: " .. err, 0)
 		end
 
-		local area_id
+		local sync_id
 		if claims then
-			-- read/write mode: replace previously tracked areas and register the new one
-			for _, area in ipairs(blockexchange.get_areas_in_area(origin, pos2)) do
-				blockexchange.remove_area(area.id)
+			-- read/write mode: replace previously synced regions and register the new one
+			for _, entry in ipairs(blockexchange.sync.get_in_area(origin, pos2)) do
+				blockexchange.sync.remove(entry.id)
 			end
-			area_id = blockexchange.register_area(origin, pos2, playername, claims.username, load_result.schema)
-			blockexchange.get_area_by_id(area_id).autosave = true
-			blockexchange.save_areas()
+			local entry = blockexchange.sync.create({
+				schema = schema,
+				owner = claims.username,
+				pos1 = origin,
+				pos2 = pos2,
+				playername = playername,
+				autosave = true,
+				-- schema fetched before the download, changes during the download get pulled later
+				pulled_mtime = schema.mtime
+			})
+			for _, schemapart in ipairs(raw_parts) do
+				blockexchange.sync.set_baseline(entry, schemapart)
+			end
+			sync_id = entry.id
 		end
 
 		return {
 			total_parts = #placed_parts,
-			area_id = area_id
+			sync_id = sync_id
 		}
 	end)
 end

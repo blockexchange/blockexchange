@@ -44,6 +44,21 @@ Schemas can be browsed and administered on the central server: https://bx.luanti
 * Login with an access token generated from https://bx.luanti.ch: `/bx_login [username] [access_token]`
 * Save the schematic with `/bx_save <name>`
 
+## Sync
+
+Synced regions keep a build in sync with a remote schematic: local changes are tracked and uploaded as deltas
+(only the changed nodes), remote changes are merged into the local build.
+
+* Open the sync menu with `/bx_sync`
+* **Upload selection**: uploads the marked area as new schematic (or links it to an existing schematic of the same size)
+  and registers it as synced region
+* **Download**: downloads a schematic as synced region (read-only, or read-write if you own it) or as one-off copy
+* Inside a synced region `/bx_sync` shows its status with the local and remote changes:
+  * **Push** uploads the local changes (with autosave enabled this happens automatically)
+  * **Pull** downloads and merges the remote changes, nodes changed on both sides are conflicts that are resolved
+    by keeping the local or the remote version
+  * **Unlink** removes the sync information, the build stays in the world
+
 # Chat commands
 
 ## Offline
@@ -54,8 +69,6 @@ Local commands, they don't need the http-api and make no calls "home"
 * **/bx_pos1 [pos?]** mark position 1 (uses WE positions if available)
 * **/bx_pos2 [pos?]** mark position 2 (uses WE positions if available)
 * **/bx_cleanup** cleans up stray metadata and invalid param2 values
-* **/bx_area_remove [area_id?]** removes the area information (not the build)
-* **/bx_area_mark [area_id?]** marks the area
 * **/bx_emerge** emerge the selected area
 * **/bx_save_local [schematic-name]** saves a local schematic to `<worldmods>/bxschems`
 * **/bx_load_local [schematic-name]** loads a local schematic from `<worldmods>/bxschems`
@@ -72,7 +85,6 @@ Online commands, they call the remote-server with the http api
 * **/bx_license** sets or displays the license of your uploaded schematics (defaults to CC0)
 * **/bx_load [username] [schematic-name]** load a schematic by name onto pos1
 * **/bx_placer [username] [schematic-name]** creates a placement tool for the schematic
-* **/bx_load_update [area_id?]** loads the changes of a loaded area
 * **/bx_allocate [username] [schematic-name]** allocates a schematic by name
 * **/bx_login [username] [access_token]** logs in with the username and token
 * **/bx_cancel** Cancels an active job
@@ -80,8 +92,13 @@ Online commands, they call the remote-server with the http api
 ### Write (needs a login)
 
 * **/bx_save [schematic-name]** saves/uploads the selected area as a new schematic
-* **/bx_save_update [area_id?]** saves the changes of a loaded area (use it with the position markers or it will upload the whole schematic)
-* **/bx_autosave [area_id?]** toggles the autosave flag for the area
+* **/bx_sync** opens the sync menu (upload/download wizards, status of the synced region at your position)
+* **/bx_sync status [id]** shows the status of a synced region
+* **/bx_sync list** lists all synced regions
+* **/bx_sync push [id]** uploads the local changes of a synced region
+* **/bx_sync pull [mine|theirs] [id]** downloads and merges the remote changes (aborts on conflicts without `mine`/`theirs`)
+* **/bx_sync autosave <on|off> [id]** toggles the automatic upload of local changes
+* **/bx_sync unlink [id]** removes the sync information of a region (the build stays)
 * **/bx_logout** logs out
 * **/bx_login** shows the login status
 
@@ -120,7 +137,7 @@ Optional authentication fields:
 * `token`: a raw jwt token
 
 If an authentication is provided, the schematic is placed in read/write mode: the player gets logged in
-and the area is registered with autosave enabled, so changes are uploaded automatically.
+and the area is registered as synced region with autosave enabled, so changes are uploaded automatically.
 The authenticated user has to be the owner of the schematic.
 
 # Api docs
