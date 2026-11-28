@@ -59,9 +59,6 @@ Synced regions keep a build in sync with a remote schematic: local changes are t
     by keeping the local or the remote version
   * **Unlink** removes the sync information, the build stays in the world
 
-Areas tracked with the previous area-tracking (`/bx_save_update`, `/bx_load_update`, `/bx_autosave`) are migrated
-to synced regions without baseline: choose the authoritative side ("Remote wins" or "Local wins") in the status page.
-
 # Chat commands
 
 ## Offline

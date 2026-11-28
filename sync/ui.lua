@@ -734,12 +734,6 @@ local function fetch_remote_state(await, entry)
 	if err or not schema then
 		return { info = "could not fetch remote schematic: " .. (err or "not found"), color = COLOR_ERR }
 	end
-	if not entry.owner_uid then
-		-- migrated regions only know the owner name
-		entry.owner_uid = schema.user_uid
-		entry.schema_name = schema.name
-		sync.save()
-	end
 	local newer = await(blockexchange.api.count_next_schemapart_by_mtime(entry.schema_uid, entry.pulled_mtime))
 	if newer and newer > 0 then
 		return { info = newer .. " parts newer (" .. format_time(schema.mtime) .. ")", color = COLOR_WARN, newer = newer }
@@ -759,7 +753,7 @@ end
 local function render_action_buttons(entry, perm)
 	local fs = ""
 	if entry.state == "needs_baseline" then
-		fs = fs .. label(0.5, 3.6, "This region has no sync baseline (migrated area), choose the authoritative side:",
+		fs = fs .. label(0.5, 3.6, "This region has no sync baseline, choose the authoritative side:",
 			COLOR_WARN)
 		if perm.can_pull then
 			fs = fs .. ui.button_exit(0.5, 4.2, 5.3, 0.8, "btn_remote_wins", "Remote wins (download)")

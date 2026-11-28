@@ -54,7 +54,6 @@ dofile(MP.."/hud.lua")
 dofile(MP.."/autosave.lua")
 dofile(MP.."/sync/store.lua")
 dofile(MP.."/sync/part.lua")
-dofile(MP.."/sync/migrate.lua")
 
 -- utils
 dofile(MP.."/util/ui.lua")
@@ -111,7 +110,6 @@ else
 end
 -- commands
 dofile(MP.."/commands/pos.lua")
-dofile(MP.."/commands/deprecated.lua")
 dofile(MP.."/commands/cancel_chat.lua")
 dofile(MP.."/commands/allocate.lua")
 dofile(MP.."/commands/load_local.lua")
@@ -146,5 +144,4 @@ if core.get_modpath("mtt") then
 	dofile(MP .. "/mtt/sync_part_spec.lua")
 	dofile(MP .. "/mtt/sync_spec.lua")
 	dofile(MP .. "/mtt/sync_ui_spec.lua")
-	dofile(MP .. "/mtt/sync_migrate_spec.lua")
 end

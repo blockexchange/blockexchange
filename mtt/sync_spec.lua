@@ -204,6 +204,40 @@ mtt.register("sync: upload, push, pull, conflicts and download", {
             -- nothing to pull for the fresh download
             plan = await(sync.fetch(entry2))
             assert_equal(#plan.parts, 0, "parts to pull after download")
+
+            -- no baseline, remote wins: the remote schematic is placed again,
+            -- parts without remote counterpart are cleared
+            entry2.state = "needs_baseline"
+            _, err = await(sync.push(playername, entry2))
+            assert(err, "push without baseline not rejected")
+            local p_changed = vector.add(pos1_download, {x=5, y=5, z=5})
+            local p_stray = vector.add(pos1_download, {x=17, y=0, z=17})
+            core.set_node(p_changed, { name = "default:wood" })
+            core.set_node(p_stray, { name = "default:dirt" })
+            blockexchange.flush_sync_changes()
+            _, err = await(sync.resolve_remote(playername, entry2))
+            if err then error("resolve_remote error: " .. tostring(err), 0) end
+            assert_equal(entry2.state, "ok", "state after resolve_remote")
+            assert_equal(sync.count_dirty(entry2), 0, "dirty parts after resolve_remote")
+            assert_equal(core.get_node(p_changed).name, "air", "local change not reverted")
+            assert_equal(core.get_node(p_stray).name, "air", "part without remote counterpart not cleared")
+            ok, msg = blockexchange.compare_area(pos1, pos2, pos1_download,
+                vector.add(pos1_download, {x=19, y=9, z=19}), { check_param1 = false })
+            if not ok then error("remote region does not match: " .. msg, 0) end
+
+            -- no baseline, local wins: the remote parts become the baseline, only the local differences are pushed
+            entry.state = "needs_baseline"
+            local p_local3 = vector.add(pos1, {x=3, y=0, z=0})
+            set_local_node(entry, p_local3, "default:wood")
+            _, err = await(sync.resolve_local(entry))
+            if err then error("resolve_local error: " .. tostring(err), 0) end
+            assert_equal(entry.state, "ok", "state after resolve_local")
+            assert_equal(sync.count_dirty(entry), 4, "dirty parts after resolve_local")
+            stats, err = await(sync.push(playername, entry))
+            if err then error("push error: " .. tostring(err), 0) end
+            assert_equal(stats.nodes, 1, "pushed nodes after resolve_local")
+            assert_equal(stats.unchanged, 3, "unchanged parts after resolve_local")
+            assert_equal(get_remote_node(await, entry, p_local3), "default:wood", "remote node after resolve_local")
         end):next(function()
             callback()
         end):catch(function(e)
