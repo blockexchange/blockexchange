@@ -17,12 +17,20 @@ function blockexchange.register_node_deserialize_callback(node_id, fn)
 	deserialization_callbacks[node_id] = fn
 end
 
---- place the meta and metadata to the world at the given positions
+--- writes the nodes of a schemapart into the data arrays of a voxelmanip
+-- the returned function has to be called after the voxelmanip is written to the map
+-- (it places the metadata, placeholders and node timers and runs the deserialization callbacks)
+-- @param area the VoxelArea of the voxelmanip
+-- @param node_data the node id array of the voxelmanip (get_data())
+-- @param node_param1 the param1 array of the voxelmanip (get_light_data())
+-- @param node_param2 the param2 array of the voxelmanip (get_param2_data())
 -- @param pos1 the start pos
 -- @param pos2 the end pos
--- @param data the nodeis/param1/param2 data
--- @param metadata the schemapart metdata
-function blockexchange.deserialize_part(pos1, pos2, data, metadata, update_light)
+-- @param data the nodeid/param1/param2 data
+-- @param metadata the schemapart metadata
+-- @return the function to call after writing the voxelmanip
+-- @return a table with the placed node names as keys
+function blockexchange.deserialize_part_into(area, node_data, node_param1, node_param2, pos1, pos2, data, metadata)
 
 	local callbacks = {} -- list of {pos, node_id}
 
@@ -53,10 +61,6 @@ function blockexchange.deserialize_part(pos1, pos2, data, metadata, update_light
 
 	local node_names = {}
 
-	local manip = core.get_voxel_manip()
-	local e1, e2 = manip:read_from_map(pos1, pos2)
-	local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
-
 	for i, node_id in ipairs(mapblock.node_ids) do
 		local node_name = foreign_nodeid_to_name_mapping[node_id]
 		node_names[node_name] = true
@@ -78,10 +82,6 @@ function blockexchange.deserialize_part(pos1, pos2, data, metadata, update_light
 
 		mapblock.node_ids[i] = local_node_id
 	end
-
-	local node_data = manip:get_data()
-	local param1 = manip:get_light_data()
-	local param2 = manip:get_param2_data()
 
 	local placeholder_pos_hashes = {}
 
@@ -108,62 +108,87 @@ function blockexchange.deserialize_part(pos1, pos2, data, metadata, update_light
 		end
 
 		-- place param1 and param2 regardless of known/unknown node
-		param1[i] = mapblock.param1[j]
-		param2[i] = mapblock.param2[j]
+		node_param1[i] = mapblock.param1[j]
+		node_param2[i] = mapblock.param2[j]
 		j = j + 1
 	end
 	end
 	end
 
-	manip:set_data(node_data)
-	manip:set_light_data(param1)
-	manip:set_param2_data(param2)
-	manip:write_to_map(update_light)
+	local function finish()
+		-- deserialize metadata
+		if metadata.metadata and metadata.metadata.meta then
+			for pos_str, md in pairs(metadata.metadata.meta) do
+				local relative_pos = core.string_to_pos(pos_str)
+				local absolute_pos = vector.add(pos1, relative_pos)
+				local hash = core.hash_node_position(absolute_pos)
+				local unknown_node_id = placeholder_pos_hashes[hash]
+				if unknown_node_id then
+					-- extract node name
+					local node_name = unknown_nodes_id_to_name_mapping[unknown_node_id]
+					-- populate proper placeholder node with metadata
+					placeholder.populate(absolute_pos, {name=node_name}, md)
+					-- remove from placeholder hashes
+					placeholder_pos_hashes[hash] = nil
+				else
+					-- plain metadata of a known node
+					core.get_meta(absolute_pos):from_table(md)
+				end
+			end
+		end
 
-	-- deserialize metadata
-	if metadata.metadata and metadata.metadata.meta then
-		for pos_str, md in pairs(metadata.metadata.meta) do
-			local relative_pos = core.string_to_pos(pos_str)
-			local absolute_pos = vector.add(pos1, relative_pos)
-			local hash = core.hash_node_position(absolute_pos)
-			local unknown_node_id = placeholder_pos_hashes[hash]
-			if unknown_node_id then
-				-- extract node name
-				local node_name = unknown_nodes_id_to_name_mapping[unknown_node_id]
-				-- populate proper placeholder node with metadata
-				placeholder.populate(absolute_pos, {name=node_name}, md)
-				-- remove from placeholder hashes
-				placeholder_pos_hashes[hash] = nil
-			else
-				-- plain metadata of a known node
-				core.get_meta(absolute_pos):from_table(md)
+		-- go over all non-replaced unknown nodes
+		for hash, nodeid in pairs(placeholder_pos_hashes) do
+			local node_name = unknown_nodes_id_to_name_mapping[nodeid]
+			local pos = core.get_position_from_hash(hash)
+			placeholder.populate(pos, {name=node_name})
+		end
+
+		-- deserialize node timers
+		if metadata.metadata and metadata.metadata.timers then
+			for pos_str, timer_data in pairs(metadata.metadata.timers) do
+				local relative_pos = core.string_to_pos(pos_str)
+				local absolute_pos = vector.add(pos1, relative_pos)
+				core.get_node_timer(absolute_pos):set(timer_data.timeout, timer_data.elapsed)
+			end
+		end
+
+		-- run deserialization callbacks
+		for _, cb in ipairs(callbacks) do
+			local fn = deserialization_callbacks[cb.node_id]
+			if type(fn) == "function" then
+				fn(cb.pos)
 			end
 		end
 	end
 
-	-- go over all non-replaced unknown nodes
-	for hash, nodeid in pairs(placeholder_pos_hashes) do
-		local node_name = unknown_nodes_id_to_name_mapping[nodeid]
-		local pos = core.get_position_from_hash(hash)
-		placeholder.populate(pos, {name=node_name})
-	end
+	return finish, node_names
+end
 
-	-- deserialize node timers
-	if metadata.metadata and metadata.metadata.timers then
-		for pos_str, timer_data in pairs(metadata.metadata.timers) do
-			local relative_pos = core.string_to_pos(pos_str)
-			local absolute_pos = vector.add(pos1, relative_pos)
-			core.get_node_timer(absolute_pos):set(timer_data.timeout, timer_data.elapsed)
-		end
-	end
+--- place the meta and metadata to the world at the given positions
+-- @param pos1 the start pos
+-- @param pos2 the end pos
+-- @param data the nodeid/param1/param2 data
+-- @param metadata the schemapart metadata
+-- @param update_light update the lighting (default: true)
+-- @return a table with the placed node names as keys
+function blockexchange.deserialize_part(pos1, pos2, data, metadata, update_light)
+	local manip = core.get_voxel_manip()
+	local e1, e2 = manip:read_from_map(pos1, pos2)
+	local area = VoxelArea:new({MinEdge=e1, MaxEdge=e2})
 
-	-- run deserialization callbacks
-	for _, cb in ipairs(callbacks) do
-		local fn = deserialization_callbacks[cb.node_id]
-		if type(fn) == "function" then
-			fn(cb.pos)
-		end
-	end
+	local node_data = manip:get_data()
+	local node_param1 = manip:get_light_data()
+	local node_param2 = manip:get_param2_data()
 
+	local finish, node_names = blockexchange.deserialize_part_into(area, node_data, node_param1, node_param2,
+		pos1, pos2, data, metadata)
+
+	manip:set_data(node_data)
+	manip:set_light_data(node_param1)
+	manip:set_param2_data(node_param2)
+	manip:write_to_map(update_light)
+
+	finish()
 	return node_names
 end

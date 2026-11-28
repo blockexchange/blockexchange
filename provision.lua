@@ -9,10 +9,16 @@
 --   "position": { "x": 0, "y": 0, "z": 0 },
 --   "username": "myuser",          (optional, login with an access token)
 --   "access_token": "abcdef",      (optional, login with an access token)
---   "token": "<jwt>"               (optional, raw jwt token)
+--   "token": "<jwt>",              (optional, raw jwt token)
+--   "mode": "emerge"               (optional, "emerge" (default) or "mapgen")
 -- }
 --
--- if authentication is provided the schematic is placed in read/write mode:
+-- modes:
+-- * "emerge": emerges the target area and places the whole schematic on the first player join
+-- * "mapgen": places the schematic chunk by chunk while the map generates (read-only, see provision_mapgen.lua),
+--   the position has to be aligned to the mapgen chunks
+--
+-- if authentication is provided the schematic is placed in read/write mode ("emerge" mode only):
 -- the player gets logged in and the area is registered as synced region with autosave enabled
 
 -- resolves the jwt token from the auth options, returns nil if no authentication is configured
@@ -151,6 +157,11 @@ if (config.username == nil) ~= (config.access_token == nil) then
 	error("[blockexchange] invalid config in '" .. config_path .. "': username and access_token are both required", 0)
 end
 
+local mode = config.mode or "emerge"
+if mode ~= "emerge" and mode ~= "mapgen" then
+	error("[blockexchange] invalid config in '" .. config_path .. "': mode has to be \"emerge\" or \"mapgen\"", 0)
+end
+
 local schema_uid = config.schema_uid
 local auth_opts = {
 	token = config.token,
@@ -158,6 +169,30 @@ local auth_opts = {
 	access_token = config.access_token
 }
 local origin = vector.round(vector.new(position.x, position.y, position.z))
+
+if mode == "mapgen" then
+	if config.token or config.username then
+		error("[blockexchange] invalid config in '" .. config_path .. "': the mapgen mode is read-only, " ..
+			"remove the authentication options", 0)
+	end
+
+	local provisioner, err = blockexchange.provision_mapgen(schema_uid, origin)
+	if not provisioner then
+		error("[blockexchange] invalid config in '" .. config_path .. "': " .. err, 0)
+	end
+
+	core.after(0, function()
+		provisioner:start():next(function()
+			return provisioner:prefetch()
+		end):next(function(count)
+			blockexchange.log("action", "mapgen provisioning of schematic '" .. schema_uid ..
+				"' ready, downloaded " .. count .. " chunks")
+		end):catch(function(e)
+			blockexchange.log("error", "mapgen provisioning of schematic '" .. schema_uid .. "' failed: " .. tostring(e))
+		end)
+	end)
+	return
+end
 local storage_key = "provisioned_schematic"
 -- provisioning state: uid and position, re-provision if one of them changes
 local storage_value = schema_uid .. "@" .. core.pos_to_string(origin)
