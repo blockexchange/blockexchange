@@ -53,6 +53,22 @@ local function expect(text, fields)
     end
 end
 
+-- returns a response function that presses the "Status" button of the list row with the region id
+local function press_status_of(id)
+    return function(fs)
+        local row = 0
+        for label in fs:gmatch("label%[0%.5,[%d%.]+;([^%]]*)%]") do
+            if label:match("^%x+  ") then
+                row = row + 1
+                if label:sub(1, #id) == id then
+                    return { ["btn_status_" .. row] = "Status" }
+                end
+            end
+        end
+        error("region '" .. id .. "' not found in list: " .. fs, 0)
+    end
+end
+
 -- simulates a change by another client: patches the given node of the remote part
 local function remote_change(await, token, entry, pos, nodename)
     local offset = sync.get_part_offset(entry, pos)
@@ -198,12 +214,14 @@ mtt.register("sync ui: wizards, status page and pull dialog", {
             player:set_pos({x=0, y=0, z=0})
             _, restore = script_formspecs({
                 { btn_list = "Synced regions" },
-                expect(entry2.id, { btn_status_1 = "Status" }),
+                press_status_of(entry2.id),
                 { btn_unlink = "Unlink..." },
                 expect("Remove the sync information", { btn_unlink = "Unlink" })
             })
             _, err = await(sync_ui.show(playername))
             restore(err)
+            assert(sync.get(entry2.id) == nil, "wrong region unlinked")
+            assert(sync.get(entry.id), "upload region removed")
             assert(#sync.list() == 1, "region not unlinked")
             assert(core.get_node(p_conflict).name == "default:cobble", "build changed by unlink")
 

@@ -141,6 +141,23 @@ function sync.list()
 	return list
 end
 
+--- returns all entries as list with a stable order: by schematic name, owner and id
+function sync.list_sorted()
+	local list = sync.list()
+	table.sort(list, function(a, b)
+		local name_a, name_b = a.schema_name or "", b.schema_name or ""
+		if name_a ~= name_b then
+			return name_a < name_b
+		end
+		local owner_a, owner_b = a.owner or "", b.owner or ""
+		if owner_a ~= owner_b then
+			return owner_a < owner_b
+		end
+		return a.id < b.id
+	end)
+	return list
+end
+
 --- returns the entry at the given position or nil
 function sync.get_at(pos)
 	for _, area in pairs(area_store:get_areas_for_pos(pos, false, true)) do

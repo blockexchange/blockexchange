@@ -879,10 +879,7 @@ local PAGE_SIZE = 8
 function sync_ui.show_list(playername, page)
 	page = page or 1
 	return Promise.async(function(await)
-		local list = sync.list()
-		table.sort(list, function(a, b)
-			return (a.schema_name or "") < (b.schema_name or "")
-		end)
+		local list = sync.list_sorted()
 		local pages = math.max(1, math.ceil(#list / PAGE_SIZE))
 		page = math.min(page, pages)
 

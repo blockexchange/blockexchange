@@ -54,7 +54,7 @@ function subcommands.status(playername, args)
 end
 
 function subcommands.list(playername)
-	local list = sync.list()
+	local list = sync.list_sorted()
 	if #list == 0 then
 		return true, "No synced regions"
 	end
