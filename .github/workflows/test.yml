@@ -8,10 +8,18 @@ jobs:
     timeout-minutes: 10
     steps:
     - uses: actions/checkout@v6
+
+    - name: start services
+      # waits until postgres and bx report healthy (see healthchecks in docker-compose.yml)
+      run: docker compose up -d --wait --wait-timeout 180 postgres bx
+
     - name: test
-      run: |
-        docker compose up -d postgres
-        sleep 5
-        docker compose up -d bx
-        docker compose up --exit-code-from mtt
-        docker compose down -v
+      run: docker compose up --no-deps --exit-code-from mtt mtt
+
+    - name: logs
+      if: failure()
+      run: docker compose logs postgres bx
+
+    - name: cleanup
+      if: always()
+      run: docker compose down -v
