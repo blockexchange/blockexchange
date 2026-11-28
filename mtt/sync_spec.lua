@@ -36,9 +36,11 @@ local function get_remote_node(await, entry, pos)
     return remote.names[part.get_index(remote.size, vector.subtract(pos, vector.add(entry.pos1, offset)))]
 end
 
+-- changes a local node, the dirty tracking happens through the autosave hooks
 local function set_local_node(entry, pos, nodename)
     core.set_node(pos, { name = nodename })
-    sync.mark_dirty(entry, pos)
+    blockexchange.flush_sync_changes()
+    assert(sync.is_dirty(entry, sync.get_part_offset(entry, pos)), "part not marked dirty")
 end
 
 local function assert_equal(a, b, msg)
@@ -67,6 +69,8 @@ mtt.register("sync: upload, push, pull, conflicts and download", {
             core.set_node(pos1, { name = "default:stone" })
             core.set_node(vector.add(pos1, {x=1, y=0, z=0}), { name = "default:stone" })
             core.set_node(vector.add(pos1, {x=2, y=0, z=0}), { name = "default:stone" })
+            -- process the pending changes before the sync entry exists
+            blockexchange.flush_sync_changes()
 
             -- upload
             local result
@@ -153,6 +157,35 @@ mtt.register("sync: upload, push, pull, conflicts and download", {
             assert_equal(stats.conflicts, 1, "resolved conflicts")
             assert_equal(core.get_node(p_conflict).name, "default:glass", "conflict resolution theirs")
             assert_equal(sync.count_dirty(entry), 0, "dirty parts after theirs")
+
+            -- autosave pushes the change in the background
+            entry.autosave = true
+            local p_autosave = vector.add(pos1, {x=0, y=4, z=0})
+            set_local_node(entry, p_autosave, "default:mese")
+            local waited = 0
+            while sync.count_dirty(entry) > 0 or sync.get_busy(entry) do
+                if waited > 20 then error("autosave did not push the changes", 0) end
+                await(Promise.after(0.5))
+                waited = waited + 0.5
+            end
+            assert_equal(get_remote_node(await, entry, p_autosave), "default:mese", "remote node after autosave")
+            entry.autosave = false
+            sync.save()
+
+            -- no autosave without write access
+            entry.autosave = true
+            local settings_backup = blockexchange.get_player_settings(playername)
+            blockexchange.set_player_settings(playername, { license = "CC0" })
+            set_local_node(entry, vector.add(pos1, {x=0, y=5, z=0}), "default:mese")
+            await(Promise.after(2))
+            assert_equal(sync.count_dirty(entry), 1, "dirty parts without write access")
+            blockexchange.set_player_settings(playername, settings_backup)
+            entry.autosave = false
+            sync.clear_dirty(entry, {x=0, y=0, z=0})
+            core.set_node(vector.add(pos1, {x=0, y=5, z=0}), { name = "air" })
+            blockexchange.flush_sync_changes()
+            sync.clear_dirty(entry, {x=0, y=0, z=0})
+            sync.save()
 
             -- download into a new synced region
             result, err = await(sync.download(playername, pos1_download, entry.schema_uid, { owner = username }))

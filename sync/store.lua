@@ -121,6 +121,12 @@ function sync.get(id)
 	return entries[id]
 end
 
+--- returns true if the player is logged in as owner of the remote schematic (read/write mode)
+function sync.can_write(playername, entry)
+	local claims = blockexchange.get_claims(playername)
+	return claims ~= nil and entry.owner_uid ~= nil and claims.user_uid == entry.owner_uid
+end
+
 --- returns all entries as list
 function sync.list()
 	local list = {}
