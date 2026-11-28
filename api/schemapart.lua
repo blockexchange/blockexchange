@@ -10,6 +10,29 @@ function blockexchange.api.create_schemapart(token, data)
   })
 end
 
+--- patches an existing remote schemapart, only the nodes selected by the patchfilter are replaced
+-- @param token the token in string format
+-- @param schemapart the schemapart with the new node data (same size as the remote part)
+-- @param patchfilter a string with one byte per node (0x01 nodename, 0x02 param1, 0x04 param2, 0x08 metadata)
+-- @return a promise with the patched remote schemapart, nil if the remote part does not exist
+function blockexchange.api.patch_schemapart(token, schemapart, patchfilter)
+  return Promise.json(http, url .. "/api/schemapart/patch", {
+    method = "POST",
+    data = {
+      schema_uid = schemapart.schema_uid,
+      offset_x = schemapart.offset_x,
+      offset_y = schemapart.offset_y,
+      offset_z = schemapart.offset_z,
+      data = schemapart.data,
+      metadata = schemapart.metadata,
+      patchfilter = core.encode_base64(patchfilter)
+    },
+    headers = {
+      "Authorization: " .. token
+    }
+  })
+end
+
 function blockexchange.api.remove_schemapart(token, schema_uid, pos)
   local del_url = url .. "/api/schemapart/" .. schema_uid .. "/" .. pos.x .. "/" .. pos.y .. "/" .. pos.z .. "/delete"
   return Promise.http(http, del_url, {

@@ -53,6 +53,7 @@ dofile(MP.."/player_settings.lua")
 dofile(MP.."/hud.lua")
 dofile(MP.."/areas.lua")
 dofile(MP.."/autosave.lua")
+dofile(MP.."/sync/store.lua")
 
 -- utils
 dofile(MP.."/util/ui.lua")
@@ -139,4 +140,5 @@ if core.get_modpath("mtt") then
 	dofile(MP .. "/mtt/load_save.spec.lua")
 	dofile(MP .. "/mtt/media_spec.lua")
 	dofile(MP .. "/mtt/provision_spec.lua")
+	dofile(MP .. "/mtt/sync_store_spec.lua")
 end
