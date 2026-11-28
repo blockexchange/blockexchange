@@ -1,13 +1,5 @@
-
--- list of changed mapblocks marked for export
-local mapblocks = {}
-
--- list of currently autosaving areas
-local busy_areas = {}
-
-function blockexchange.is_area_autosaving(area_id)
-    return busy_areas[area_id]
-end
+---------
+-- change tracking and autosave of synced regions
 
 -- sync entry autosave
 
@@ -73,77 +65,6 @@ local function push_sync_entries()
     end
 end
 
--- worker promise
-local worker
-worker = Promise.asyncify(function(await)
-    local pending_entries = {} -- area.id => { pos1, pos2, area }
-
-    local areas_changed = false
-    for mapblock_pos_str in pairs(mapblocks) do
-        local mapblock_pos = core.string_to_pos(mapblock_pos_str)
-        local pos1, pos2 = blockexchange.get_mapblock_bounds_from_mapblock(mapblock_pos)
-
-        local list = blockexchange.get_areas_in_area(pos1, pos2)
-        for _, area in ipairs(list) do
-            area.dirty = true
-            areas_changed = true
-            if area.autosave and area.playername then
-                if pending_entries[area.id] then
-                    -- update existing border
-                    pending_entries[area.id].pos1 = blockexchange.sort_pos(pending_entries[area.id].pos1, pos1)
-                    _, pending_entries[area.id].pos2 = blockexchange.sort_pos(pending_entries[area.id].pos2, pos2)
-                else
-                    -- create new entry
-                    pending_entries[area.id] = {
-                        pos1 = pos1,
-                        pos2 = pos2,
-                        area = area
-                    }
-                end
-            end
-        end
-    end
-
-    -- reset mapblock list after collecting the changed areas
-    mapblocks = {}
-
-    if areas_changed then
-        blockexchange.save_areas()
-    end
-
-
-    -- start saving all changed area parts
-    for _, entry in pairs(pending_entries) do
-        local area = entry.area
-        blockexchange.log("action",
-            "autosaving area " .. area.id ..
-            " playername: " .. area.playername ..
-            " username: " .. area.username ..
-            " pos1: " .. core.pos_to_string(entry.pos1) ..
-            " pos2: " .. core.pos_to_string(entry.pos2)
-        )
-        busy_areas[area.id] = true
-        local _, err = await(blockexchange.save_update_area(area.playername,
-            area.pos1, area.pos2,
-            entry.pos1, entry.pos2,
-            area.schema_uid
-        ))
-        busy_areas[area.id] = nil
-        -- remove dirty / local changes flag
-        area.dirty = false
-        blockexchange.save_areas()
-
-        if err then
-            blockexchange.log("error",
-                "autosave failed for area: " .. area.id ..
-                " reason: " .. (err or "<unkown>")
-            )
-        end
-    end
-
-    core.after(1, worker)
-end)
-
 local function sync_worker()
     blockexchange.flush_sync_changes()
     push_sync_entries()
@@ -151,7 +72,6 @@ local function sync_worker()
 end
 
 if blockexchange.is_online then
-    core.after(1, worker)
     core.after(1, sync_worker)
 end
 
@@ -175,7 +95,6 @@ function blockexchange.mark_changed(pos1, pos2)
             for z=mapblock_pos1.z,mapblock_pos2.z do
                 local mapblock_pos = {x=x, y=y, z=z}
                 local mapblock_pos_str = core.pos_to_string(mapblock_pos)
-                mapblocks[mapblock_pos_str] = true
                 sync_mapblocks[mapblock_pos_str] = true
             end
         end

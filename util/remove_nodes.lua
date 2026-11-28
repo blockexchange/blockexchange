@@ -29,9 +29,15 @@ function blockexchange.remove_nodes(pos1, pos2)
         meta:from_table({})
     end
 
-    -- remove areas
-    local list = blockexchange.get_areas_in_area(pos1, pos2)
-    for _, a in ipairs(list) do
-        blockexchange.remove_area(a.id)
+    -- unlink synced regions inside the removed area, mark the changes of partially removed regions
+    pos1, pos2 = blockexchange.sort_pos(pos1, pos2)
+    for _, entry in ipairs(blockexchange.sync.get_in_area(pos1, pos2)) do
+        local inside = entry.pos1.x >= pos1.x and entry.pos1.y >= pos1.y and entry.pos1.z >= pos1.z and
+            entry.pos2.x <= pos2.x and entry.pos2.y <= pos2.y and entry.pos2.z <= pos2.z
+        if inside then
+            blockexchange.sync.remove(entry.id)
+        else
+            blockexchange.mark_changed(pos1, pos2)
+        end
     end
 end

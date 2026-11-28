@@ -121,11 +121,6 @@ function blockexchange.save(playername, pos1, pos2, schemaname, options)
 			error("saved schema not found: " .. schema.uid, 0)
 		end
 
-		-- register area
-		if player_settings.area_tracking then
-			blockexchange.register_area(pos1, pos2, playername, claims.username, schema)
-		end
-
 		return {
 			total_parts = total_parts,
 			total_size = total_size,

@@ -3,12 +3,9 @@
 -- @param pos1 lower position to load
 -- @param label the label to show in the hud
 -- @param fetch_schema function returning a promise that resolves with the schema
--- @param opts table with optional fields: from_mtime, username (for area tracking), on_schemapart(pos1, pos2)
+-- @param opts table with the optional fields on_schemapart(pos1, pos2) and on_schemapart_raw(schemapart)
 -- @return a promise that resolves if the operation is complete
 local function load_schema(playername, pos1, label, fetch_schema, opts)
-	local from_mtime = opts.from_mtime
-	local username = opts.username
-
 	local job = {
 		hud_icon = "blockexchange_download.png",
 		hud_text = "Download '" .. label .. "' starting"
@@ -17,7 +14,6 @@ local function load_schema(playername, pos1, label, fetch_schema, opts)
 	local retries = 0
 	local max_retries = 12
 	local current_part = 0
-	local initial_load = not from_mtime
 
 	job.promise = Promise.async(function(await)
 		local schema, err = await(fetch_schema())
@@ -26,13 +22,9 @@ local function load_schema(playername, pos1, label, fetch_schema, opts)
 		elseif not schema then
 			error("schema not found: '" .. label .. "'", 0)
 		end
-		local pos2 = blockexchange.get_schema_pos2(pos1, schema)
-
-		-- current mtime, if set
-		local mtime = from_mtime or 0
 
 		local total_parts
-		total_parts, err = await(blockexchange.api.count_next_schemapart_by_mtime(schema.uid, mtime))
+		total_parts, err = await(blockexchange.api.count_next_schemapart_by_mtime(schema.uid, 0))
 		if err then
 			error("error fetching total parts: " .. err, 0)
 		end
@@ -42,14 +34,9 @@ local function load_schema(playername, pos1, label, fetch_schema, opts)
 
 		while true do
 			local fetch_promise
-			if mtime > 0 then
-				-- incremental download by mtime
-				fetch_promise = blockexchange.api.get_next_schemapart_by_mtime(schema.uid, mtime)
-			elseif not schemapart then
-				-- full download, first part
+			if not schemapart then
 				fetch_promise = blockexchange.api.get_first_schemapart(schema.uid)
 			else
-				-- full download, next part
 				fetch_promise = blockexchange.api.get_next_schemapart(schema.uid, {
 					x = schemapart.offset_x,
 					y = schemapart.offset_y,
@@ -71,9 +58,6 @@ local function load_schema(playername, pos1, label, fetch_schema, opts)
 				break
 			else
 				schemapart = next_part
-				if mtime > 0 then
-					mtime = next_part.mtime
-				end
 				current_part = current_part + 1
 				local part_pos1, part_pos2 = blockexchange.place_schemapart(next_part, pos1)
 				if opts.on_schemapart then
@@ -96,24 +80,6 @@ local function load_schema(playername, pos1, label, fetch_schema, opts)
 			end
 		end
 
-		local player_settings = blockexchange.get_player_settings(playername)
-		if player_settings.area_tracking and initial_load and username then
-			blockexchange.register_area(pos1, pos2, playername, username, schema)
-		end
-
-		-- update mtime
-		local area = blockexchange.get_area(pos1)
-		if area then
-			-- update area mtime
-			schema, err = await(blockexchange.api.get_schema_by_uid(schema.uid))
-			if err then
-				error("schema get error: " .. err, 0)
-			end
-			area.mtime = schema.mtime
-			blockexchange.save_areas()
-		end
-
-
 		return {
 			total_parts = total_parts,
 			last_schemapart = schemapart,
@@ -130,15 +96,11 @@ end
 -- @param pos1 lower position to load
 -- @param username the username/owner of the schema
 -- @param schemaname the name of the schema
--- @param[opt] from_mtime start with block mtime
 -- @return a promise that resolves if the operation is complete
-function blockexchange.load(playername, pos1, username, schemaname, from_mtime)
+function blockexchange.load(playername, pos1, username, schemaname)
 	return load_schema(playername, pos1, username .. "/" .. schemaname, function()
 		return blockexchange.api.get_schema_by_name(username, schemaname, true)
-	end, {
-		from_mtime = from_mtime,
-		username = username
-	})
+	end, {})
 end
 
 --- load a schematic by its uid asynchronously
@@ -158,8 +120,6 @@ function blockexchange.load_by_uid(playername, pos1, schema_uid, opts)
 	})
 end
 
-
-
 Promise.register_chatcommand("bx_load", {
     params = "<username> <schemaname>",
     description = "Downloads a schema from the blockexchange to the selected pos1",
@@ -178,31 +138,5 @@ Promise.register_chatcommand("bx_load", {
         return blockexchange.load(name, pos1, username, schemaname):next(function(result)
             return "Download complete with " .. result.schema.total_parts .. " parts"
         end)
-    end
-})
-
-function blockexchange.load_update_area(playername, area)
-	return blockexchange.load(playername, area.pos1, area.username, area.name, area.mtime):next(function(stat)
-		if stat.last_schemapart then
-			-- some parts have been updated
-			return "Load-update complete with " .. stat.total_parts .. " parts"
-		else
-			-- nothing has been updated
-			return "No updates available"
-		end
-	end)
-end
-
-Promise.register_chatcommand("bx_load_update", {
-    params = "[area_id?]",
-    description = "downloads changes",
-    privs = {blockexchange = true},
-    func = function(name, area_id)
-        local area, err_msg = blockexchange.select_player_area(name, area_id)
-        if err_msg then
-            return false, err_msg
-        end
-
-		return blockexchange.load_update_area(name, area)
     end
 })

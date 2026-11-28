@@ -734,6 +734,12 @@ local function fetch_remote_state(await, entry)
 	if err or not schema then
 		return { info = "could not fetch remote schematic: " .. (err or "not found"), color = COLOR_ERR }
 	end
+	if not entry.owner_uid then
+		-- migrated regions only know the owner name
+		entry.owner_uid = schema.user_uid
+		entry.schema_name = schema.name
+		sync.save()
+	end
 	local newer = await(blockexchange.api.count_next_schemapart_by_mtime(entry.schema_uid, entry.pulled_mtime))
 	if newer and newer > 0 then
 		return { info = newer .. " parts newer (" .. format_time(schema.mtime) .. ")", color = COLOR_WARN, newer = newer }

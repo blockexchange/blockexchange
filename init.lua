@@ -51,10 +51,10 @@ dofile(MP.."/privs.lua")
 dofile(MP.."/markers.lua")
 dofile(MP.."/player_settings.lua")
 dofile(MP.."/hud.lua")
-dofile(MP.."/areas.lua")
 dofile(MP.."/autosave.lua")
 dofile(MP.."/sync/store.lua")
 dofile(MP.."/sync/part.lua")
+dofile(MP.."/sync/migrate.lua")
 
 -- utils
 dofile(MP.."/util/ui.lua")
@@ -63,7 +63,6 @@ dofile(MP.."/util/placer_tool.lua")
 dofile(MP.."/util/placer_entity.lua")
 dofile(MP.."/util/placer_preview.lua")
 dofile(MP.."/util/remove_nodes.lua")
-dofile(MP.."/util/player_area.lua")
 dofile(MP.."/util/compare_area.lua")
 dofile(MP.."/util/cleanup_area.lua")
 dofile(MP.."/util/ignored_content_ids.lua")
@@ -98,8 +97,6 @@ if blockexchange.is_online then
 	dofile(MP.."/commands/user.lua")
 	dofile(MP.."/commands/placer.lua")
 	dofile(MP.."/commands/save.lua")
-	dofile(MP.."/commands/save_update.lua")
-	dofile(MP.."/commands/autosave.lua")
 	dofile(MP.."/commands/media.lua")
 	dofile(MP.."/commands/load.lua")
 	dofile(MP.."/commands/bx.lua")
@@ -114,7 +111,7 @@ else
 end
 -- commands
 dofile(MP.."/commands/pos.lua")
-dofile(MP.."/commands/area.lua")
+dofile(MP.."/commands/deprecated.lua")
 dofile(MP.."/commands/cancel_chat.lua")
 dofile(MP.."/commands/allocate.lua")
 dofile(MP.."/commands/load_local.lua")
@@ -136,7 +133,6 @@ end
 if core.get_modpath("mtt") then
 	dofile(MP .. "/mtt/serialize_spec.lua")
 	dofile(MP .. "/mtt/token_spec.lua")
-	dofile(MP .. "/mtt/areas_spec.lua")
 	dofile(MP .. "/mtt/clip_area_spec.lua")
 	dofile(MP .. "/mtt/get_base_pos_spec.lua")
 	dofile(MP .. "/mtt/iterator_spec.lua")
@@ -150,4 +146,5 @@ if core.get_modpath("mtt") then
 	dofile(MP .. "/mtt/sync_part_spec.lua")
 	dofile(MP .. "/mtt/sync_spec.lua")
 	dofile(MP .. "/mtt/sync_ui_spec.lua")
+	dofile(MP .. "/mtt/sync_migrate_spec.lua")
 end

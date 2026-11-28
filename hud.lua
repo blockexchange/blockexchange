@@ -15,10 +15,9 @@ local function update_player_hud(player)
 		return
 	end
 
-	-- area hud
+	-- synced region hud
 	local pos = player:get_pos()
 	local entry = blockexchange.sync.get_at(pos)
-	local area = not entry and blockexchange.get_area(pos)
 	local area_icon = ""
 	local area_text = ""
 
@@ -47,19 +46,6 @@ local function update_player_hud(player)
 			area_icon = "blockexchange_upload.png"
 		elseif busy == "pull" then
 			area_icon = "blockexchange_download.png"
-		end
-	elseif area then
-		-- player is in an area
-		area_icon = "blockexchange_info.png"
-		area_text = string.format("BX-Area: '%s' Schema: %s/%s", area.id, area.username, area.name)
-		if area.autosave then
-			area_text = area_text .. " [Autosave]"
-		end
-		if area.dirty then
-			area_text = area_text .. " [Local changes]"
-		end
-		if blockexchange.is_area_autosaving(area.id) then
-			area_icon = "blockexchange_upload.png"
 		end
 	end
 

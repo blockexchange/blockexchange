@@ -89,15 +89,20 @@ core.register_on_mods_loaded(sync.load)
 
 --- creates and persists a new sync entry
 -- @param def table with the fields: schema (remote schema with uid, name, user_uid, mtime), pos1, pos2, playername
---  and the optional fields owner (username), autosave, pulled_mtime and state
+--  and the optional fields id (used if free), owner (username), autosave, pulled_mtime and state
 -- @return the new entry
 function sync.create(def)
 	assert(def.schema and def.schema.uid, "schema with uid required")
 	assert(def.pos1 and def.pos2, "pos1 and pos2 required")
 	local pos1, pos2 = blockexchange.sort_pos(def.pos1, def.pos2)
 
+	local id = def.id
+	if not id or entries[id] or not string.match(id, "^%w+$") then
+		id = create_id()
+	end
+
 	local entry = {
-		id = create_id(),
+		id = id,
 		schema_uid = def.schema.uid,
 		schema_name = def.schema.name,
 		owner = def.owner,
