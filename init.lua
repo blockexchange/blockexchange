@@ -107,6 +107,8 @@ if blockexchange.is_online then
 	dofile(MP.."/sync/push.lua")
 	dofile(MP.."/sync/pull.lua")
 	dofile(MP.."/sync/transfer.lua")
+	dofile(MP.."/sync/ui.lua")
+	dofile(MP.."/commands/sync.lua")
 else
 	dofile(MP.."/commands/offline_info.lua")
 end
@@ -147,4 +149,5 @@ if core.get_modpath("mtt") then
 	dofile(MP .. "/mtt/sync_store_spec.lua")
 	dofile(MP .. "/mtt/sync_part_spec.lua")
 	dofile(MP .. "/mtt/sync_spec.lua")
+	dofile(MP .. "/mtt/sync_ui_spec.lua")
 end

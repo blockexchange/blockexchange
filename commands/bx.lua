@@ -19,11 +19,12 @@ local function main_fs(title, playername)
 	local area = blockexchange.select_player_area(playername)
 
 	local fs = ui.formspec(width, height) ..
-		ui.button_exit(0,-1, 2.8,0.8, "show_main", "Info") ..
-		ui.button_exit(3,-1, 2.8,0.8, "show_settings", "Player settings")
+		ui.button_exit(0,-1, 2.3,0.8, "show_main", "Info") ..
+		ui.button_exit(2.5,-1, 2.3,0.8, "show_settings", "Settings") ..
+		ui.button_exit(5,-1, 2.3,0.8, "show_sync", "Sync")
 
 	if area then
-		fs = fs .. ui.button_exit(6,-1, 2.8,0.8, "show_area", "Area")
+		fs = fs .. ui.button_exit(7.5,-1, 2.3,0.8, "show_area", "Area")
 	end
 
 	fs = fs .. "label[1,1;" .. title .. "]"
@@ -41,6 +42,9 @@ local function handle_top_nav(fields, playername)
 		return true
 	elseif fields.show_area then
 		blockexchange.show_form_area(playername)
+		return true
+	elseif fields.show_sync then
+		blockexchange.sync_ui.show(playername)
 		return true
 	else
 		-- not a nav thing

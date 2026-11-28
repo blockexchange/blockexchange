@@ -51,6 +51,20 @@ function blockexchange.api.get_schema_by_uid(schema_uid, download)
   return Promise.json(http, schema_url)
 end
 
+--- searches complete schemas
+-- @param query search fields, for example: user_name, schema_name, schema_uid, user_uid, limit
+-- @return a promise with the list of results: { schema = {...}, username = "...", mods = {...} }
+function blockexchange.api.search_schemas(query)
+  local data = table.copy(query)
+  data.complete = true
+  return Promise.json(http, url .. "/api/search/schema", {
+    method = "POST",
+    data = data
+  }):next(function(result)
+    return result or {}
+  end)
+end
+
 --- search for a schema by username and schemaname
 -- @param user_name the username
 -- @param schema_name the name of the schema
