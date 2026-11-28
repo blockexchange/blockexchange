@@ -140,6 +140,29 @@ If an authentication is provided, the schematic is placed in read/write mode: th
 and the area is registered as synced region with autosave enabled, so changes are uploaded automatically.
 The authenticated user has to be the owner of the schematic.
 
+## Mapgen mode
+
+With `"mode": "mapgen"` the schematic is placed chunk by chunk while the map generates, instead of emerging
+and placing the whole area on the first player join. This suits large schematics that get explored over time:
+
+```json
+{
+	"schema_uid": "a681b2e3-f44a-47e5-b862-5c4714709040",
+	"position": { "x": -32, "y": -32, "z": -32 },
+	"mode": "mapgen"
+}
+```
+
+* The `position` has to be aligned to the mapgen chunks: `(position + 32) % 80 == 0` on every axis
+  (for example `-32`, `48`, `128`), the mapgen `chunksize` has to be `5` (default)
+* Only chunks that generate after the mod is set up are filled, use a new world or an area that is not generated yet
+* All chunks are downloaded into `<worldpath>/bx_provision/<schema_uid>/` on startup, the cache is cleared if the
+  remote schematic changes (already generated chunks stay as they are)
+* Chunks that generate before their download is available are deleted and generated again when the download arrives
+* Read-only: the authentication options are not supported in this mode
+* Other mapgens can place trees or decorations across the chunk borders, `mg_name = singlenode` avoids that
+* Needs a blockexchange server with api version 1.2 or newer (5x5x5 chunks)
+
 # Api docs
 
 See: https://blockexchange.github.io/blockexchange/
